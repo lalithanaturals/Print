@@ -1,1 +1,610 @@
-# Print
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thermal Print Manager | Lalitha Naturals</title>
+    <style>
+        :root {
+            --bg-color: #f4f6f8;
+            --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: #333;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px 10px;
+        }
+
+        /* App Header */
+        .app-header {
+            text-align: center;
+            margin-bottom: 20px;
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .app-header h1 {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1a1a1a;
+        }
+
+        .app-header p {
+            font-size: 12px;
+            color: #666;
+            margin-top: 2px;
+        }
+
+        /* 3 Big Icon Buttons Container */
+        .big-buttons-bar {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            justify-content: center;
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .icon-btn {
+            background: #ffffff;
+            border: 2px solid #e0e0e0;
+            border-radius: 14px;
+            padding: 14px 18px;
+            width: 125px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.04);
+            transition: all 0.2s ease;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .icon-btn:hover, .icon-btn:active {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+        }
+
+        .icon-btn.whatsapp:hover, .icon-btn.whatsapp:active {
+            border-color: #25D366;
+            background-color: #f0fdf4;
+        }
+
+        .icon-btn.exchange:hover, .icon-btn.exchange:active {
+            border-color: #f59e0b;
+            background-color: #fffbe8;
+        }
+
+        .icon-btn.both:hover, .icon-btn.both:active {
+            border-color: #2563eb;
+            background-color: #eff6ff;
+        }
+
+        .icon-btn svg {
+            width: 36px;
+            height: 36px;
+        }
+
+        .icon-btn span {
+            font-size: 12px;
+            font-weight: 700;
+            color: #222;
+            text-align: center;
+        }
+
+        /* Side-by-Side Layout for Desktop / Stacked for Mobile */
+        .receipts-wrapper {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .receipt-column {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .card-label {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #777;
+            margin-bottom: 8px;
+        }
+
+        .preview-box {
+            width: 150px;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Receipt Card Base */
+        .card {
+            width: 250px;
+            background-color: #ffffff;
+            padding: 18px 20px;
+            text-align: center;
+            border-radius: 8px;
+            box-shadow: var(--card-shadow);
+            border: 1px solid #eaeaea;
+            transform: scale(0.60);
+            transform-origin: top center;
+            margin-bottom: -100px;
+        }
+
+        /* Common Elements */
+        .header {
+            font-size: 16px;
+            font-weight: 700;
+            color: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            margin-bottom: 8px;
+        }
+
+        .header svg {
+            width: 18px;
+            height: 18px;
+            fill: #000;
+        }
+
+        .logo {
+            width: 75px;
+            height: 75px;
+            margin: 0 auto 8px;
+            display: block;
+            border-radius: 50%;
+            filter: grayscale(100%) contrast(200%);
+        }
+
+        .brand-name {
+            font-size: 14px;
+            font-weight: 700;
+            color: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            margin-bottom: 8px;
+        }
+
+        .divider {
+            border-bottom: 1px dashed #000;
+            margin: 10px 0;
+        }
+
+        .cut-separator {
+            display: none;
+            width: 100%;
+            text-align: center;
+            font-weight: 700;
+            font-size: 10px;
+            margin: 30px 0 20px;
+            border-top: 2px dashed #000;
+            padding-top: 6px;
+        }
+
+        /* WhatsApp Card */
+        .notice-box {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .notice-title {
+            font-size: 12px;
+            font-weight: 700;
+            color: #000;
+            margin-bottom: 5px;
+        }
+
+        .notice-list {
+            list-style: none;
+            padding-left: 0;
+            font-size: 12px;
+            font-weight: 700;
+            color: #000;
+            line-height: 1.4;
+            margin-bottom: 6px;
+        }
+
+        .notice-list li::before {
+            content: "• ";
+        }
+
+        .notice-footer {
+            font-size: 11px;
+            font-weight: 700;
+            color: #000;
+            line-height: 1.3;
+        }
+
+        .qr-container {
+            position: relative;
+            width: 150px;
+            height: 150px;
+            margin: 8px auto;
+        }
+
+        .qr-code {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        .qr-center-icon {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 24px;
+            height: 24px;
+            background: #ffffff;
+            border-radius: 50%;
+            padding: 2px;
+        }
+
+        .footer-text {
+            font-size: 11px;
+            font-weight: 700;
+            color: #000;
+            margin-top: 4px;
+        }
+
+        /* Exchange Card */
+        .tagline {
+            font-size: 11px;
+            font-style: italic;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .offer-header {
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 2px;
+        }
+
+        .offer-sub {
+            font-size: 11px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .rate-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 8px 0;
+        }
+
+        .rate-table th, .rate-table td {
+            border: 1px solid #000;
+            padding: 5px 2px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .rate-table th {
+            background-color: #f0f0f0;
+            font-size: 10px;
+        }
+
+        .note-box {
+            border: 1px solid #000;
+            padding: 6px;
+            margin: 8px 0;
+            font-size: 10px;
+            font-weight: 700;
+            line-height: 1.3;
+            text-align: left;
+        }
+
+        .bullets {
+            font-size: 10px;
+            font-weight: 700;
+            text-align: left;
+            margin-left: 10px;
+            line-height: 1.4;
+        }
+
+        /* --- Mobile Responsiveness --- */
+        @media (max-width: 600px) {
+            .big-buttons-bar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .icon-btn {
+                width: 100%;
+                flex-direction: row;
+                justify-content: center;
+                padding: 12px 16px;
+            }
+
+            .icon-btn svg {
+                width: 28px;
+                height: 28px;
+            }
+
+            .icon-btn span {
+                font-size: 14px;
+            }
+
+            .receipts-wrapper {
+                flex-direction: row;
+                justify-content: space-around;
+            }
+        }
+
+        /* --- Print Overrides --- */
+        @page {
+            size: auto;
+            margin: 0mm;
+        }
+
+        @media print {
+            .app-header, .big-buttons-bar, .card-label {
+                display: none !important;
+            }
+            html, body {
+                background: #ffffff;
+                padding: 0;
+                margin: 0;
+            }
+            .receipts-wrapper {
+                display: block;
+                max-width: 100%;
+            }
+            .preview-box {
+                width: 100%;
+                overflow: visible;
+            }
+            .card {
+                width: 100%;
+                padding: 0 20px;
+                box-shadow: none !important;
+                border: none !important;
+                border-radius: 0;
+                margin: 0 auto;
+                transform: none !important;
+            }
+
+            body.print-whatsapp .exchange-column {
+                display: none !important;
+            }
+            body.print-exchange .whatsapp-column {
+                display: none !important;
+            }
+            body.print-both .cut-separator {
+                display: block;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-header">
+        <h1>Lalitha Naturals Print Center</h1>
+        <p>Tap any button below to print directly</p>
+    </div>
+
+    <!-- 3 Big Responsive Icon Buttons -->
+    <div class="big-buttons-bar">
+        
+        <!-- 1. WhatsApp Button -->
+        <button class="icon-btn whatsapp" onclick="triggerMobilePrint('whatsapp')">
+            <svg viewBox="0 0 24 24" fill="#25D366">
+                <path d="M12.012 2c-5.506 0-9.989 4.478-9.99 9.984 0 1.758.459 3.474 1.33 4.982l-1.413 5.161 5.283-1.386c1.455.793 3.096 1.213 4.782 1.214h.004c5.505 0 9.987-4.478 9.989-9.984 0-2.668-1.037-5.176-2.922-7.062-1.886-1.886-4.394-2.923-7.063-2.923zm5.885 14.341c-.247.697-1.442 1.333-1.992 1.402-.505.063-1.161.09-3.376-.827-2.831-1.172-4.654-4.048-4.795-4.237-.142-.188-1.147-1.528-1.147-2.913 0-1.386.726-2.067.984-2.348.258-.282.563-.352.751-.352.188 0 .375.002.539.01.173.008.406-.066.634.48.235.563.8 1.951.869 2.092.07.141.117.305.023.493-.094.188-.141.305-.282.469-.141.164-.296.368-.423.493-.141.141-.288.294-.124.576.164.282.729 1.203 1.564 1.947 1.074.957 1.98 1.254 2.262 1.394.282.141.446.117.61-.07.164-.188.697-.812.885-1.093.188-.282.375-.235.634-.141.258.094 1.643.774 1.925.915.282.141.469.211.539.328.07.117.07.68-.177 1.377z"/>
+            </svg>
+            <span>Print WhatsApp</span>
+        </button>
+
+        <!-- 2. Exchange Button -->
+        <button class="icon-btn exchange" onclick="triggerMobilePrint('exchange')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 11-.57-8.38l5.67-5.67"/>
+            </svg>
+            <span>Print Exchange</span>
+        </button>
+
+        <!-- 3. Print Both Button -->
+        <button class="icon-btn both" onclick="triggerMobilePrint('both')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                <path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"></path>
+                <rect x="6" y="14" width="12" height="8"></rect>
+            </svg>
+            <span>Print Both</span>
+        </button>
+
+    </div>
+
+    <div class="receipts-wrapper">
+
+        <!-- Column 1: WhatsApp Group -->
+        <div class="receipt-column whatsapp-column">
+            <div class="card-label">WhatsApp QR</div>
+            <div class="preview-box">
+                <div class="card" id="whatsapp-card-el">
+                    <div class="header">
+                        Join Our WhatsApp Group
+                        <svg viewBox="0 0 24 24">
+                            <path d="M12.012 2c-5.506 0-9.989 4.478-9.99 9.984 0 1.758.459 3.474 1.33 4.982l-1.413 5.161 5.283-1.386c1.455.793 3.096 1.213 4.782 1.214h.004c5.505 0 9.987-4.478 9.989-9.984 0-2.668-1.037-5.176-2.922-7.062-1.886-1.886-4.394-2.923-7.063-2.923zm5.885 14.341c-.247.697-1.442 1.333-1.992 1.402-.505.063-1.161.09-3.376-.827-2.831-1.172-4.654-4.048-4.795-4.237-.142-.188-1.147-1.528-1.147-2.913 0-1.386.726-2.067.984-2.348.258-.282.563-.352.751-.352.188 0 .375.002.539.01.173.008.406-.066.634.48.235.563.8 1.951.869 2.092.07.141.117.305.023.493-.094.188-.141.305-.282.469-.141.164-.296.368-.423.493-.141.141-.288.294-.124.576.164.282.729 1.203 1.564 1.947 1.074.957 1.98 1.254 2.262 1.394.282.141.446.117.61-.07.164-.188.697-.812.885-1.093.188-.282.375-.235.634-.141.258.094 1.643.774 1.925.915.282.141.469.211.539.328.07.117.07.68-.177 1.377z"/>
+                        </svg>
+                    </div>
+
+                    <img src="l circle.png" class="logo" alt="Lalitha Naturals Logo">
+
+                    <div class="brand-name">Lalitha Naturals CIRCLE</div>
+
+                    <div class="notice-box">
+                        <div class="notice-title">This group is strictly for official updates on:</div>
+                        <ul class="notice-list">
+                            <li>New arrivals</li>
+                            <li>Special offers</li>
+                            <li>Store news</li>
+                            <li>Real-time stock updates</li>
+                        </ul>
+                        <div class="notice-footer">
+                            Zero spam, zero distractions—just the updates you need.
+                        </div>
+                    </div>
+
+                    <div class="qr-container">
+                        <img class="qr-code" src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https%3A%2F%2Fchat.whatsapp.com%2FE8udXvgNXAOKSXWGvud4ct" alt="WhatsApp Group QR Code">
+                        <svg class="qr-center-icon" viewBox="0 0 24 24">
+                            <path fill="#000" d="M12.012 2c-5.506 0-9.989 4.478-9.99 9.984 0 1.758.459 3.474 1.33 4.982l-1.413 5.161 5.283-1.386c1.455.793 3.096 1.213 4.782 1.214h.004c5.505 0 9.987-4.478 9.989-9.984 0-2.668-1.037-5.176-2.922-7.062-1.886-1.886-4.394-2.923-7.063-2.923zm5.885 14.341c-.247.697-1.442 1.333-1.992 1.402-.505.063-1.161.09-3.376-.827-2.831-1.172-4.654-4.048-4.795-4.237-.142-.188-1.147-1.528-1.147-2.913 0-1.386.726-2.067.984-2.348.258-.282.563-.352.751-.352.188 0 .375.002.539.01.173.008.406-.066.634.48.235.563.8 1.951.869 2.092.07.141.117.305.023.493-.094.188-.141.305-.282.469-.141.164-.296.368-.423.493-.141.141-.288.294-.124.576.164.282.729 1.203 1.564 1.947 1.074.957 1.98 1.254 2.262 1.394.282.141.446.117.61-.07.164-.188.697-.812.885-1.093.188-.282.375-.235.634-.141.258.094 1.643.774 1.925.915.282.141.469.211.539.328.07.117.07.68-.177 1.377z"/>
+                        </svg>
+                    </div>
+
+                    <div class="footer-text">
+                        Open WhatsApp and scan the QR code to join.
+                    </div>
+
+                    <div class="cut-separator">✂ - - - - - - CUT HERE - - - - - - ✂</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Column 2: Exchange Offer -->
+        <div class="receipt-column exchange-column">
+            <div class="card-label">Scrap Exchange</div>
+            <div class="preview-box">
+                <div class="card" id="exchange-card-el">
+                    <img src="l circle.png" class="logo" alt="Lalitha Naturals Logo">
+
+                    <div class="brand-name">Lalitha NATURALS</div>
+                    <div class="tagline">Feel the earth</div>
+
+                    <div class="divider"></div>
+
+                    <div class="offer-header">EXCHANGE YOUR OLD ITEMS</div>
+                    <div class="offer-sub">&amp; GET INSTANT VALUE!</div>
+
+                    <table class="rate-table">
+                        <thead>
+                            <tr>
+                                <th>ITEM</th>
+                                <th>RATE</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>ALUMINIUM</td>
+                                <td>₹150 / 1 KG</td>
+                            </tr>
+                            <tr>
+                                <td>STEEL</td>
+                                <td>₹50 / 1 KG</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="note-box">
+                        <strong>PLASTIC OR WOODEN HANDLE?</strong><br>
+                        100 GM will be deducted per product.
+                    </div>
+
+                    <div class="divider"></div>
+
+                    <ul class="bullets">
+                        <li>SWAP TODAY, SAVE &amp; SUSTAIN</li>
+                        <li>CLEAN HOME, GREENER TOMORROW</li>
+                        <li>REDUCE WASTE, REUSE RESPONSIBLY</li>
+                    </ul>
+
+                    <div class="divider"></div>
+
+                    <div class="footer-text">
+                        VISIT OUR EXPO &amp; EXCHANGE TODAY!
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        function triggerMobilePrint(type) {
+            document.body.classList.remove('print-whatsapp', 'print-exchange', 'print-both');
+            if (type === 'whatsapp') {
+                document.body.classList.add('print-whatsapp');
+            } else if (type === 'exchange') {
+                document.body.classList.add('print-exchange');
+            } else {
+                document.body.classList.add('print-both');
+            }
+
+            // Attempt standard browser print
+            try {
+                window.print();
+            } catch (e) {
+                console.log("Standard print failed:", e);
+            }
+
+            // Mobile specific fallback: If browser ignores window.print(), open a clean popup for native browser share/print
+            setTimeout(() => {
+                const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+                if (isMobile) {
+                    let printWin = window.open('', '_blank');
+                    if (printWin) {
+                        let content = '';
+                        if (type === 'whatsapp') {
+                            content = document.getElementById('whatsapp-card-el').outerHTML;
+                        } else if (type === 'exchange') {
+                            content = document.getElementById('exchange-card-el').outerHTML;
+                        } else {
+                            content = document.getElementById('whatsapp-card-el').outerHTML + '<br>' + document.getElementById('exchange-card-el').outerHTML;
+                        }
+
+                        printWin.document.write(`
+                            <html>
+                            <head>
+                                <title>Print Receipt</title>
+                                <style>
+                                    body { font-family: sans-serif; text-align: center; padding: 10px; margin: 0; }
+                                    .card { width: 100%; max-width: 280px; margin: 0 auto; transform: none !important; }
+                                    .logo { width: 75px; height: 75px; border-radius: 50%; filter: grayscale(100%); }
+                                    .rate-table { width: 100%; border-collapse: collapse; }
+                                    .rate-table th, .rate-table td { border: 1px solid #000; padding: 4px; }
+                                    .notice-list { list-style: none; padding: 0; }
+                                    .qr-code { width: 150px; height: 150px; }
+                                    .divider { border-bottom: 1px dashed #000; margin: 8px 0; }
+                                </style>
+                            </head>
+                            <body onload="window.print();">
+                                ${content}
+                            </body>
+                            </html>
+                        `);
+                        printWin.document.close();
+                    }
+                }
+            }, 300);
+        }
+    </script>
+</body>
+</html>
