@@ -957,7 +957,7 @@
                 display: block !important;
             }
 
-            /* Visibility toggles for single/selected printing */
+            /* Single print visibility toggles */
             body.print-whatsapp .whatsapp-column { display: block !important; }
             body.print-exchange .exchange-column { display: block !important; }
             body.print-custom .custom-text-column { display: block !important; }
@@ -965,7 +965,7 @@
             body.print-price .price-receipt-column { display: block !important; }
             body.print-location .location-receipt-column { display: block !important; }
 
-            /* Print Both mode: show both WhatsApp and Exchange columns */
+            /* Print Both WhatsApp & Exchange */
             body.print-both .whatsapp-column,
             body.print-both .exchange-column {
                 display: block !important;
@@ -974,20 +974,28 @@
                 display: block !important;
             }
 
-            /* Location single vs both options handling */
-            body.print-location.print-gajuwaka #loc-kurmannapalem-wrapper { display: none !important; }
-            body.print-location.print-kurmannapalem #loc-gajuwaka-wrapper { display: none !important; }
-
-            body.print-both-locations .location-receipt-column { display: block !important; }
-            body.print-both-locations .cut-separator { display: none !important; }
-
+            /* Print Both Locations (Gajuwaka & Kurmannapalem) */
+            body.print-both-locations .location-receipt-column { 
+                display: block !important; 
+            }
+            body.print-both-locations #loc-gajuwaka-wrapper,
+            body.print-both-locations #loc-kurmannapalem-wrapper {
+                display: block !important;
+            }
+            body.print-both-locations .loc-card-wrapper .cut-separator {
+                display: block !important;
+            }
+            
+            /* Clean duplicate title/tagline header elements on the second location card when printing both locations */
             body.print-both-locations #loc-kurmannapalem-wrapper .location-card-title,
             body.print-both-locations #loc-kurmannapalem-wrapper .tagline,
-            body.print-both-locations #loc-kurmannapalem-wrapper .divider:first-of-type,
-            body.print-both-locations #loc-kurmannapalem-wrapper .contact-row,
-            body.print-both-locations #loc-kurmannapalem-wrapper .social-row {
+            body.print-both-locations #loc-kurmannapalem-wrapper .divider:first-of-type {
                 display: none !important;
             }
+
+            /* Location single branch filters */
+            body.print-location.print-gajuwaka #loc-kurmannapalem-wrapper { display: none !important; }
+            body.print-location.print-kurmannapalem #loc-gajuwaka-wrapper { display: none !important; }
         }
     </style>
 </head>
@@ -1517,7 +1525,7 @@
             }
         }
 
-        function printCouponAction() {
+        printCouponAction = function() {
             if (!document.getElementById('coupon-staff-name').value.trim()) {
                 alert('Please enter Staff Name');
                 return;
@@ -1525,7 +1533,7 @@
             triggerMobilePrint('coupon');
         }
 
-        function printPriceAction() {
+        printPriceAction = function() {
             if (!document.getElementById('price-itemname').value.trim() || !document.getElementById('price-mrp').value.trim()) {
                 alert('Please fill Item Name and MRP');
                 return;
