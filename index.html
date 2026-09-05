@@ -965,6 +965,15 @@
             body.print-price .price-receipt-column { display: block !important; }
             body.print-location .location-receipt-column { display: block !important; }
 
+            /* Print Both mode: show both WhatsApp and Exchange columns */
+            body.print-both .whatsapp-column,
+            body.print-both .exchange-column {
+                display: block !important;
+            }
+            body.print-both .cut-separator {
+                display: block !important;
+            }
+
             /* Location single vs both options handling */
             body.print-location.print-gajuwaka #loc-kurmannapalem-wrapper { display: none !important; }
             body.print-location.print-kurmannapalem #loc-gajuwaka-wrapper { display: none !important; }
@@ -1234,6 +1243,7 @@
                     </div>
                 </div>
             </div>
+            <div class="cut-separator">✂ - - - - - - CUT HERE - - - - - - ✂</div>
         </div>
 
         <div class="receipt-column exchange-column" id="exReceiptCol">
@@ -1558,6 +1568,7 @@
             else if (type === 'price') document.body.classList.add('print-price');
             else if (type === 'location') document.body.classList.add('print-location', 'print-' + locationBranch);
             else if (type === 'both-locations') document.body.classList.add('print-both-locations');
+            else if (type === 'both') document.body.classList.add('print-both');
 
             window.print();
         }
