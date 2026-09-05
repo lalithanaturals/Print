@@ -166,11 +166,14 @@
             fill: #000;
         }
 
-        .logo-svg {
+        .logo {
             width: 75px;
             height: 75px;
             margin: 0 auto 8px;
             display: block;
+            border-radius: 50%;
+            filter: grayscale(100%) contrast(200%);
+            object-fit: contain;
         }
 
         .brand-name {
@@ -321,7 +324,6 @@
             line-height: 1.4;
         }
 
-        /* Store Address Footer Section */
         .address-title {
             font-size: 11px;
             font-weight: 800;
@@ -477,11 +479,8 @@
                         </svg>
                     </div>
 
-                    <svg class="logo-svg" viewBox="0 0 100 100">
-                        <circle cx="50" cy="50" r="46" fill="none" stroke="#000" stroke-width="2"/>
-                        <circle cx="50" cy="50" r="36" fill="none" stroke="#000" stroke-width="1" stroke-dasharray="2,2"/>
-                        <text x="50" y="62" font-family="'Brush Script MT', cursive, sans-serif" font-size="42" font-weight="bold" text-anchor="middle" fill="#000">L</text>
-                    </svg>
+                    <!-- Uses actual uploaded image file -->
+                    <img src="l circle.png" class="logo" alt="Lalitha Naturals Logo">
 
                     <div class="brand-name">Lalitha Naturals CIRCLE</div>
 
@@ -511,7 +510,6 @@
 
                     <div class="divider"></div>
 
-                    <!-- Store Address Header & Details -->
                     <div class="address-title">OUR LOCATIONS</div>
                     <div class="store-address-box">
                         <div class="address-line"><strong>Branch-1:</strong> MIG-20, Near Timpany School, Vuda colony, Vinayaka nagar, Gajuwaka</div>
@@ -530,11 +528,8 @@
             <div class="card-label">Scrap Exchange</div>
             <div class="preview-box">
                 <div class="card" id="exchange-card-el">
-                    <svg class="logo-svg" viewBox="0 0 100 100">
-                        <circle cx="50" cy="50" r="46" fill="none" stroke="#000" stroke-width="2"/>
-                        <circle cx="50" cy="50" r="36" fill="none" stroke="#000" stroke-width="1" stroke-dasharray="2,2"/>
-                        <text x="50" y="62" font-family="'Brush Script MT', cursive, sans-serif" font-size="42" font-weight="bold" text-anchor="middle" fill="#000">L</text>
-                    </svg>
+                    <!-- Uses actual uploaded image file -->
+                    <img src="l circle.png" class="logo" alt="Lalitha Naturals Logo">
 
                     <div class="brand-name">Lalitha NATURALS</div>
                     <div class="tagline">Feel the earth</div>
@@ -584,7 +579,6 @@
 
                     <div class="divider"></div>
 
-                    <!-- Store Address Header & Details -->
                     <div class="address-title">OUR LOCATIONS</div>
                     <div class="store-address-box">
                         <div class="address-line"><strong>Branch-1:</strong> MIG-20, Near Timpany School, Vuda colony, Vinayaka nagar, Gajuwaka</div>
@@ -637,7 +631,7 @@
                                 <style>
                                     body { font-family: sans-serif; text-align: center; padding: 10px; margin: 0; }
                                     .card { width: 100%; max-width: 280px; margin: 0 auto; transform: none !important; }
-                                    .logo-svg { width: 75px; height: 75px; }
+                                    .logo { width: 75px; height: 75px; border-radius: 50%; filter: grayscale(100%); }
                                     .rate-table { width: 100%; border-collapse: collapse; }
                                     .rate-table th, .rate-table td { border: 1px solid #000; padding: 4px; }
                                     .notice-list { list-style: none; padding: 0; }
