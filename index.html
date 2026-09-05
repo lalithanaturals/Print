@@ -27,7 +27,6 @@
             padding: 20px 10px;
         }
 
-        /* App Header */
         .app-header {
             text-align: center;
             margin-bottom: 20px;
@@ -47,7 +46,6 @@
             margin-top: 2px;
         }
 
-        /* 3 Big Icon Buttons Container */
         .big-buttons-bar {
             display: flex;
             gap: 12px;
@@ -106,7 +104,6 @@
             text-align: center;
         }
 
-        /* Side-by-Side Layout for Desktop / Stacked for Mobile */
         .receipts-wrapper {
             display: flex;
             gap: 15px;
@@ -139,7 +136,6 @@
             justify-content: center;
         }
 
-        /* Receipt Card Base */
         .card {
             width: 250px;
             background-color: #ffffff;
@@ -153,7 +149,6 @@
             margin-bottom: -100px;
         }
 
-        /* Common Elements */
         .header {
             font-size: 16px;
             font-weight: 700;
@@ -171,13 +166,11 @@
             fill: #000;
         }
 
-        .logo {
+        .logo-svg {
             width: 75px;
             height: 75px;
             margin: 0 auto 8px;
             display: block;
-            border-radius: 50%;
-            filter: grayscale(100%) contrast(200%);
         }
 
         .brand-name {
@@ -207,7 +200,6 @@
             padding-top: 6px;
         }
 
-        /* WhatsApp Card */
         .notice-box {
             text-align: center;
             margin-bottom: 10px;
@@ -273,7 +265,6 @@
             margin-top: 4px;
         }
 
-        /* Exchange Card */
         .tagline {
             font-size: 11px;
             font-style: italic;
@@ -330,7 +321,44 @@
             line-height: 1.4;
         }
 
-        /* --- Mobile Responsiveness --- */
+        /* Store Address Footer Section */
+        .address-title {
+            font-size: 11px;
+            font-weight: 800;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 4px;
+            margin-bottom: 4px;
+            text-decoration: underline;
+        }
+
+        .store-address-box {
+            font-size: 9.5px;
+            font-weight: 700;
+            text-align: left;
+            line-height: 1.35;
+            color: #000;
+        }
+
+        .address-line {
+            margin-bottom: 3px;
+        }
+
+        .contact-row {
+            font-size: 10px;
+            font-weight: 700;
+            text-align: center;
+            margin-top: 5px;
+        }
+
+        .social-row {
+            font-size: 9px;
+            font-weight: 700;
+            text-align: center;
+            margin-top: 3px;
+        }
+
         @media (max-width: 600px) {
             .big-buttons-bar {
                 flex-direction: column;
@@ -359,7 +387,6 @@
             }
         }
 
-        /* --- Print Overrides --- */
         @page {
             size: auto;
             margin: 0mm;
@@ -411,10 +438,7 @@
         <p>Tap any button below to print directly</p>
     </div>
 
-    <!-- 3 Big Responsive Icon Buttons -->
     <div class="big-buttons-bar">
-        
-        <!-- 1. WhatsApp Button -->
         <button class="icon-btn whatsapp" onclick="triggerMobilePrint('whatsapp')">
             <svg viewBox="0 0 24 24" fill="#25D366">
                 <path d="M12.012 2c-5.506 0-9.989 4.478-9.99 9.984 0 1.758.459 3.474 1.33 4.982l-1.413 5.161 5.283-1.386c1.455.793 3.096 1.213 4.782 1.214h.004c5.505 0 9.987-4.478 9.989-9.984 0-2.668-1.037-5.176-2.922-7.062-1.886-1.886-4.394-2.923-7.063-2.923zm5.885 14.341c-.247.697-1.442 1.333-1.992 1.402-.505.063-1.161.09-3.376-.827-2.831-1.172-4.654-4.048-4.795-4.237-.142-.188-1.147-1.528-1.147-2.913 0-1.386.726-2.067.984-2.348.258-.282.563-.352.751-.352.188 0 .375.002.539.01.173.008.406-.066.634.48.235.563.8 1.951.869 2.092.07.141.117.305.023.493-.094.188-.141.305-.282.469-.141.164-.296.368-.423.493-.141.141-.288.294-.124.576.164.282.729 1.203 1.564 1.947 1.074.957 1.98 1.254 2.262 1.394.282.141.446.117.61-.07.164-.188.697-.812.885-1.093.188-.282.375-.235.634-.141.258.094 1.643.774 1.925.915.282.141.469.211.539.328.07.117.07.68-.177 1.377z"/>
@@ -422,7 +446,6 @@
             <span>Print WhatsApp</span>
         </button>
 
-        <!-- 2. Exchange Button -->
         <button class="icon-btn exchange" onclick="triggerMobilePrint('exchange')">
             <svg viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 11-.57-8.38l5.67-5.67"/>
@@ -430,7 +453,6 @@
             <span>Print Exchange</span>
         </button>
 
-        <!-- 3. Print Both Button -->
         <button class="icon-btn both" onclick="triggerMobilePrint('both')">
             <svg viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <polyline points="6 9 6 2 18 2 18 9"></polyline>
@@ -439,7 +461,6 @@
             </svg>
             <span>Print Both</span>
         </button>
-
     </div>
 
     <div class="receipts-wrapper">
@@ -456,7 +477,11 @@
                         </svg>
                     </div>
 
-                    <img src="l circle.png" class="logo" alt="Lalitha Naturals Logo">
+                    <svg class="logo-svg" viewBox="0 0 100 100">
+                        <circle cx="50" cy="50" r="46" fill="none" stroke="#000" stroke-width="2"/>
+                        <circle cx="50" cy="50" r="36" fill="none" stroke="#000" stroke-width="1" stroke-dasharray="2,2"/>
+                        <text x="50" y="62" font-family="'Brush Script MT', cursive, sans-serif" font-size="42" font-weight="bold" text-anchor="middle" fill="#000">L</text>
+                    </svg>
 
                     <div class="brand-name">Lalitha Naturals CIRCLE</div>
 
@@ -484,6 +509,17 @@
                         Open WhatsApp and scan the QR code to join.
                     </div>
 
+                    <div class="divider"></div>
+
+                    <!-- Store Address Header & Details -->
+                    <div class="address-title">OUR LOCATIONS</div>
+                    <div class="store-address-box">
+                        <div class="address-line"><strong>Branch-1:</strong> MIG-20, Near Timpany School, Vuda colony, Vinayaka nagar, Gajuwaka</div>
+                        <div class="address-line"><strong>Branch-2:</strong> HIG-7, Opp Gloria Vidya Kendram, Vuda phase 7, Kurmannapalem</div>
+                    </div>
+                    <div class="contact-row">📞 CONTACT: 9676287766</div>
+                    <div class="social-row">📸 /lalithanaturals &nbsp;|&nbsp; 🌐 www.lalithanaturals.com</div>
+
                     <div class="cut-separator">✂ - - - - - - CUT HERE - - - - - - ✂</div>
                 </div>
             </div>
@@ -494,7 +530,11 @@
             <div class="card-label">Scrap Exchange</div>
             <div class="preview-box">
                 <div class="card" id="exchange-card-el">
-                    <img src="l circle.png" class="logo" alt="Lalitha Naturals Logo">
+                    <svg class="logo-svg" viewBox="0 0 100 100">
+                        <circle cx="50" cy="50" r="46" fill="none" stroke="#000" stroke-width="2"/>
+                        <circle cx="50" cy="50" r="36" fill="none" stroke="#000" stroke-width="1" stroke-dasharray="2,2"/>
+                        <text x="50" y="62" font-family="'Brush Script MT', cursive, sans-serif" font-size="42" font-weight="bold" text-anchor="middle" fill="#000">L</text>
+                    </svg>
 
                     <div class="brand-name">Lalitha NATURALS</div>
                     <div class="tagline">Feel the earth</div>
@@ -541,6 +581,18 @@
                     <div class="footer-text">
                         VISIT OUR EXPO &amp; EXCHANGE TODAY!
                     </div>
+
+                    <div class="divider"></div>
+
+                    <!-- Store Address Header & Details -->
+                    <div class="address-title">OUR LOCATIONS</div>
+                    <div class="store-address-box">
+                        <div class="address-line"><strong>Branch-1:</strong> MIG-20, Near Timpany School, Vuda colony, Vinayaka nagar, Gajuwaka</div>
+                        <div class="address-line"><strong>Branch-2:</strong> HIG-7, Opp Gloria Vidya Kendram, Vuda phase 7, Kurmannapalem</div>
+                    </div>
+                    <div class="contact-row">📞 CONTACT: 9676287766</div>
+                    <div class="social-row">📸 /lalithanaturals &nbsp;|&nbsp; 🌐 www.lalithanaturals.com</div>
+
                 </div>
             </div>
         </div>
@@ -558,14 +610,12 @@
                 document.body.classList.add('print-both');
             }
 
-            // Attempt standard browser print
             try {
                 window.print();
             } catch (e) {
                 console.log("Standard print failed:", e);
             }
 
-            // Mobile specific fallback: If browser ignores window.print(), open a clean popup for native browser share/print
             setTimeout(() => {
                 const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
                 if (isMobile) {
@@ -587,12 +637,16 @@
                                 <style>
                                     body { font-family: sans-serif; text-align: center; padding: 10px; margin: 0; }
                                     .card { width: 100%; max-width: 280px; margin: 0 auto; transform: none !important; }
-                                    .logo { width: 75px; height: 75px; border-radius: 50%; filter: grayscale(100%); }
+                                    .logo-svg { width: 75px; height: 75px; }
                                     .rate-table { width: 100%; border-collapse: collapse; }
                                     .rate-table th, .rate-table td { border: 1px solid #000; padding: 4px; }
                                     .notice-list { list-style: none; padding: 0; }
                                     .qr-code { width: 150px; height: 150px; }
                                     .divider { border-bottom: 1px dashed #000; margin: 8px 0; }
+                                    .address-title { font-size: 11px; font-weight: bold; text-decoration: underline; margin-top: 4px; }
+                                    .store-address-box { font-size: 9px; text-align: left; margin-top: 4px; }
+                                    .contact-row { font-size: 10px; margin-top: 4px; }
+                                    .social-row { font-size: 9px; margin-top: 2px; }
                                 </style>
                             </head>
                             <body onload="window.print();">
