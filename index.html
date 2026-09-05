@@ -51,7 +51,7 @@
             font-weight: 700;
         }
 
-        /* Dashboard Buttons */
+        /* Dashboard Buttons Grid Layout */
         .big-buttons-bar {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
@@ -90,8 +90,8 @@
 
         .icon-btn.whatsapp::before  { background: linear-gradient(90deg, #25D366, #128C7E); }
         .icon-btn.exchange::before  { background: linear-gradient(90deg, #f59e0b, #d97706); }
-        .icon-btn.custom::before    { background: linear-gradient(90deg, #a855f7, #7e22ce); }
         .icon-btn.both::before      { background: linear-gradient(90deg, #3b82f6, #1d4ed8); }
+        .icon-btn.custom::before    { background: linear-gradient(90deg, #a855f7, #7e22ce); }
         .icon-btn.coupon::before    { background: linear-gradient(90deg, #ec4899, #be185d); }
         .icon-btn.price::before     { background: linear-gradient(90deg, #0ea5e9, #0369a1); }
         .icon-btn.location::before  { background: linear-gradient(90deg, #10b981, #047857); }
@@ -123,7 +123,6 @@
         .whatsapp .btn-badge  { background: #25D366; }
         .exchange .btn-badge  { background: #f59e0b; }
         .custom .btn-badge    { background: #a855f7; }
-        .both .btn-badge      { background: #3b82f6; }
         .coupon .btn-badge    { background: #ec4899; }
         .price .btn-badge     { background: #0ea5e9; }
         .location .btn-badge  { background: #10b981; }
@@ -340,7 +339,6 @@
         .print-coupon-btn  { background: #ec4899; }
         .print-price-btn   { background: #0ea5e9; }
         .print-location-btn{ background: #10b981; }
-        .print-price-btn:hover { background: #0284c7; }
 
         .editor-canvas {
             width: 100%;
@@ -361,43 +359,6 @@
             content: attr(placeholder);
             color: #94a3b8;
             font-weight: 700;
-        }
-
-        .controls-row {
-            display: flex;
-            gap: 10px;
-            margin-top: 12px;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-
-        .align-controls, .style-controls, .line-height-control {
-            display: flex;
-            gap: 4px;
-            align-items: center;
-        }
-
-        .align-controls label, .font-size-control label, .line-height-control label {
-            font-size: 11px;
-            font-weight: 900;
-            color: #475569;
-        }
-
-        .align-btn, .bullet-btn, .case-btn, .style-btn {
-            padding: 6px 10px;
-            font-size: 11px;
-            font-weight: 900;
-            border: 1.5px solid #cbd5e1;
-            background: #f8fafc;
-            color: #334155;
-            cursor: pointer;
-            border-radius: 8px;
-        }
-
-        .align-btn.active, .bullet-btn.active, .case-btn.active, .style-btn.active {
-            background: #0f172a;
-            color: #ffffff;
-            border-color: #0f172a;
         }
 
         /* 80mm Thermal Receipt Preview Area */
@@ -460,12 +421,6 @@
             gap: 4px;
             margin-bottom: 5px;
             text-transform: uppercase;
-        }
-
-        .header svg {
-            width: 18px;
-            height: 18px;
-            fill: #000000;
         }
 
         .logo {
@@ -566,18 +521,6 @@
             image-rendering: pixelated;
         }
 
-        .qr-center-icon {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 16px;
-            height: 16px;
-            background: #ffffff;
-            border-radius: 50%;
-            padding: 1px;
-        }
-
         .footer-text {
             font-size: 12px;
             font-weight: 900;
@@ -600,13 +543,6 @@
             font-weight: 900;
             text-transform: uppercase;
             margin-bottom: 2px;
-            color: #000000;
-        }
-
-        .offer-sub {
-            font-size: 13px;
-            font-weight: 900;
-            margin-bottom: 6px;
             color: #000000;
         }
 
@@ -643,15 +579,6 @@
             font-weight: 900;
             line-height: 1.3;
             text-align: left;
-            color: #000000;
-        }
-
-        .bullets {
-            font-size: 11.5px;
-            font-weight: 900;
-            text-align: left;
-            margin-left: 10px;
-            line-height: 1.4;
             color: #000000;
         }
 
@@ -694,15 +621,6 @@
             background: #fff;
         }
 
-        .price-tag-mrp-strike {
-            font-size: 18px;
-            font-weight: 900;
-            text-decoration: line-through;
-            color: #000000;
-            margin-bottom: 3px;
-            letter-spacing: 0.5px;
-        }
-
         .price-tag-mrp-standard {
             font-size: 42px;
             font-weight: 900;
@@ -710,25 +628,7 @@
             line-height: 1.1;
         }
 
-        .price-tag-offer-val {
-            font-size: 46px;
-            font-weight: 900;
-            letter-spacing: 1px;
-            line-height: 1.1;
-        }
-
-        .price-tag-notes {
-            font-size: 12px;
-            font-weight: 900;
-            text-transform: uppercase;
-            margin-top: 8px;
-            padding: 4px 6px;
-            border: 1.5px dashed #000;
-            background: #fff;
-            word-break: break-word;
-        }
-
-        /* Location Tag Specific Styling */
+        /* Location & Coupon Styles */
         .location-card-title {
             font-size: 20px;
             font-weight: 900;
@@ -772,7 +672,6 @@
             padding: 3px 10px;
             margin-bottom: 4px;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
         }
 
         .coupon-details-table {
@@ -818,35 +717,6 @@
             font-size: 14px;
             font-weight: 900;
             letter-spacing: 1px;
-        }
-
-        .terms-box {
-            border: 2px solid #000000;
-            padding: 6px;
-            margin: 6px 0;
-            text-align: left;
-        }
-
-        .terms-title {
-            font-size: 11px;
-            font-weight: 900;
-            text-transform: uppercase;
-            margin-bottom: 3px;
-            text-decoration: underline;
-        }
-
-        .terms-list {
-            list-style: none;
-            padding-left: 0;
-            font-size: 9.5px;
-            font-weight: 900;
-            line-height: 1.4;
-            margin: 0;
-        }
-
-        .terms-list li::before {
-            content: "• ";
-            font-weight: 900;
         }
 
         .address-title {
@@ -957,7 +827,7 @@
                 display: block !important;
             }
 
-            /* Single print visibility toggles */
+            /* Single Print Selectors */
             body.print-whatsapp .whatsapp-column { display: block !important; }
             body.print-exchange .exchange-column { display: block !important; }
             body.print-custom .custom-text-column { display: block !important; }
@@ -965,7 +835,7 @@
             body.print-price .price-receipt-column { display: block !important; }
             body.print-location .location-receipt-column { display: block !important; }
 
-            /* Print Both WhatsApp & Exchange */
+            /* Print WhatsApp & Exchange Combined (Common Button for 1 & 2 without badge number) */
             body.print-both .whatsapp-column,
             body.print-both .exchange-column {
                 display: block !important;
@@ -974,7 +844,7 @@
                 display: block !important;
             }
 
-            /* Print Both Locations (Gajuwaka & Kurmannapalem) */
+            /* Print Both Locations */
             body.print-both-locations .location-receipt-column { 
                 display: block !important; 
             }
@@ -985,15 +855,12 @@
             body.print-both-locations .loc-card-wrapper .cut-separator {
                 display: block !important;
             }
-            
-            /* Clean duplicate title/tagline header elements on the second location card when printing both locations */
             body.print-both-locations #loc-kurmannapalem-wrapper .location-card-title,
             body.print-both-locations #loc-kurmannapalem-wrapper .tagline,
             body.print-both-locations #loc-kurmannapalem-wrapper .divider:first-of-type {
                 display: none !important;
             }
 
-            /* Location single branch filters */
             body.print-location.print-gajuwaka #loc-kurmannapalem-wrapper { display: none !important; }
             body.print-location.print-kurmannapalem #loc-gajuwaka-wrapper { display: none !important; }
         }
@@ -1006,7 +873,10 @@
         <p>Tap a print option below or manage item stickers &amp; coupons</p>
     </div>
 
+    <!-- Correct Ordered Layout: 1. WhatsApp, 2. Exchange, Common "Print WhatsApp & Exchange" for 1 & 2 (No number), 3. Custom Text, 4. Coupon, 5. Price Print, 6. Store Location -->
     <div class="big-buttons-bar">
+        
+        <!-- 1. Print WhatsApp -->
         <button class="icon-btn whatsapp" onclick="triggerMobilePrint('whatsapp')">
             <span class="btn-badge">01</span>
             <svg viewBox="0 0 24 24" fill="none">
@@ -1016,6 +886,7 @@
             <span>Print WhatsApp</span>
         </button>
 
+        <!-- 2. Print Exchange -->
         <button class="icon-btn exchange" onclick="triggerMobilePrint('exchange')">
             <span class="btn-badge">02</span>
             <svg viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -1027,6 +898,18 @@
             <span>Print Exchange</span>
         </button>
 
+        <!-- Common Button for WhatsApp & Exchange (No number badge, renamed) -->
+        <button class="icon-btn both" onclick="triggerMobilePrint('both')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"></path>
+                <line x1="8" y1="6" x2="16" y2="6"></line>
+                <line x1="8" y1="10" x2="16" y2="10"></line>
+                <line x1="8" y1="14" x2="12" y2="14"></line>
+            </svg>
+            <span>Print WhatsApp &amp; Exchange</span>
+        </button>
+
+        <!-- 3. Custom Text -->
         <button class="icon-btn custom" id="btn-toggle-custom" onclick="toggleCustomTextPanel()">
             <span class="btn-badge">03</span>
             <svg viewBox="0 0 24 24" fill="none" stroke="#a855f7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -1038,19 +921,9 @@
             <span>Custom Text</span>
         </button>
 
-        <button class="icon-btn both" onclick="triggerMobilePrint('both')">
-            <span class="btn-badge">04</span>
-            <svg viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"></path>
-                <line x1="8" y1="6" x2="16" y2="6"></line>
-                <line x1="8" y1="10" x2="16" y2="10"></line>
-                <line x1="8" y1="14" x2="12" y2="14"></line>
-            </svg>
-            <span>Print Both</span>
-        </button>
-
+        <!-- 4. Coupon -->
         <button class="icon-btn coupon" id="btn-toggle-coupon" onclick="toggleCouponPanel()">
-            <span class="btn-badge">05</span>
+            <span class="btn-badge">04</span>
             <svg viewBox="0 0 24 24" fill="none" stroke="#ec4899" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v2z"></path>
                 <path d="M12 6v12" stroke-dasharray="2 2"></path>
@@ -1058,8 +931,9 @@
             <span>Coupon</span>
         </button>
 
+        <!-- 5. Price Print -->
         <button class="icon-btn price" id="btn-toggle-price" onclick="togglePricePanel()">
-            <span class="btn-badge">06</span>
+            <span class="btn-badge">05</span>
             <svg viewBox="0 0 24 24" fill="none" stroke="#0ea5e9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
                 <line x1="7" y1="7" x2="7.01" y2="7"></line>
@@ -1067,16 +941,19 @@
             <span>Price Print</span>
         </button>
 
+        <!-- 6. Store Location -->
         <button class="icon-btn location" id="btn-toggle-location" onclick="toggleLocationPanel()">
-            <span class="btn-badge">07</span>
+            <span class="btn-badge">06</span>
             <svg viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
                 <circle cx="12" cy="10" r="3"></circle>
             </svg>
             <span>Store Location</span>
         </button>
+
     </div>
 
+    <!-- Input Panels -->
     <div class="text-input-panel" id="customInputPanel">
         <div class="panel-header-row">
             <span class="panel-title">✍️ Custom Text Editor</span>
@@ -1087,13 +964,13 @@
                     <option value="notice">Notice</option>
                     <option value="offer">Special Offer</option>
                 </select>
-                <button class="clear-btn" onclick="clearTextSource()" title="Clear Text">✖ Clear</button>
-                <button class="upload-file-btn" onclick="document.getElementById('fileInput').click()">📁 Upload File</button>
+                <button class="clear-btn" onclick="clearTextSource()">✖ Clear</button>
+                <button class="upload-file-btn" onclick="document.getElementById('fileInput').click()">📁 Upload</button>
                 <input type="file" id="fileInput" accept=".txt,.log,.csv" style="display: none;" onchange="handleFileUpload(event)">
                 <button class="print-now-btn" onclick="triggerMobilePrint('custom')">🖨️ Print Custom Text</button>
             </div>
         </div>
-        <div class="editor-canvas" id="editorCanvas" contenteditable="true" placeholder="Type or upload text to print..." oninput="handleEditorInput()" onkeyup="updateToolbarState()" onclick="updateToolbarState()"></div>
+        <div class="editor-canvas" id="editorCanvas" contenteditable="true" placeholder="Type or upload text to print..." oninput="handleEditorInput()"></div>
     </div>
 
     <div class="coupon-panel" id="couponInputPanel">
@@ -1128,28 +1005,8 @@
                 <input type="date" class="form-control" id="coupon-from-date" onchange="updateCouponCardPreview()">
             </div>
             <div class="form-group">
-                <label>Minimum Purchase Bill (₹)</label>
-                <input type="number" class="form-control" id="coupon-min-bill" value="0" oninput="updateCouponCardPreview()">
-            </div>
-            <div class="form-group">
-                <label>Payment Method</label>
-                <select class="form-control" id="coupon-pay-mode" onchange="updateCouponCardPreview()">
-                    <option value="all">All Payments Allowed</option>
-                    <option value="upi">UPI / Online Only</option>
-                    <option value="cash">Cash Only</option>
-                </select>
-            </div>
-            <div class="form-group">
                 <label>Generated By (Staff Name) <span style="color:#ef4444;">*</span></label>
                 <input type="text" class="form-control" id="coupon-staff-name" placeholder="Staff Name" oninput="updateCouponCardPreview()">
-            </div>
-            <div class="form-group">
-                <label>Customer Name</label>
-                <input type="text" class="form-control" id="coupon-cust-name" placeholder="Optional" oninput="updateCouponCardPreview()">
-            </div>
-            <div class="form-group">
-                <label>Customer Mobile</label>
-                <input type="tel" class="form-control" id="coupon-cust-phone" placeholder="Optional" oninput="updateCouponCardPreview()">
             </div>
         </div>
     </div>
@@ -1174,25 +1031,6 @@
                 <label>MRP (₹) <span style="color:#ef4444;">*</span></label>
                 <input type="number" class="form-control" id="price-mrp" placeholder="e.g. 250" oninput="updatePriceCardPreview()">
             </div>
-            <div class="form-group">
-                <label>Discount Type</label>
-                <div class="type-selector-btns">
-                    <button class="type-btn active" id="price-type-pct-btn" onclick="setPriceDiscountType('pct')">Discount %</button>
-                    <button class="type-btn" id="price-type-amt-btn" onclick="setPriceDiscountType('amt')">Discount ₹</button>
-                </div>
-            </div>
-            <div class="form-group" id="price-pct-group">
-                <label>Discount Percentage (%)</label>
-                <input type="number" class="form-control" id="price-pct-val" placeholder="e.g. 10" oninput="updatePriceCardPreview()">
-            </div>
-            <div class="form-group" id="price-amt-group" style="display: none;">
-                <label>Discount Amount (₹)</label>
-                <input type="number" class="form-control" id="price-amt-val" placeholder="e.g. 30" oninput="updatePriceCardPreview()">
-            </div>
-            <div class="form-group full-width">
-                <label>Notes (Optional)</label>
-                <input type="text" class="form-control" id="price-notes" placeholder="e.g. Festival Batch" oninput="updatePriceCardPreview()">
-            </div>
         </div>
     </div>
 
@@ -1215,7 +1053,10 @@
         </div>
     </div>
 
+    <!-- Receipts Wrapper Container -->
     <div class="receipts-wrapper">
+        
+        <!-- WhatsApp Receipt -->
         <div class="receipt-column whatsapp-column" id="waReceiptCol">
             <div class="card-label">WhatsApp QR (80mm)</div>
             <div class="preview-box">
@@ -1254,6 +1095,7 @@
             <div class="cut-separator">✂ - - - - - - CUT HERE - - - - - - ✂</div>
         </div>
 
+        <!-- Exchange Receipt -->
         <div class="receipt-column exchange-column" id="exReceiptCol">
             <div class="card-label">Scrap Exchange (80mm)</div>
             <div class="preview-box">
@@ -1333,7 +1175,7 @@
             <div class="card-label">Store Location QR (80mm)</div>
             <div class="preview-box" style="flex-direction: column; align-items: center; gap: 15px;">
                 <div class="loc-card-wrapper" id="loc-gajuwaka-wrapper" style="width: 100%;">
-                    <div class="card location-card" id="loc-card-gajuwaka-el">
+                    <div class="card location-card">
                         <div class="location-card-title">VISIT OUR STORE</div>
                         <div class="tagline">Scan for Google Map Directions</div>
                         <div class="divider"></div>
@@ -1349,7 +1191,7 @@
                 </div>
 
                 <div class="loc-card-wrapper" id="loc-kurmannapalem-wrapper" style="width: 100%;">
-                    <div class="card location-card" id="loc-card-kurmannapalem-el">
+                    <div class="card location-card">
                         <div class="location-card-title">VISIT OUR STORE</div>
                         <div class="tagline">Scan for Google Map Directions</div>
                         <div class="divider"></div>
@@ -1364,12 +1206,12 @@
                 </div>
             </div>
         </div>
+
     </div>
 
     <script>
         let currentPct = 5;
         let couponType = 'pct';
-        let priceDiscountType = 'pct';
         let locationBranch = 'gajuwaka';
 
         window.addEventListener('DOMContentLoaded', () => {
@@ -1458,15 +1300,6 @@
             updateCouponCardPreview();
         }
 
-        function setPriceDiscountType(type) {
-            priceDiscountType = type;
-            document.getElementById('price-type-pct-btn').classList.toggle('active', type === 'pct');
-            document.getElementById('price-type-amt-btn').classList.toggle('active', type === 'amt');
-            document.getElementById('price-pct-group').style.display = type === 'pct' ? 'flex' : 'none';
-            document.getElementById('price-amt-group').style.display = type === 'amt' ? 'flex' : 'none';
-            updatePriceCardPreview();
-        }
-
         function setLocationBranch(branch) {
             locationBranch = branch;
             document.getElementById('loc-btn-gajuwaka').classList.toggle('active', branch === 'gajuwaka');
@@ -1525,7 +1358,7 @@
             }
         }
 
-        printCouponAction = function() {
+        function printCouponAction() {
             if (!document.getElementById('coupon-staff-name').value.trim()) {
                 alert('Please enter Staff Name');
                 return;
@@ -1533,7 +1366,7 @@
             triggerMobilePrint('coupon');
         }
 
-        printPriceAction = function() {
+        function printPriceAction() {
             if (!document.getElementById('price-itemname').value.trim() || !document.getElementById('price-mrp').value.trim()) {
                 alert('Please fill Item Name and MRP');
                 return;
