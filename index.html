@@ -14,42 +14,44 @@
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+            -webkit-font-smoothing: none;
+            -moz-osx-font-smoothing: grayscale;
         }
 
         body {
             background-color: var(--bg-color);
-            color: #333;
+            color: #000;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 20px 10px;
+            padding: 15px 10px;
         }
 
         .app-header {
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             width: 100%;
             max-width: 500px;
         }
 
         .app-header h1 {
-            font-size: 20px;
-            font-weight: 700;
+            font-size: 18px;
+            font-weight: 800;
             color: #1a1a1a;
         }
 
         .app-header p {
-            font-size: 12px;
-            color: #666;
+            font-size: 11px;
+            color: #555;
             margin-top: 2px;
         }
 
         .big-buttons-bar {
             display: flex;
-            gap: 12px;
-            margin-bottom: 25px;
+            gap: 10px;
+            margin-bottom: 20px;
             flex-wrap: wrap;
             justify-content: center;
             width: 100%;
@@ -58,14 +60,14 @@
 
         .icon-btn {
             background: #ffffff;
-            border: 2px solid #e0e0e0;
-            border-radius: 14px;
-            padding: 14px 18px;
-            width: 125px;
+            border: 2px solid #000000;
+            border-radius: 12px;
+            padding: 10px 14px;
+            width: 115px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
             cursor: pointer;
             box-shadow: 0 4px 10px rgba(0,0,0,0.04);
             transition: all 0.2s ease;
@@ -93,14 +95,14 @@
         }
 
         .icon-btn svg {
-            width: 36px;
-            height: 36px;
+            width: 30px;
+            height: 30px;
         }
 
         .icon-btn span {
-            font-size: 12px;
-            font-weight: 700;
-            color: #222;
+            font-size: 11px;
+            font-weight: 800;
+            color: #000;
             text-align: center;
         }
 
@@ -121,12 +123,12 @@
         }
 
         .card-label {
-            font-size: 11px;
-            font-weight: 600;
+            font-size: 10px;
+            font-weight: 800;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            color: #777;
-            margin-bottom: 8px;
+            color: #000;
+            margin-bottom: 6px;
         }
 
         .preview-box {
@@ -136,117 +138,139 @@
             justify-content: center;
         }
 
+        /* Tightened Sharp Card Layout */
         .card {
             width: 250px;
             background-color: #ffffff;
-            padding: 18px 20px;
+            padding: 10px 14px;
             text-align: center;
             border-radius: 8px;
             box-shadow: var(--card-shadow);
-            border: 1px solid #eaeaea;
+            border: 1px solid #000000;
             transform: scale(0.60);
             transform-origin: top center;
-            margin-bottom: -100px;
+            margin-bottom: -110px;
+            color: #000000 !important;
         }
 
         .header {
-            font-size: 16px;
-            font-weight: 700;
-            color: #000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            margin-bottom: 8px;
-        }
-
-        .header svg {
-            width: 18px;
-            height: 18px;
-            fill: #000;
-        }
-
-        .logo {
-            width: 75px;
-            height: 75px;
-            margin: 0 auto 8px;
-            display: block;
-            border-radius: 50%;
-            filter: grayscale(100%) contrast(200%);
-            object-fit: contain;
-        }
-
-        .brand-name {
-            font-size: 14px;
-            font-weight: 700;
-            color: #000;
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 15px;
+            font-weight: 900;
+            color: #000000;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 4px;
-            margin-bottom: 8px;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.2px;
+        }
+
+        .header svg {
+            width: 16px;
+            height: 16px;
+            fill: #000000;
+        }
+
+        .logo {
+            width: 55px;
+            height: 55px;
+            margin: 0 auto 4px;
+            display: block;
+            border-radius: 50%;
+            filter: grayscale(100%) contrast(1000%);
+            object-fit: contain;
+        }
+
+        .brand-name {
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 14px;
+            font-weight: 900;
+            color: #000000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            margin-bottom: 4px;
+            letter-spacing: 0.3px;
         }
 
         .divider {
-            border-bottom: 1px dashed #000;
-            margin: 10px 0;
+            border-bottom: 2px dashed #000000;
+            margin: 6px 0;
         }
 
         .cut-separator {
             display: none;
             width: 100%;
             text-align: center;
-            font-weight: 700;
+            font-weight: 900;
             font-size: 10px;
-            margin: 30px 0 20px;
-            border-top: 2px dashed #000;
-            padding-top: 6px;
+            margin: 15px 0 10px;
+            border-top: 2px dashed #000000;
+            padding-top: 4px;
+            color: #000000;
+        }
+
+        /* Horizontal Split for WhatsApp Layout */
+        .side-by-side-whatsapp {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 6px;
+            margin: 4px 0;
+            text-align: left;
         }
 
         .notice-box {
-            text-align: center;
-            margin-bottom: 10px;
+            flex: 1;
+            text-align: left;
         }
 
         .notice-title {
-            font-size: 12px;
-            font-weight: 700;
-            color: #000;
-            margin-bottom: 5px;
+            font-size: 10.5px;
+            font-weight: 900;
+            color: #000000;
+            margin-bottom: 2px;
+            line-height: 1.15;
+            text-transform: uppercase;
         }
 
         .notice-list {
             list-style: none;
             padding-left: 0;
-            font-size: 12px;
-            font-weight: 700;
-            color: #000;
-            line-height: 1.4;
-            margin-bottom: 6px;
+            font-size: 9.5px;
+            font-weight: 800;
+            color: #000000;
+            line-height: 1.25;
+            margin-bottom: 2px;
         }
 
         .notice-list li::before {
             content: "• ";
+            font-weight: 900;
         }
 
         .notice-footer {
-            font-size: 11px;
-            font-weight: 700;
-            color: #000;
-            line-height: 1.3;
+            font-size: 9px;
+            font-weight: 800;
+            color: #000000;
+            line-height: 1.15;
         }
 
         .qr-container {
             position: relative;
-            width: 150px;
-            height: 150px;
-            margin: 8px auto;
+            width: 95px;
+            height: 95px;
+            flex-shrink: 0;
         }
 
         .qr-code {
             width: 100%;
             height: 100%;
             display: block;
+            image-rendering: pixelated; /* Ensures QR code edges stay ultra sharp */
         }
 
         .qr-center-icon {
@@ -254,111 +278,124 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 24px;
-            height: 24px;
+            width: 16px;
+            height: 16px;
             background: #ffffff;
             border-radius: 50%;
-            padding: 2px;
+            padding: 1px;
         }
 
         .footer-text {
-            font-size: 11px;
-            font-weight: 700;
-            color: #000;
-            margin-top: 4px;
+            font-size: 10px;
+            font-weight: 900;
+            color: #000000;
+            margin-top: 2px;
+            text-transform: uppercase;
         }
 
         .tagline {
-            font-size: 11px;
+            font-size: 10px;
             font-style: italic;
-            font-weight: 700;
-            margin-bottom: 6px;
+            font-weight: 800;
+            margin-bottom: 4px;
+            color: #000000;
         }
 
         .offer-header {
+            font-family: Arial, Helvetica, sans-serif;
             font-size: 13px;
-            font-weight: 700;
+            font-weight: 900;
             text-transform: uppercase;
-            margin-bottom: 2px;
+            margin-bottom: 1px;
+            color: #000000;
+            letter-spacing: 0.2px;
         }
 
         .offer-sub {
-            font-size: 11px;
-            font-weight: 700;
-            margin-bottom: 8px;
+            font-size: 10.5px;
+            font-weight: 900;
+            margin-bottom: 4px;
+            color: #000000;
         }
 
         .rate-table {
             width: 100%;
             border-collapse: collapse;
-            margin: 8px 0;
+            margin: 4px 0;
+            border: 2px solid #000000;
         }
 
         .rate-table th, .rate-table td {
-            border: 1px solid #000;
-            padding: 5px 2px;
-            font-size: 11px;
-            font-weight: 700;
+            border: 1.5px solid #000000;
+            padding: 4px 2px;
+            font-size: 10.5px;
+            font-weight: 900;
+            color: #000000;
         }
 
         .rate-table th {
-            background-color: #f0f0f0;
+            background-color: #ffffff;
             font-size: 10px;
+            text-transform: uppercase;
         }
 
         .note-box {
-            border: 1px solid #000;
-            padding: 6px;
-            margin: 8px 0;
-            font-size: 10px;
-            font-weight: 700;
-            line-height: 1.3;
+            border: 1.5px solid #000000;
+            padding: 4px;
+            margin: 4px 0;
+            font-size: 9px;
+            font-weight: 800;
+            line-height: 1.2;
             text-align: left;
+            color: #000000;
         }
 
         .bullets {
-            font-size: 10px;
-            font-weight: 700;
+            font-size: 9.5px;
+            font-weight: 800;
             text-align: left;
             margin-left: 10px;
-            line-height: 1.4;
+            line-height: 1.3;
+            color: #000000;
         }
 
         .address-title {
-            font-size: 11px;
-            font-weight: 800;
+            font-size: 10.5px;
+            font-weight: 900;
             text-align: center;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-top: 4px;
-            margin-bottom: 4px;
+            margin-top: 3px;
+            margin-bottom: 2px;
             text-decoration: underline;
+            color: #000000;
         }
 
         .store-address-box {
-            font-size: 9.5px;
-            font-weight: 700;
+            font-size: 9px;
+            font-weight: 800;
             text-align: left;
-            line-height: 1.35;
-            color: #000;
+            line-height: 1.25;
+            color: #000000;
         }
 
         .address-line {
-            margin-bottom: 3px;
+            margin-bottom: 2px;
         }
 
         .contact-row {
-            font-size: 10px;
-            font-weight: 700;
+            font-size: 9.5px;
+            font-weight: 900;
             text-align: center;
-            margin-top: 5px;
+            margin-top: 3px;
+            color: #000000;
         }
 
         .social-row {
-            font-size: 9px;
-            font-weight: 700;
+            font-size: 8.5px;
+            font-weight: 800;
             text-align: center;
-            margin-top: 3px;
+            margin-top: 2px;
+            color: #000000;
         }
 
         @media (max-width: 600px) {
@@ -371,16 +408,16 @@
                 width: 100%;
                 flex-direction: row;
                 justify-content: center;
-                padding: 12px 16px;
+                padding: 10px 14px;
             }
 
             .icon-btn svg {
-                width: 28px;
-                height: 28px;
+                width: 24px;
+                height: 24px;
             }
 
             .icon-btn span {
-                font-size: 14px;
+                font-size: 13px;
             }
 
             .receipts-wrapper {
@@ -395,11 +432,19 @@
         }
 
         @media print {
+            * {
+                color: #000000 !important;
+                background: transparent !important;
+                box-shadow: none !important;
+                text-shadow: none !important;
+                -webkit-font-smoothing: none !important;
+            }
+
             .app-header, .big-buttons-bar, .card-label {
                 display: none !important;
             }
             html, body {
-                background: #ffffff;
+                background: #ffffff !important;
                 padding: 0;
                 margin: 0;
             }
@@ -413,8 +458,7 @@
             }
             .card {
                 width: 100%;
-                padding: 0 20px;
-                box-shadow: none !important;
+                padding: 0 12px;
                 border: none !important;
                 border-radius: 0;
                 margin: 0 auto;
@@ -429,6 +473,10 @@
             }
             body.print-both .cut-separator {
                 display: block;
+            }
+
+            body.print-both .exchange-card .address-section {
+                display: none !important;
             }
         }
     </style>
@@ -471,7 +519,7 @@
         <div class="receipt-column whatsapp-column">
             <div class="card-label">WhatsApp QR</div>
             <div class="preview-box">
-                <div class="card" id="whatsapp-card-el">
+                <div class="card whatsapp-card" id="whatsapp-card-el">
                     <div class="header">
                         Join Our WhatsApp Group
                         <svg viewBox="0 0 24 24">
@@ -479,44 +527,51 @@
                         </svg>
                     </div>
 
-                    <!-- Uses actual uploaded image file -->
                     <img src="l circle.png" class="logo" alt="Lalitha Naturals Logo">
 
                     <div class="brand-name">Lalitha Naturals CIRCLE</div>
 
-                    <div class="notice-box">
-                        <div class="notice-title">This group is strictly for official updates on:</div>
-                        <ul class="notice-list">
-                            <li>New arrivals</li>
-                            <li>Special offers</li>
-                            <li>Store news</li>
-                            <li>Real-time stock updates</li>
-                        </ul>
-                        <div class="notice-footer">
-                            Zero spam, zero distractions—just the updates you need.
+                    <div class="divider"></div>
+
+                    <!-- Side-by-Side: Text Left, QR Right -->
+                    <div class="side-by-side-whatsapp">
+                        <div class="notice-box">
+                            <div class="notice-title">Official updates on:</div>
+                            <ul class="notice-list">
+                                <li>New arrivals</li>
+                                <li>Special offers</li>
+                                <li>Store news</li>
+                                <li>Real-time stock</li>
+                            </ul>
+                            <div class="notice-footer">
+                                Zero spam—just store updates.
+                            </div>
+                        </div>
+
+                        <div class="qr-container">
+                            <img class="qr-code" src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https%3A%2F%2Fchat.whatsapp.com%2FE8udXvgNXAOKSXWGvud4ct" alt="WhatsApp Group QR Code">
+                            <svg class="qr-center-icon" viewBox="0 0 24 24">
+                                <path fill="#000" d="M12.012 2c-5.506 0-9.989 4.478-9.99 9.984 0 1.758.459 3.474 1.33 4.982l-1.413 5.161 5.283-1.386c1.455.793 3.096 1.213 4.782 1.214h.004c5.505 0 9.987-4.478 9.989-9.984 0-2.668-1.037-5.176-2.922-7.062-1.886-1.886-4.394-2.923-7.063-2.923zm5.885 14.341c-.247.697-1.442 1.333-1.992 1.402-.505.063-1.161.09-3.376-.827-2.831-1.172-4.654-4.048-4.795-4.237-.142-.188-1.147-1.528-1.147-2.913 0-1.386.726-2.067.984-2.348.258-.282.563-.352.751-.352.188 0 .375.002.539.01.173.008.406-.066.634.48.235.563.8 1.951.869 2.092.07.141.117.305.023.493-.094.188-.141.305-.282.469-.141.164-.296.368-.423.493-.141.141-.288.294-.124.576.164.282.729 1.203 1.564 1.947 1.074.957 1.98 1.254 2.262 1.394.282.141.446.117.61-.07.164-.188.697-.812.885-1.093.188-.282.375-.235.634-.141.258.094 1.643.774 1.925.915.282.141.469.211.539.328.07.117.07.68-.177 1.377z"/>
+                            </svg>
                         </div>
                     </div>
 
-                    <div class="qr-container">
-                        <img class="qr-code" src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https%3A%2F%2Fchat.whatsapp.com%2FE8udXvgNXAOKSXWGvud4ct" alt="WhatsApp Group QR Code">
-                        <svg class="qr-center-icon" viewBox="0 0 24 24">
-                            <path fill="#000" d="M12.012 2c-5.506 0-9.989 4.478-9.99 9.984 0 1.758.459 3.474 1.33 4.982l-1.413 5.161 5.283-1.386c1.455.793 3.096 1.213 4.782 1.214h.004c5.505 0 9.987-4.478 9.989-9.984 0-2.668-1.037-5.176-2.922-7.062-1.886-1.886-4.394-2.923-7.063-2.923zm5.885 14.341c-.247.697-1.442 1.333-1.992 1.402-.505.063-1.161.09-3.376-.827-2.831-1.172-4.654-4.048-4.795-4.237-.142-.188-1.147-1.528-1.147-2.913 0-1.386.726-2.067.984-2.348.258-.282.563-.352.751-.352.188 0 .375.002.539.01.173.008.406-.066.634.48.235.563.8 1.951.869 2.092.07.141.117.305.023.493-.094.188-.141.305-.282.469-.141.164-.296.368-.423.493-.141.141-.288.294-.124.576.164.282.729 1.203 1.564 1.947 1.074.957 1.98 1.254 2.262 1.394.282.141.446.117.61-.07.164-.188.697-.812.885-1.093.188-.282.375-.235.634-.141.258.094 1.643.774 1.925.915.282.141.469.211.539.328.07.117.07.68-.177 1.377z"/>
-                        </svg>
-                    </div>
-
                     <div class="footer-text">
-                        Open WhatsApp and scan the QR code to join.
+                        Scan QR code to join group.
                     </div>
 
                     <div class="divider"></div>
 
-                    <div class="address-title">OUR LOCATIONS</div>
-                    <div class="store-address-box">
-                        <div class="address-line"><strong>Branch-1:</strong> MIG-20, Near Timpany School, Vuda colony, Vinayaka nagar, Gajuwaka</div>
-                        <div class="address-line"><strong>Branch-2:</strong> HIG-7, Opp Gloria Vidya Kendram, Vuda phase 7, Kurmannapalem</div>
+                    <!-- Store Address Section on WhatsApp Card -->
+                    <div class="address-section">
+                        <div class="address-title">OUR LOCATIONS</div>
+                        <div class="store-address-box">
+                            <div class="address-line"><strong>Branch-1:</strong> MIG-20, Near Timpany School, Gajuwaka</div>
+                            <div class="address-line"><strong>Branch-2:</strong> HIG-7, Opp Gloria Vidya Kendram, Kurmannapalem</div>
+                        </div>
+                        <div class="contact-row">📞 CONTACT: 9676287766</div>
+                        <div class="social-row">📸 /lalithanaturals &nbsp;|&nbsp; 🌐 www.lalithanaturals.com</div>
                     </div>
-                    <div class="contact-row">📞 CONTACT: 9676287766</div>
-                    <div class="social-row">📸 /lalithanaturals &nbsp;|&nbsp; 🌐 www.lalithanaturals.com</div>
 
                     <div class="cut-separator">✂ - - - - - - CUT HERE - - - - - - ✂</div>
                 </div>
@@ -527,8 +582,7 @@
         <div class="receipt-column exchange-column">
             <div class="card-label">Scrap Exchange</div>
             <div class="preview-box">
-                <div class="card" id="exchange-card-el">
-                    <!-- Uses actual uploaded image file -->
+                <div class="card exchange-card" id="exchange-card-el">
                     <img src="l circle.png" class="logo" alt="Lalitha Naturals Logo">
 
                     <div class="brand-name">Lalitha NATURALS</div>
@@ -577,15 +631,17 @@
                         VISIT OUR EXPO &amp; EXCHANGE TODAY!
                     </div>
 
-                    <div class="divider"></div>
-
-                    <div class="address-title">OUR LOCATIONS</div>
-                    <div class="store-address-box">
-                        <div class="address-line"><strong>Branch-1:</strong> MIG-20, Near Timpany School, Vuda colony, Vinayaka nagar, Gajuwaka</div>
-                        <div class="address-line"><strong>Branch-2:</strong> HIG-7, Opp Gloria Vidya Kendram, Vuda phase 7, Kurmannapalem</div>
+                    <!-- Store Address Section on Exchange Card -->
+                    <div class="address-section">
+                        <div class="divider"></div>
+                        <div class="address-title">OUR LOCATIONS</div>
+                        <div class="store-address-box">
+                            <div class="address-line"><strong>Branch-1:</strong> MIG-20, Near Timpany School, Gajuwaka</div>
+                            <div class="address-line"><strong>Branch-2:</strong> HIG-7, Opp Gloria Vidya Kendram, Kurmannapalem</div>
+                        </div>
+                        <div class="contact-row">📞 CONTACT: 9676287766</div>
+                        <div class="social-row">📸 /lalithanaturals &nbsp;|&nbsp; 🌐 www.lalithanaturals.com</div>
                     </div>
-                    <div class="contact-row">📞 CONTACT: 9676287766</div>
-                    <div class="social-row">📸 /lalithanaturals &nbsp;|&nbsp; 🌐 www.lalithanaturals.com</div>
 
                 </div>
             </div>
@@ -621,7 +677,13 @@
                         } else if (type === 'exchange') {
                             content = document.getElementById('exchange-card-el').outerHTML;
                         } else {
-                            content = document.getElementById('whatsapp-card-el').outerHTML + '<br>' + document.getElementById('exchange-card-el').outerHTML;
+                            let waClone = document.getElementById('whatsapp-card-el').cloneNode(true);
+                            let exClone = document.getElementById('exchange-card-el').cloneNode(true);
+                            
+                            let addr = exClone.querySelector('.address-section');
+                            if (addr) { addr.remove(); }
+
+                            content = waClone.outerHTML + '<br>' + exClone.outerHTML;
                         }
 
                         printWin.document.write(`
@@ -629,18 +691,21 @@
                             <head>
                                 <title>Print Receipt</title>
                                 <style>
-                                    body { font-family: sans-serif; text-align: center; padding: 10px; margin: 0; }
+                                    * { -webkit-font-smoothing: none !important; color: #000000 !important; }
+                                    body { font-family: Arial, sans-serif; text-align: center; padding: 5px; margin: 0; color: #000; }
                                     .card { width: 100%; max-width: 280px; margin: 0 auto; transform: none !important; }
-                                    .logo { width: 75px; height: 75px; border-radius: 50%; filter: grayscale(100%); }
-                                    .rate-table { width: 100%; border-collapse: collapse; }
-                                    .rate-table th, .rate-table td { border: 1px solid #000; padding: 4px; }
-                                    .notice-list { list-style: none; padding: 0; }
-                                    .qr-code { width: 150px; height: 150px; }
-                                    .divider { border-bottom: 1px dashed #000; margin: 8px 0; }
-                                    .address-title { font-size: 11px; font-weight: bold; text-decoration: underline; margin-top: 4px; }
-                                    .store-address-box { font-size: 9px; text-align: left; margin-top: 4px; }
-                                    .contact-row { font-size: 10px; margin-top: 4px; }
-                                    .social-row { font-size: 9px; margin-top: 2px; }
+                                    .logo { width: 50px; height: 50px; border-radius: 50%; filter: grayscale(100%) contrast(1000%); }
+                                    .rate-table { width: 100%; border-collapse: collapse; border: 2px solid #000; }
+                                    .rate-table th, .rate-table td { border: 1.5px solid #000; padding: 3px; font-weight: 900; }
+                                    .notice-list { list-style: none; padding: 0; font-weight: 800; }
+                                    .qr-container { width: 90px; height: 90px; }
+                                    .qr-code { width: 100%; height: 100%; image-rendering: pixelated; }
+                                    .side-by-side-whatsapp { display: flex; align-items: center; justify-content: space-between; }
+                                    .divider { border-bottom: 2px dashed #000; margin: 5px 0; }
+                                    .address-title { font-size: 10px; font-weight: 900; text-decoration: underline; margin-top: 2px; }
+                                    .store-address-box { font-size: 8.5px; text-align: left; margin-top: 2px; font-weight: 800; }
+                                    .contact-row { font-size: 9px; margin-top: 2px; font-weight: 900; }
+                                    .social-row { font-size: 8.5px; margin-top: 1px; font-weight: 800; }
                                 </style>
                             </head>
                             <body onload="window.print();">
