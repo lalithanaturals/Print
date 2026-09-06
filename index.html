@@ -54,7 +54,7 @@
         /* Dashboard Buttons Grid Layout */
         .big-buttons-bar {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
             gap: 12px;
             margin-bottom: 24px;
             width: 100%;
@@ -88,13 +88,13 @@
             height: 4px;
         }
 
-        .icon-btn.whatsapp::before  { background: linear-gradient(90deg, #25D366, #128C7E); }
-        .icon-btn.exchange::before  { background: linear-gradient(90deg, #f59e0b, #d97706); }
-        .icon-btn.both::before      { background: linear-gradient(90deg, #3b82f6, #1d4ed8); }
-        .icon-btn.custom::before    { background: linear-gradient(90deg, #a855f7, #7e22ce); }
-        .icon-btn.coupon::before    { background: linear-gradient(90deg, #ec4899, #be185d); }
-        .icon-btn.price::before     { background: linear-gradient(90deg, #0ea5e9, #0369a1); }
-        .icon-btn.location::before  { background: linear-gradient(90deg, #10b981, #047857); }
+        .icon-btn.whatsapp::before    { background: linear-gradient(90deg, #25D366, #128C7E); }
+        .icon-btn.exchange::before    { background: linear-gradient(90deg, #f59e0b, #d97706); }
+        .icon-btn.custom::before      { background: linear-gradient(90deg, #a855f7, #7e22ce); }
+        .icon-btn.coupon::before      { background: linear-gradient(90deg, #ec4899, #be185d); }
+        .icon-btn.location::before    { background: linear-gradient(90deg, #10b981, #047857); }
+        .icon-btn.price::before       { background: linear-gradient(90deg, #0ea5e9, #0284c7); }
+        .icon-btn.multibutton::before { background: linear-gradient(90deg, #f97316, #c2410c); }
 
         .icon-btn:hover {
             transform: translateY(-4px);
@@ -124,8 +124,8 @@
         .exchange .btn-badge  { background: #f59e0b; }
         .custom .btn-badge    { background: #a855f7; }
         .coupon .btn-badge    { background: #ec4899; }
-        .price .btn-badge     { background: #0ea5e9; }
         .location .btn-badge  { background: #10b981; }
+        .price .btn-badge     { background: #0ea5e9; }
 
         .icon-btn svg {
             width: 36px;
@@ -148,7 +148,7 @@
         }
 
         /* Panels Shared */
-        .text-input-panel, .coupon-panel, .price-panel, .location-panel {
+        .text-input-panel, .coupon-panel, .location-panel, .price-panel, .multi-print-panel {
             display: none;
             width: 100%;
             max-width: 900px;
@@ -171,6 +171,8 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 12px;
+            flex-wrap: wrap;
+            gap: 10px;
         }
 
         .panel-title {
@@ -185,10 +187,11 @@
             display: flex;
             gap: 8px;
             align-items: center;
+            flex-wrap: wrap;
         }
 
         /* Form Elements */
-        .coupon-grid, .price-grid, .location-grid {
+        .coupon-grid, .location-grid, .price-grid, .multi-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
             gap: 14px;
@@ -228,10 +231,12 @@
         .type-selector-btns {
             display: flex;
             gap: 8px;
+            flex-wrap: wrap;
         }
 
         .type-btn {
             flex: 1;
+            min-width: 70px;
             padding: 8px;
             border: 1.5px solid #cbd5e1;
             border-radius: 8px;
@@ -241,6 +246,7 @@
             cursor: pointer;
             color: #334155;
             transition: all 0.15s ease;
+            text-align: center;
         }
 
         .type-btn.active {
@@ -257,6 +263,11 @@
         .location-panel .type-btn.active {
             background: #10b981;
             border-color: #10b981;
+        }
+
+        .price-panel .type-btn.active {
+            background: #0ea5e9;
+            border-color: #0ea5e9;
         }
 
         .counter-box {
@@ -290,7 +301,7 @@
             text-align: center;
         }
 
-        .preset-select, .select-input {
+        .preset-select {
             padding: 6px 10px;
             font-size: 11px;
             font-weight: 900;
@@ -324,7 +335,7 @@
             cursor: pointer;
         }
 
-        .print-now-btn, .print-coupon-btn, .print-price-btn, .print-location-btn {
+        .print-now-btn, .print-coupon-btn, .print-location-btn, .print-price-btn, .print-multi-btn {
             background: #a855f7;
             color: #ffffff;
             border: none;
@@ -336,13 +347,14 @@
             text-transform: uppercase;
         }
 
-        .print-coupon-btn  { background: #ec4899; }
-        .print-price-btn   { background: #0ea5e9; }
-        .print-location-btn{ background: #10b981; }
+        .print-coupon-btn   { background: #ec4899; }
+        .print-location-btn { background: #10b981; }
+        .print-price-btn    { background: #0ea5e9; }
+        .print-multi-btn    { background: #f97316; }
 
         .editor-canvas {
             width: 100%;
-            min-height: 110px;
+            min-height: 130px;
             max-height: 250px;
             overflow-y: auto;
             border: 1.5px solid #cbd5e1;
@@ -353,12 +365,125 @@
             outline: none;
             line-height: 1.4;
             background: #ffffff;
+            margin-bottom: 12px;
+            text-align: left;
         }
 
         .editor-canvas[placeholder]:empty:before {
             content: attr(placeholder);
             color: #94a3b8;
             font-weight: 700;
+        }
+
+        /* Custom Text Formatting Toolbar */
+        .custom-toolbar {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            font-size: 11px;
+            font-weight: 900;
+            color: #334155;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            padding: 8px 12px;
+            border-radius: 10px;
+        }
+
+        .toolbar-group {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .tool-btn {
+            background: #ffffff;
+            border: 1.5px solid #cbd5e1;
+            border-radius: 8px;
+            padding: 5px 10px;
+            font-size: 11px;
+            font-weight: 900;
+            color: #334155;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .tool-btn:hover {
+            background: #f1f5f9;
+            border-color: #94a3b8;
+        }
+
+        .tool-btn.active {
+            background: #0f172a;
+            color: #ffffff;
+            border-color: #0f172a;
+        }
+
+        .tool-select {
+            padding: 5px 8px;
+            font-size: 11px;
+            font-weight: 900;
+            border: 1.5px solid #cbd5e1;
+            border-radius: 8px;
+            background: #ffffff;
+            color: #334155;
+            cursor: pointer;
+            outline: none;
+        }
+
+        /* Checkbox grid for Custom Combined Print */
+        .checkbox-cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 10px;
+            margin-top: 8px;
+            margin-bottom: 12px;
+        }
+
+        .checkbox-card-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 12px;
+            background: #f8fafc;
+            border: 1.5px solid #cbd5e1;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 900;
+            color: #1e293b;
+        }
+
+        .checkbox-card-item input {
+            width: 16px;
+            height: 16px;
+            accent-color: #f97316;
+            cursor: pointer;
+        }
+
+        /* Inline configuration inputs inside Custom Combined Panel */
+        .multi-inline-config {
+            background: #f1f5f9;
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+            padding: 14px;
+            margin-top: 14px;
+        }
+
+        .multi-inline-config h4 {
+            font-size: 12px;
+            font-weight: 900;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            color: #334155;
+            letter-spacing: 0.5px;
+        }
+
+        .multi-config-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            margin-bottom: 10px;
         }
 
         /* 80mm Thermal Receipt Preview Area */
@@ -378,7 +503,7 @@
             align-items: center;
         }
 
-        .custom-text-column, .coupon-receipt-column, .price-receipt-column, .location-receipt-column {
+        .custom-text-column, .coupon-receipt-column, .location-receipt-column, .price-receipt-column, .multi-receipt-column {
             display: none;
         }
 
@@ -423,26 +548,14 @@
             text-transform: uppercase;
         }
 
-        .logo {
-            width: 55px;
-            height: 55px;
+        /* Pure Black & White Thermal Printer Optimized Logo */
+        .thermal-logo {
+            width: 140px;
+            height: auto;
             margin: 0 auto 4px;
             display: block;
-            border-radius: 50%;
-            filter: grayscale(100%) contrast(1000%);
+            filter: grayscale(100%) brightness(0%) contrast(300%);
             object-fit: contain;
-        }
-
-        .brand-name {
-            font-family: Arial, Helvetica, sans-serif;
-            font-size: 16px;
-            font-weight: 900;
-            color: #000000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 4px;
-            margin-bottom: 5px;
         }
 
         .divider {
@@ -498,13 +611,6 @@
         .notice-list li::before {
             content: "• ";
             font-weight: 900;
-        }
-
-        .notice-footer {
-            font-size: 11px;
-            font-weight: 900;
-            color: #000000;
-            line-height: 1.25;
         }
 
         .qr-container {
@@ -583,7 +689,7 @@
         }
 
         .custom-text-content {
-            font-size: 14px;
+            font-size: 12px;
             font-weight: 900;
             color: #000000;
             line-height: 1.4;
@@ -593,73 +699,96 @@
             text-align: left;
         }
 
-        /* Price Tag Thermal Styling */
+        /* Price Tag Styles */
         .price-tag-brand {
+            font-size: 15px;
+            font-weight: 900;
+            text-transform: uppercase;
+            margin-bottom: 2px;
+            letter-spacing: 0.5px;
+        }
+
+        .price-tag-item-name {
             font-size: 18px;
             font-weight: 900;
             text-transform: uppercase;
-            letter-spacing: 0.8px;
-            margin-bottom: 4px;
+            border: 2px solid #000000;
+            padding: 5px 4px;
+            margin: 4px 0;
+            background: #fff;
+            letter-spacing: 0.5px;
         }
 
-        .price-tag-itemname {
-            font-size: 24px;
+        .price-tag-qty {
+            font-size: 13px;
             font-weight: 900;
             text-transform: uppercase;
-            line-height: 1.15;
-            margin: 8px 0;
-            padding: 6px 0;
-            border-top: 2px solid #000;
-            border-bottom: 2px solid #000;
-            word-break: break-word;
+            margin: 3px 0;
+            letter-spacing: 0.5px;
         }
 
-        .price-tag-pricing-box {
-            border: 2.5px solid #000;
-            padding: 8px;
-            margin: 10px 0;
-            background: #fff;
-        }
-
-        .price-tag-mrp-standard {
-            font-size: 42px;
+        /* When NO discount is entered */
+        .price-tag-mrp-box {
+            font-size: 26px;
             font-weight: 900;
+            border: 3px solid #000000;
+            padding: 6px 4px;
+            margin: 6px 0;
+            background: #fff;
             letter-spacing: 1px;
-            line-height: 1.1;
+        }
+
+        /* When DISCOUNT is entered: MRP becomes small and struck through, Final Price becomes large */
+        .price-tag-mrp-small-struck {
+            font-size: 14px;
+            font-weight: 900;
+            text-decoration: line-through;
+            text-transform: uppercase;
+            margin-top: 4px;
+            letter-spacing: 0.5px;
+        }
+
+        .price-tag-final-price-box {
+            font-size: 26px;
+            font-weight: 900;
+            border: 3px solid #000000;
+            padding: 6px 4px;
+            margin: 4px 0;
+            background: #fff;
+            letter-spacing: 1px;
+        }
+
+        .price-tag-notes {
+            font-size: 11px;
+            font-weight: 900;
+            text-transform: uppercase;
+            margin-top: 4px;
         }
 
         /* Location & Coupon Styles */
-        .location-card-title {
-            font-size: 20px;
-            font-weight: 900;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 4px;
-        }
-
         .location-card-branch {
-            font-size: 16px;
+            font-size: 15px;
             font-weight: 900;
             text-transform: uppercase;
-            margin: 6px 0 4px;
+            margin: 4px 0 2px;
             text-decoration: underline;
         }
 
         .location-card-address {
-            font-size: 12px;
+            font-size: 11.5px;
             font-weight: 900;
-            line-height: 1.35;
-            margin-bottom: 8px;
+            line-height: 1.3;
+            margin-bottom: 6px;
             text-transform: uppercase;
         }
 
         .coupon-title-badge {
-            font-size: 22px;
+            font-size: 20px;
             font-weight: 900;
             text-transform: uppercase;
             border: 2.5px dashed #000000;
-            padding: 8px 4px;
-            margin: 8px 0;
+            padding: 6px 4px;
+            margin: 6px 0;
             background: #fff;
             letter-spacing: 0.5px;
         }
@@ -677,85 +806,15 @@
         .coupon-details-table {
             width: 100%;
             text-align: left;
-            font-size: 11.5px;
+            font-size: 11px;
             font-weight: 900;
-            margin: 6px 0;
+            margin: 4px 0;
             border-collapse: collapse;
         }
 
         .coupon-details-table td {
-            padding: 3.5px 0;
+            padding: 2.5px 0;
             vertical-align: top;
-        }
-
-        .coupon-qr-section {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin: 6px 0;
-            gap: 6px;
-        }
-
-        .coupon-qr-box {
-            width: 65px;
-            height: 65px;
-            flex-shrink: 0;
-        }
-
-        .coupon-qr-box img {
-            width: 100%;
-            height: 100%;
-            image-rendering: pixelated;
-        }
-
-        .coupon-code-wrap {
-            flex: 1;
-            text-align: right;
-        }
-
-        .coupon-code-box {
-            font-size: 14px;
-            font-weight: 900;
-            letter-spacing: 1px;
-        }
-
-        .address-title {
-            font-size: 12px;
-            font-weight: 900;
-            text-align: center;
-            text-transform: uppercase;
-            margin-top: 4px;
-            margin-bottom: 2px;
-            text-decoration: underline;
-            color: #000000;
-        }
-
-        .store-address-box {
-            font-size: 10px;
-            font-weight: 900;
-            text-align: left;
-            line-height: 1.35;
-            color: #000000;
-        }
-
-        .address-line {
-            margin-bottom: 2px;
-        }
-
-        .contact-row {
-            font-size: 11.5px;
-            font-weight: 900;
-            text-align: center;
-            margin-top: 4px;
-            color: #000000;
-        }
-
-        .social-row {
-            font-size: 10px;
-            font-weight: 900;
-            text-align: center;
-            margin-top: 2px;
-            color: #000000;
         }
 
         @media (max-width: 600px) {
@@ -783,7 +842,7 @@
                 -webkit-font-smoothing: none !important;
             }
 
-            .app-header, .big-buttons-bar, .text-input-panel, .coupon-panel, .price-panel, .location-panel, .card-label {
+            .app-header, .big-buttons-bar, .text-input-panel, .coupon-panel, .location-panel, .price-panel, .multi-print-panel, .card-label {
                 display: none !important;
             }
             
@@ -832,17 +891,8 @@
             body.print-exchange .exchange-column { display: block !important; }
             body.print-custom .custom-text-column { display: block !important; }
             body.print-coupon .coupon-receipt-column { display: block !important; }
-            body.print-price .price-receipt-column { display: block !important; }
             body.print-location .location-receipt-column { display: block !important; }
-
-            /* Print WhatsApp & Exchange Combined (Common Button for 1 & 2 without badge number) */
-            body.print-both .whatsapp-column,
-            body.print-both .exchange-column {
-                display: block !important;
-            }
-            body.print-both .cut-separator {
-                display: block !important;
-            }
+            body.print-price .price-receipt-column { display: block !important; }
 
             /* Print Both Locations */
             body.print-both-locations .location-receipt-column { 
@@ -855,11 +905,24 @@
             body.print-both-locations .loc-card-wrapper .cut-separator {
                 display: block !important;
             }
-            body.print-both-locations #loc-kurmannapalem-wrapper .location-card-title,
-            body.print-both-locations #loc-kurmannapalem-wrapper .tagline,
-            body.print-both-locations #loc-kurmannapalem-wrapper .divider:first-of-type {
-                display: none !important;
+
+            /* Custom Multi-Select Combined Print */
+            body.print-multi .multi-receipt-column {
+                display: block !important;
             }
+            body.print-multi .multi-print-section {
+                display: block !important;
+                margin-bottom: 12px;
+            }
+            body.print-multi .multi-print-section .cut-separator {
+                display: block !important;
+                margin-top: 10px;
+            }
+
+            body.print-coupon.print-coupon-gajuwaka #coupon-kurmannapalem-section { display: none !important; }
+            body.print-coupon.print-coupon-kurmannapalem #coupon-gajuwaka-section { display: none !important; }
+            body.print-coupon.print-coupon-both #coupon-gajuwaka-section,
+            body.print-coupon.print-coupon-both #coupon-kurmannapalem-section { display: block !important; }
 
             body.print-location.print-gajuwaka #loc-kurmannapalem-wrapper { display: none !important; }
             body.print-location.print-kurmannapalem #loc-gajuwaka-wrapper { display: none !important; }
@@ -870,10 +933,10 @@
 
     <div class="app-header">
         <h1>Lalitha Naturals Thermal Print Center</h1>
-        <p>Tap a print option below or manage item stickers &amp; coupons</p>
+        <p>Tap a print option below or manage store locations, coupons & custom text</p>
     </div>
 
-    <!-- Correct Ordered Layout: 1. WhatsApp, 2. Exchange, Common "Print WhatsApp & Exchange" for 1 & 2 (No number), 3. Custom Text, 4. Coupon, 5. Price Print, 6. Store Location -->
+    <!-- Dashboard Button Bar -->
     <div class="big-buttons-bar">
         
         <!-- 1. Print WhatsApp -->
@@ -898,17 +961,6 @@
             <span>Print Exchange</span>
         </button>
 
-        <!-- Common Button for WhatsApp & Exchange (No number badge, renamed) -->
-        <button class="icon-btn both" onclick="triggerMobilePrint('both')">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"></path>
-                <line x1="8" y1="6" x2="16" y2="6"></line>
-                <line x1="8" y1="10" x2="16" y2="10"></line>
-                <line x1="8" y1="14" x2="12" y2="14"></line>
-            </svg>
-            <span>Print WhatsApp &amp; Exchange</span>
-        </button>
-
         <!-- 3. Custom Text -->
         <button class="icon-btn custom" id="btn-toggle-custom" onclick="toggleCustomTextPanel()">
             <span class="btn-badge">03</span>
@@ -931,19 +983,9 @@
             <span>Coupon</span>
         </button>
 
-        <!-- 5. Price Print -->
-        <button class="icon-btn price" id="btn-toggle-price" onclick="togglePricePanel()">
-            <span class="btn-badge">05</span>
-            <svg viewBox="0 0 24 24" fill="none" stroke="#0ea5e9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
-                <line x1="7" y1="7" x2="7.01" y2="7"></line>
-            </svg>
-            <span>Price Print</span>
-        </button>
-
-        <!-- 6. Store Location -->
+        <!-- 5. Store Location -->
         <button class="icon-btn location" id="btn-toggle-location" onclick="toggleLocationPanel()">
-            <span class="btn-badge">06</span>
+            <span class="btn-badge">05</span>
             <svg viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
                 <circle cx="12" cy="10" r="3"></circle>
@@ -951,6 +993,62 @@
             <span>Store Location</span>
         </button>
 
+        <!-- 6. Price Print -->
+        <button class="icon-btn price" id="btn-toggle-price" onclick="togglePricePanel()">
+            <span class="btn-badge">06</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="#0ea5e9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
+                <line x1="7" y1="7" x2="7.01" y2="7"></line>
+            </svg>
+            <span>Price Print</span>
+        </button>
+
+        <!-- Custom Multi-Select Combined Print Button -->
+        <button class="icon-btn multibutton" id="btn-toggle-multi" onclick="toggleMultiPanel()">
+            <span class="btn-badge" style="background:#f97316;">★</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="#f97316" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="7" height="7"></rect>
+                <rect x="14" y="3" width="7" height="7"></rect>
+                <rect x="14" y="14" width="7" height="7"></rect>
+                <rect x="3" y="14" width="7" height="7"></rect>
+            </svg>
+            <span>Custom Combined Print</span>
+        </button>
+
+    </div>
+
+    <!-- Custom Multi-Select Panel -->
+    <div class="multi-print-panel" id="multiInputPanel">
+        <div class="panel-header-row">
+            <span class="panel-title">🛠️ Select Items to Combine in Single Print</span>
+            <div class="panel-header-actions">
+                <button class="print-multi-btn" onclick="executeMultiPrint()">🖨️ Print Selected Items</button>
+            </div>
+        </div>
+        <div class="multi-grid">
+            <div class="form-group full-width">
+                <label>Check items to include in your exact chosen order:</label>
+                <div class="checkbox-cards-grid" id="multi-checkboxes-container">
+                    <label class="checkbox-card-item"><input type="checkbox" value="whatsapp" checked onchange="buildMultiPreview()"> WhatsApp QR</label>
+                    <label class="checkbox-card-item"><input type="checkbox" value="exchange" checked onchange="buildMultiPreview()"> Scrap Exchange</label>
+                    <label class="checkbox-card-item"><input type="checkbox" value="custom" onchange="buildMultiPreview()"> Custom Text</label>
+                    <label class="checkbox-card-item"><input type="checkbox" value="coupon" onchange="buildMultiPreview()"> Discount Coupon</label>
+                    <label class="checkbox-card-item"><input type="checkbox" value="loc-gajuwaka" onchange="buildMultiPreview()"> Location: Gajuwaka</label>
+                    <label class="checkbox-card-item"><input type="checkbox" value="loc-kurmannapalem" onchange="buildMultiPreview()"> Location: Kurmannapalem</label>
+                    <label class="checkbox-card-item"><input type="checkbox" value="price" onchange="buildMultiPreview()"> Price Tag</label>
+                </div>
+            </div>
+
+            <div class="form-group full-width multi-inline-config">
+                <h4>✍️ Configure Data for Multi-Print Items</h4>
+                <div class="multi-config-row">
+                    <div class="form-group">
+                        <label>Custom Text Message</label>
+                        <input type="text" class="form-control capitalize-input" id="multi-input-custom-text" placeholder="Type custom text..." oninput="syncMultiInputs('custom')">
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Input Panels -->
@@ -970,7 +1068,85 @@
                 <button class="print-now-btn" onclick="triggerMobilePrint('custom')">🖨️ Print Custom Text</button>
             </div>
         </div>
-        <div class="editor-canvas" id="editorCanvas" contenteditable="true" placeholder="Type or upload text to print..." oninput="handleEditorInput()"></div>
+        
+        <div class="editor-canvas" id="editorCanvas" contenteditable="true" placeholder="Type or upload text to print..." oninput="handleEditorInput()" style="text-align: left; font-size: 12px; line-height: 1.4;"></div>
+
+        <div class="custom-toolbar">
+            <div class="toolbar-group">
+                <span>Align:</span>
+                <button class="tool-btn" id="align-center-btn" onclick="setTextAlignment('center')">Center</button>
+                <button class="tool-btn active" id="align-left-btn" onclick="setTextAlignment('left')">Left</button>
+                <button class="tool-btn" id="align-right-btn" onclick="setTextAlignment('right')">Right</button>
+            </div>
+            <div class="toolbar-group">
+                <button class="tool-btn" id="format-b-btn" onclick="formatEditorText('bold')">B</button>
+                <button class="tool-btn" id="format-u-btn" onclick="formatEditorText('underline')">U</button>
+                <button class="tool-btn" onclick="formatEditorText('insertUnorderedList')">• Add Bullets</button>
+            </div>
+            <div class="toolbar-group">
+                <span>Font Size:</span>
+                <select class="tool-select" id="editor-fontsize-select" onchange="changeEditorFontSize(this.value)">
+                    <option value="10px">10px</option>
+                    <option value="12px" selected>12px</option>
+                    <option value="14px">14px</option>
+                    <option value="16px">16px</option>
+                </select>
+            </div>
+            <div class="toolbar-group">
+                <span>Spacing:</span>
+                <select class="tool-select" id="editor-spacing-select" onchange="changeEditorSpacing(this.value)">
+                    <option value="1.2">1.2x</option>
+                    <option value="1.4" selected>1.4x</option>
+                    <option value="1.6">1.6x</option>
+                </select>
+            </div>
+            <div class="toolbar-group">
+                <button class="tool-btn" onclick="toggleEditorCase()">Aa Case</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Price Print Input Panel -->
+    <div class="price-panel" id="priceInputPanel">
+        <div class="panel-header-row">
+            <span class="panel-title">🏷️ Item Price Tag Creator</span>
+            <div class="panel-header-actions">
+                <button class="print-price-btn" onclick="triggerMobilePrint('price')">🖨️ Print Price Tag</button>
+            </div>
+        </div>
+        <div class="price-grid">
+            <div class="form-group">
+                <label>Brand Name</label>
+                <input type="text" class="form-control capitalize-input" id="price-brand-name" placeholder="e.g. Lalitha Naturals" value="Lalitha Naturals" oninput="updatePriceCardPreview()">
+            </div>
+            <div class="form-group">
+                <label>Item Name <span style="color:#ef4444;">*</span></label>
+                <input type="text" class="form-control capitalize-input" id="price-item-name" placeholder="e.g. Groundnut Oil 1L" value="" oninput="updatePriceCardPreview()">
+            </div>
+            <div class="form-group">
+                <label>Net Weight / Quantity</label>
+                <input type="text" class="form-control capitalize-input" id="price-item-qty" placeholder="e.g. 1 Litre" value="" oninput="updatePriceCardPreview()">
+            </div>
+            <div class="form-group">
+                <label>MRP (₹) <span style="color:#ef4444;">*</span></label>
+                <input type="number" class="form-control" id="price-item-value" placeholder="e.g. 250" value="" oninput="updatePriceCardPreview()">
+            </div>
+            <div class="form-group">
+                <label>Discount Type</label>
+                <div class="type-selector-btns">
+                    <button class="type-btn active" id="price-disc-pct-btn" onclick="setPriceDiscType('pct')">Discount %</button>
+                    <button class="type-btn" id="price-disc-rs-btn" onclick="setPriceDiscType('rs')">Discount ₹</button>
+                </div>
+            </div>
+            <div class="form-group" id="price-disc-val-group">
+                <label id="price-disc-label">Discount Percentage (%)</label>
+                <input type="number" class="form-control" id="price-disc-val" placeholder="e.g. 10" value="" oninput="updatePriceCardPreview()">
+            </div>
+            <div class="form-group full-width">
+                <label>Notes (Optional)</label>
+                <input type="text" class="form-control capitalize-input" id="price-notes" placeholder="e.g. Festival Batch" value="" oninput="updatePriceCardPreview()">
+            </div>
+        </div>
     </div>
 
     <div class="coupon-panel" id="couponInputPanel">
@@ -978,9 +1154,18 @@
             <span class="panel-title">🎟️ Issue Store Discount Coupon</span>
             <div class="panel-header-actions">
                 <button class="print-coupon-btn" onclick="printCouponAction()">🖨️ Print Coupon</button>
+                <button class="print-now-btn" onclick="triggerMobilePrint('coupon-both')" style="background: #ec4899;">🖨️ Print Both Branches</button>
             </div>
         </div>
         <div class="coupon-grid">
+            <div class="form-group">
+                <label>Customer Name (Optional)</label>
+                <input type="text" class="form-control capitalize-input" id="coupon-cust-name" placeholder="e.g. John Doe" oninput="updateCouponCardPreview()">
+            </div>
+            <div class="form-group">
+                <label>Customer Number (Optional)</label>
+                <input type="text" class="form-control" id="coupon-cust-phone" placeholder="e.g. 9876543210" oninput="updateCouponCardPreview()">
+            </div>
             <div class="form-group">
                 <label>Coupon Type</label>
                 <div class="type-selector-btns">
@@ -1001,35 +1186,29 @@
                 <input type="number" class="form-control" id="rs-input-val" value="50" oninput="updateCouponCardPreview()">
             </div>
             <div class="form-group">
+                <label>Select Branch Location</label>
+                <div class="type-selector-btns">
+                    <button class="type-btn active" id="coupon-branch-gajuwaka" onclick="setCouponBranch('gajuwaka')">Gajuwaka</button>
+                    <button class="type-btn" id="coupon-branch-kurmannapalem" onclick="setCouponBranch('kurmannapalem')">Kurmannapalem</button>
+                </div>
+            </div>
+            <div class="form-group">
                 <label>Coupon From Date</label>
                 <input type="date" class="form-control" id="coupon-from-date" onchange="updateCouponCardPreview()">
             </div>
-            <div class="form-group">
+            <div class="form-group full-width">
                 <label>Generated By (Staff Name) <span style="color:#ef4444;">*</span></label>
-                <input type="text" class="form-control" id="coupon-staff-name" placeholder="Staff Name" oninput="updateCouponCardPreview()">
+                <div class="type-selector-btns" style="margin-bottom: 6px;">
+                    <button class="type-btn staff-option active" id="staff-btn-bhargav" onclick="setStaffOption('Bhargav')">Bhargav</button>
+                    <button class="type-btn staff-option" id="staff-btn-kanthi" onclick="setStaffOption('Kanthi')">Kanthi</button>
+                    <button class="type-btn staff-option" id="staff-btn-vamsi" onclick="setStaffOption('Vamsi')">Vamsi</button>
+                    <button class="type-btn staff-option" id="staff-btn-other" onclick="setStaffOption('Other')">Other</button>
+                </div>
+                <input type="text" class="form-control capitalize-input" id="coupon-staff-name" placeholder="Enter staff name..." value="Bhargav" oninput="updateCouponCardPreview()" style="display: none;">
             </div>
-        </div>
-    </div>
-
-    <div class="price-panel" id="priceInputPanel">
-        <div class="panel-header-row">
-            <span class="panel-title">🏷️ Item Price Tag Creator</span>
-            <div class="panel-header-actions">
-                <button class="print-price-btn" onclick="printPriceAction()">🖨️ Print Price Tag</button>
-            </div>
-        </div>
-        <div class="price-grid">
-            <div class="form-group">
-                <label>Brand Name</label>
-                <input type="text" class="form-control" id="price-brand" value="Lalitha Naturals" oninput="updatePriceCardPreview()">
-            </div>
-            <div class="form-group">
-                <label>Item Name <span style="color:#ef4444;">*</span></label>
-                <input type="text" class="form-control" id="price-itemname" placeholder="e.g. Groundnut Oil 1L" oninput="updatePriceCardPreview()">
-            </div>
-            <div class="form-group">
-                <label>MRP (₹) <span style="color:#ef4444;">*</span></label>
-                <input type="number" class="form-control" id="price-mrp" placeholder="e.g. 250" oninput="updatePriceCardPreview()">
+            <div class="form-group full-width">
+                <label>Notes / Terms (Optional)</label>
+                <input type="text" class="form-control capitalize-input" id="coupon-notes" placeholder="e.g. Valid on minimum purchase of Rs.500" oninput="updateCouponCardPreview()">
             </div>
         </div>
     </div>
@@ -1062,8 +1241,7 @@
             <div class="preview-box">
                 <div class="card whatsapp-card" id="whatsapp-card-el">
                     <div class="header">Join Our WhatsApp Group</div>
-                    <img src="l circle.png" class="logo" alt="Logo">
-                    <div class="brand-name">Lalitha Naturals CIRCLE</div>
+                    <img src="Black Logo _3.png" class="thermal-logo" alt="Logo">
                     <div class="divider"></div>
                     <div class="side-by-side-whatsapp">
                         <div class="notice-box">
@@ -1100,8 +1278,7 @@
             <div class="card-label">Scrap Exchange (80mm)</div>
             <div class="preview-box">
                 <div class="card exchange-card" id="exchange-card-el">
-                    <img src="l circle.png" class="logo" alt="Logo">
-                    <div class="brand-name">Lalitha NATURALS</div>
+                    <img src="Black Logo _3.png" class="thermal-logo" alt="Logo">
                     <div class="tagline">Feel the earth</div>
                     <div class="divider"></div>
                     <div class="offer-header">EXCHANGE YOUR OLD ITEMS</div>
@@ -1119,14 +1296,34 @@
             </div>
         </div>
 
+        <!-- Price Print Receipt Column -->
+        <div class="receipt-column price-receipt-column" id="priceReceiptCol">
+            <div class="card-label">Price Tag Sticker (80mm)</div>
+            <div class="preview-box">
+                <div class="card price-card" id="price-card-el" style="text-align: center;">
+                    <div class="price-tag-brand" id="p-card-brand">LALITHA NATURALS</div>
+                    <div class="divider"></div>
+                    <div class="price-tag-item-name" id="p-card-name">ITEM NAME</div>
+                    <div class="price-tag-qty" id="p-card-qty" style="display: none;"></div>
+                    
+                    <div id="p-card-price-container">
+                        <div class="price-tag-mrp-box" id="p-card-mrp-box">MRP: ₹0</div>
+                    </div>
+
+                    <div id="p-card-notes-wrapper" style="display: none;">
+                        <div class="price-tag-notes" id="p-card-notes"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="receipt-column custom-text-column" id="customReceiptCol">
             <div class="card-label">Custom Text (80mm)</div>
             <div class="preview-box">
                 <div class="card custom-card" id="custom-card-el">
-                    <img src="l circle.png" class="logo" alt="Logo">
-                    <div class="brand-name">Lalitha NATURALS</div>
+                    <img src="Black Logo _3.png" class="thermal-logo" alt="Logo">
                     <div class="divider"></div>
-                    <div class="custom-text-content" id="customTextDisplay"></div>
+                    <div class="custom-text-content" id="customTextDisplay" style="text-align: left; font-size: 12px; line-height: 1.4;"></div>
                     <div class="divider"></div>
                 </div>
             </div>
@@ -1134,40 +1331,77 @@
 
         <div class="receipt-column coupon-receipt-column" id="couponReceiptCol">
             <div class="card-label">Store Coupon (80mm)</div>
-            <div class="preview-box">
-                <div class="card coupon-card" id="coupon-card-el">
-                    <img src="l circle.png" class="logo" alt="Logo">
-                    <div class="brand-name">Lalitha NATURALS</div>
-                    <div class="divider"></div>
-                    <div class="coupon-stamp">⚡ ONE-TIME USE ONLY ⚡</div>
-                    <div class="coupon-title-badge" id="c-offer-badge">FLAT 5% OFF</div>
-                    <table class="coupon-details-table">
-                        <tr><td><strong>ISSUED:</strong></td><td id="c-issue-date">-</td></tr>
-                        <tr><td><strong>VALID:</strong></td><td id="c-valid-date">-</td></tr>
-                        <tr><td><strong>BY:</strong></td><td id="c-staff-disp">-</td></tr>
-                    </table>
-                    <div class="coupon-qr-section">
-                        <div class="coupon-qr-box"><img id="c-qr-img" src="" alt="QR"></div>
-                        <div class="coupon-code-wrap">
-                            <div class="notice-footer">CODE</div>
-                            <div class="coupon-code-box" id="c-code-disp">LN-CPN</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+            <div class="preview-box" style="flex-direction: column; align-items: center; gap: 15px;">
+                
+                <!-- Gajuwaka Coupon Wrapper -->
+                <div class="coupon-branch-wrapper" id="coupon-gajuwaka-section" style="width: 100%;">
+                    <div class="card coupon-card" style="text-align: center;">
+                        <img src="Black Logo _3.png" class="thermal-logo" alt="Logo">
+                        
+                        <div class="coupon-stamp">⚡ DISCOUNT COUPON ⚡</div>
+                        <div class="coupon-title-badge" id="c-offer-badge-1">FLAT 5% OFF</div>
+                        <table class="coupon-details-table" id="c-cust-table-1" style="display:none;">
+                            <tr><td><strong>CUSTOMER:</strong></td><td id="c-cust-name-disp-1">-</td></tr>
+                            <tr><td><strong>PHONE:</strong></td><td id="c-cust-phone-disp-1">-</td></tr>
+                        </table>
+                        <table class="coupon-details-table">
+                            <tr><td><strong>ISSUED:</strong></td><td id="c-issue-date-1">-</td></tr>
+                            <tr><td><strong>VALID:</strong></td><td id="c-valid-date-1">-</td></tr>
+                            <tr><td><strong>BY:</strong></td><td id="c-staff-disp-1">-</td></tr>
+                            <tr><td><strong>CODE:</strong></td><td id="c-code-disp-1" style="letter-spacing:1px;">LN-CPN</td></tr>
+                        </table>
+                        <div id="c-notes-row-1" style="font-size:10.5px; font-weight:900; margin:4px 0; text-align:left; display:none;"><strong>NOTE:</strong> <span id="c-notes-text-1"></span></div>
+                        
+                        <div class="divider"></div>
 
-        <div class="receipt-column price-receipt-column" id="priceReceiptCol">
-            <div class="card-label">Price Tag Sticker (80mm)</div>
-            <div class="preview-box">
-                <div class="card price-card" id="price-card-el">
-                    <div class="price-tag-brand" id="p-brand-disp">Lalitha Naturals</div>
-                    <div class="divider"></div>
-                    <div class="price-tag-itemname" id="p-item-disp">Item Name</div>
-                    <div class="price-tag-pricing-box">
-                        <div class="price-tag-mrp-standard" id="p-mrp-std-val">MRP: ₹0</div>
+                        <div style="font-size:12px; font-weight:900; margin-bottom:4px;">SCAN FOR DIRECTIONS</div>
+                        <div style="display: flex; justify-content: center; margin: 4px 0;">
+                            <div class="qr-container" style="width: 85px; height: 85px;">
+                                <img class="qr-code" src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https%3A%2F%2Fmaps.app.goo.gl%2FGzxq2iuM7fijRAQr6" alt="QR">
+                            </div>
+                        </div>
+
+                        <div class="location-card-branch" style="margin-top:6px;">GAJUWAKA BRANCH</div>
+                        <div class="location-card-address">MIG-20, Near Timpany School Vuda Colony, Gonthinavanipalem, Gajuwaka, Andhra Pradesh 530044</div>
+                        <div style="font-size:11px; font-weight:900; margin-top:2px;">📞 9676287766</div>
+                    </div>
+                    <div class="cut-separator">✂ - - - - - - CUT HERE - - - - - - ✂</div>
+                </div>
+
+                <!-- Kurmannapalem Coupon Wrapper -->
+                <div class="coupon-branch-wrapper" id="coupon-kurmannapalem-section" style="width: 100%;">
+                    <div class="card coupon-card" style="text-align: center;">
+                        <img src="Black Logo _3.png" class="thermal-logo" alt="Logo">
+
+                        <div class="coupon-stamp">⚡ DISCOUNT COUPON ⚡</div>
+                        <div class="coupon-title-badge" id="c-offer-badge-2">FLAT 5% OFF</div>
+                        <table class="coupon-details-table" id="c-cust-table-2" style="display:none;">
+                            <tr><td><strong>CUSTOMER:</strong></td><td id="c-cust-name-disp-2">-</td></tr>
+                            <tr><td><strong>PHONE:</strong></td><td id="c-cust-phone-disp-2">-</td></tr>
+                        </table>
+                        <table class="coupon-details-table">
+                            <tr><td><strong>ISSUED:</strong></td><td id="c-issue-date-2">-</td></tr>
+                            <tr><td><strong>VALID:</strong></td><td id="c-valid-date-2">-</td></tr>
+                            <tr><td><strong>BY:</strong></td><td id="c-staff-disp-2">-</td></tr>
+                            <tr><td><strong>CODE:</strong></td><td id="c-code-disp-2" style="letter-spacing:1px;">LN-CPN</td></tr>
+                        </table>
+                        <div id="c-notes-row-2" style="font-size:10.5px; font-weight:900; margin:4px 0; text-align:left; display:none;"><strong>NOTE:</strong> <span id="c-notes-text-2"></span></div>
+                        
+                        <div class="divider"></div>
+
+                        <div style="font-size:12px; font-weight:900; margin-bottom:4px;">SCAN FOR DIRECTIONS</div>
+                        <div style="display: flex; justify-content: center; margin: 4px 0;">
+                            <div class="qr-container" style="width: 85px; height: 85px;">
+                                <img class="qr-code" src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https%3A%2F%2Fmaps.app.goo.gl%2Fdpn7MfYHNzjBDrch6" alt="QR">
+                            </div>
+                        </div>
+
+                        <div class="location-card-branch" style="margin-top:6px;">KURMANNAPALEM BRANCH</div>
+                        <div class="location-card-address">Vuda phase 7, Hig 7, opposite Gloria Vidya Kendram, Vuda Colony, Gajuwaka, Andhra Pradesh 530049</div>
+                        <div style="font-size:11px; font-weight:900; margin-top:2px;">📞 9676287766</div>
                     </div>
                 </div>
+
             </div>
         </div>
 
@@ -1181,6 +1415,7 @@
                         <div class="divider"></div>
                         <div class="location-card-branch">GAJUWAKA BRANCH</div>
                         <div class="location-card-address">MIG-20, Near Timpany School Vuda Colony, Gonthinavanipalem, Gajuwaka, Andhra Pradesh 530044</div>
+                        <div style="font-size:11px; font-weight:900; margin-bottom:6px;">📞 9676287766</div>
                         <div style="display: flex; justify-content: center; margin: 10px 0;">
                             <div class="qr-container" style="width: 130px; height: 130px;">
                                 <img class="qr-code" src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=https%3A%2F%2Fmaps.app.goo.gl%2FGzxq2iuM7fijRAQr6" alt="QR">
@@ -1197,6 +1432,7 @@
                         <div class="divider"></div>
                         <div class="location-card-branch">KURMANNAPALEM BRANCH</div>
                         <div class="location-card-address">Vuda phase 7, Hig 7, opposite Gloria Vidya Kendram, Vuda Colony, Gajuwaka, Andhra Pradesh 530049</div>
+                        <div style="font-size:11px; font-weight:900; margin-bottom:6px;">📞 9676287766</div>
                         <div style="display: flex; justify-content: center; margin: 10px 0;">
                             <div class="qr-container" style="width: 130px; height: 130px;">
                                 <img class="qr-code" src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=https%3A%2F%2Fmaps.app.goo.gl%2Fdpn7MfYHNzjBDrch6" alt="QR">
@@ -1207,32 +1443,107 @@
             </div>
         </div>
 
+        <!-- Custom Multi-Select Dynamic Preview Column -->
+        <div class="receipt-column multi-receipt-column" id="multiReceiptCol">
+            <div class="card-label">Custom Combined Print Preview (80mm)</div>
+            <div class="preview-box">
+                <div class="card" id="multi-preview-card-container" style="width: 80mm; padding: 10px 12px; text-align: center;">
+                    <!-- Dynamically injected selected sections in exact user check order -->
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <script>
         let currentPct = 5;
         let couponType = 'pct';
+        let couponBranch = 'gajuwaka';
         let locationBranch = 'gajuwaka';
+        let selectedStaff = 'Bhargav';
+        let priceDiscType = 'pct';
 
         window.addEventListener('DOMContentLoaded', () => {
             const todayStr = new Date().toISOString().split('T')[0];
             const dateInput = document.getElementById('coupon-from-date');
             if (dateInput) dateInput.value = todayStr;
+
             updateLocationCardPreview();
+            updateCouponCardPreview();
+            updatePriceCardPreview();
+            initCapitalizationListeners();
+            buildMultiPreview();
         });
 
-        function hideAllPanelsKeepData() {
-            ['customInputPanel', 'couponInputPanel', 'priceInputPanel', 'locationInputPanel'].forEach(id => {
-                document.getElementById(id).style.display = 'none';
+        // Automatically capitalize the first letter of text inputs
+        function initCapitalizationListeners() {
+            document.querySelectorAll('.capitalize-input').forEach(input => {
+                input.addEventListener('input', function(e) {
+                    let val = this.value;
+                    if (val.length > 0) {
+                        this.value = val.charAt(0).toUpperCase() + val.slice(1);
+                    }
+                });
             });
-            ['customReceiptCol', 'couponReceiptCol', 'priceReceiptCol', 'locationReceiptCol'].forEach(id => {
-                document.getElementById(id).style.display = 'none';
+        }
+
+        // Custom Text Formatting Toolbar Functions
+        function setTextAlignment(align) {
+            const editor = document.getElementById('editorCanvas');
+            const display = document.getElementById('customTextDisplay');
+            editor.style.textAlign = align;
+            display.style.textAlign = align;
+
+            document.getElementById('align-center-btn').classList.toggle('active', align === 'center');
+            document.getElementById('align-left-btn').classList.toggle('active', align === 'left');
+            document.getElementById('align-right-btn').classList.toggle('active', align === 'right');
+        }
+
+        function formatEditorText(command) {
+            document.execCommand(command, false, null);
+            handleEditorInput();
+        }
+
+        function changeEditorFontSize(size) {
+            const editor = document.getElementById('editorCanvas');
+            const display = document.getElementById('customTextDisplay');
+            editor.style.fontSize = size;
+            display.style.fontSize = size;
+        }
+
+        function changeEditorSpacing(spacing) {
+            const editor = document.getElementById('editorCanvas');
+            const display = document.getElementById('customTextDisplay');
+            editor.style.lineHeight = spacing;
+            display.style.lineHeight = spacing;
+        }
+
+        function toggleEditorCase() {
+            const editor = document.getElementById('editorCanvas');
+            let text = editor.innerText;
+            if (text === text.toUpperCase()) {
+                editor.innerText = text.toLowerCase();
+            } else {
+                editor.innerText = text.toUpperCase();
+            }
+            handleEditorInput();
+        }
+
+        function hideAllPanelsKeepData() {
+            ['customInputPanel', 'couponInputPanel', 'locationInputPanel', 'priceInputPanel', 'multiInputPanel'].forEach(id => {
+                const el = document.getElementById(id);
+                if(el) el.style.display = 'none';
+            });
+            ['customReceiptCol', 'couponReceiptCol', 'locationReceiptCol', 'priceReceiptCol', 'multiReceiptCol'].forEach(id => {
+                const el = document.getElementById(id);
+                if(el) el.style.display = 'none';
             });
             document.getElementById('waReceiptCol').style.display = 'flex';
             document.getElementById('exReceiptCol').style.display = 'flex';
 
-            ['btn-toggle-custom', 'btn-toggle-coupon', 'btn-toggle-price', 'btn-toggle-location'].forEach(id => {
-                document.getElementById(id).classList.remove('active-toggle');
+            ['btn-toggle-custom', 'btn-toggle-coupon', 'btn-toggle-location', 'btn-toggle-price', 'btn-toggle-multi'].forEach(id => {
+                const btn = document.getElementById(id);
+                if(btn) btn.classList.remove('active-toggle');
             });
         }
 
@@ -1263,20 +1574,6 @@
             }
         }
 
-        function togglePricePanel() {
-            const panel = document.getElementById('priceInputPanel');
-            if (panel.style.display === 'block') { hideAllPanelsKeepData(); } 
-            else {
-                hideAllPanelsKeepData();
-                panel.style.display = 'block';
-                document.getElementById('priceReceiptCol').style.display = 'flex';
-                document.getElementById('waReceiptCol').style.display = 'none';
-                document.getElementById('exReceiptCol').style.display = 'none';
-                document.getElementById('btn-toggle-price').classList.add('active-toggle');
-                updatePriceCardPreview();
-            }
-        }
-
         function toggleLocationPanel() {
             const panel = document.getElementById('locationInputPanel');
             if (panel.style.display === 'block') { hideAllPanelsKeepData(); } 
@@ -1291,6 +1588,105 @@
             }
         }
 
+        function togglePricePanel() {
+            const panel = document.getElementById('priceInputPanel');
+            if (panel.style.display === 'block') { hideAllPanelsKeepData(); } 
+            else {
+                hideAllPanelsKeepData();
+                panel.style.display = 'block';
+                document.getElementById('priceReceiptCol').style.display = 'flex';
+                document.getElementById('waReceiptCol').style.display = 'none';
+                document.getElementById('exReceiptCol').style.display = 'none';
+                document.getElementById('btn-toggle-price').classList.add('active-toggle');
+                updatePriceCardPreview();
+            }
+        }
+
+        function toggleMultiPanel() {
+            const panel = document.getElementById('multiInputPanel');
+            if (panel.style.display === 'block') { hideAllPanelsKeepData(); } 
+            else {
+                hideAllPanelsKeepData();
+                panel.style.display = 'block';
+                document.getElementById('multiReceiptCol').style.display = 'flex';
+                document.getElementById('waReceiptCol').style.display = 'none';
+                document.getElementById('exReceiptCol').style.display = 'none';
+                document.getElementById('btn-toggle-multi').classList.add('active-toggle');
+                
+                const mainEditorHtml = document.getElementById('editorCanvas').innerHTML;
+                if(mainEditorHtml) {
+                    document.getElementById('multi-input-custom-text').value = document.getElementById('editorCanvas').innerText;
+                }
+
+                buildMultiPreview();
+            }
+        }
+
+        function setPriceDiscType(type) {
+            priceDiscType = type;
+            document.getElementById('price-disc-pct-btn').classList.toggle('active', type === 'pct');
+            document.getElementById('price-disc-rs-btn').classList.toggle('active', type === 'rs');
+            document.getElementById('price-disc-label').textContent = type === 'pct' ? 'Discount Percentage (%)' : 'Discount Amount (₹)';
+            updatePriceCardPreview();
+        }
+
+        function updatePriceCardPreview() {
+            const brandName = document.getElementById('price-brand-name').value.trim() || 'Lalitha Naturals';
+            const itemName = document.getElementById('price-item-name').value.trim();
+            const itemQty = document.getElementById('price-item-qty').value.trim();
+            const itemVal = parseFloat(document.getElementById('price-item-value').value) || 0;
+            const discVal = parseFloat(document.getElementById('price-disc-val').value) || 0;
+            const notesVal = document.getElementById('price-notes').value.trim();
+
+            document.getElementById('p-card-brand').textContent = brandName;
+            
+            const nameEl = document.getElementById('p-card-name');
+            if (itemName) {
+                nameEl.style.display = 'block';
+                nameEl.textContent = itemName;
+            } else {
+                nameEl.textContent = 'ITEM NAME';
+            }
+
+            const qtyEl = document.getElementById('p-card-qty');
+            if (itemQty) {
+                qtyEl.style.display = 'block';
+                qtyEl.textContent = itemQty;
+            } else {
+                qtyEl.style.display = 'none';
+            }
+
+            const priceContainer = document.getElementById('p-card-price-container');
+            
+            if (itemVal > 0) {
+                if (discVal > 0) {
+                    let finalPrice = priceDiscType === 'pct' ? itemVal - (itemVal * (discVal / 100)) : itemVal - discVal;
+                    if (finalPrice < 0) finalPrice = 0;
+                    priceContainer.innerHTML = `
+                        <div class="price-tag-mrp-small-struck">MRP: ₹${itemVal.toFixed(2)} (${discVal}${priceDiscType === 'pct' ? '% OFF' : '₹ OFF'})</div>
+                        <div class="price-tag-final-price-box">PRICE: ₹${finalPrice.toFixed(2)}</div>
+                    `;
+                } else {
+                    priceContainer.innerHTML = `
+                        <div class="price-tag-mrp-box">MRP: ₹${itemVal.toFixed(2)}</div>
+                    `;
+                }
+            } else {
+                priceContainer.innerHTML = `
+                    <div class="price-tag-mrp-box">MRP: ₹0</div>
+                `;
+            }
+
+            const notesWrapper = document.getElementById('p-card-notes-wrapper');
+            const notesEl = document.getElementById('p-card-notes');
+            if (notesVal) {
+                notesWrapper.style.display = 'block';
+                notesEl.textContent = `NOTE: ${notesVal}`;
+            } else {
+                notesWrapper.style.display = 'none';
+            }
+        }
+
         function setCouponType(type) {
             couponType = type;
             document.getElementById('type-pct-btn').classList.toggle('active', type === 'pct');
@@ -1300,11 +1696,37 @@
             updateCouponCardPreview();
         }
 
+        function setCouponBranch(branch) {
+            couponBranch = branch;
+            document.getElementById('coupon-branch-gajuwaka').classList.toggle('active', branch === 'gajuwaka');
+            document.getElementById('coupon-branch-kurmannapalem').classList.toggle('active', branch === 'kurmannapalem');
+            updateCouponCardPreview();
+        }
+
         function setLocationBranch(branch) {
             locationBranch = branch;
             document.getElementById('loc-btn-gajuwaka').classList.toggle('active', branch === 'gajuwaka');
             document.getElementById('loc-btn-kurmannapalem').classList.toggle('active', branch === 'kurmannapalem');
             updateLocationCardPreview();
+        }
+
+        function setStaffOption(staffName) {
+            selectedStaff = staffName;
+            ['bhargav', 'kanthi', 'vamsi', 'other'].forEach(s => {
+                const btn = document.getElementById(`staff-btn-${s}`);
+                if(btn) btn.classList.toggle('active', s === staffName.toLowerCase());
+            });
+
+            const customInput = document.getElementById('coupon-staff-name');
+            if (staffName === 'Other') {
+                customInput.style.display = 'block';
+                customInput.value = '';
+                customInput.focus();
+            } else {
+                customInput.style.display = 'none';
+                customInput.value = staffName;
+            }
+            updateCouponCardPreview();
         }
 
         function updateLocationCardPreview() {
@@ -1319,70 +1741,92 @@
         }
 
         function updateCouponCardPreview() {
+            document.getElementById('coupon-gajuwaka-section').style.display = couponBranch === 'gajuwaka' ? 'block' : 'none';
+            document.getElementById('coupon-kurmannapalem-section').style.display = couponBranch === 'kurmannapalem' ? 'block' : 'none';
+
             const manualDateVal = document.getElementById('coupon-from-date').value;
             let startDate = manualDateVal ? new Date(manualDateVal) : new Date();
             let validUntil = new Date(startDate);
             validUntil.setDate(startDate.getDate() + 30);
 
-            document.getElementById('c-issue-date').textContent = startDate.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
-            document.getElementById('c-valid-date').textContent = validUntil.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+            const formattedDate = startDate.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+            const formattedValid = validUntil.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
 
-            if (couponType === 'pct') {
-                document.getElementById('c-offer-badge').textContent = `FLAT ${currentPct}% OFF`;
-            } else {
-                const rsVal = document.getElementById('rs-input-val').value || '0';
-                document.getElementById('c-offer-badge').textContent = `FLAT ₹${rsVal} OFF`;
+            const custName = document.getElementById('coupon-cust-name').value.trim();
+            const custPhone = document.getElementById('coupon-cust-phone').value.trim();
+            
+            let staffName = selectedStaff;
+            if (selectedStaff === 'Other') {
+                staffName = document.getElementById('coupon-staff-name').value.trim();
             }
 
-            const staffName = document.getElementById('coupon-staff-name').value.trim();
-            document.getElementById('c-staff-disp').textContent = staffName || 'Staff';
+            const notesText = document.getElementById('coupon-notes').value.trim();
 
-            const randomCode = 'LN-CPN-' + Math.floor(1000 + Math.random() * 9000);
-            document.getElementById('c-code-disp').textContent = randomCode;
-            document.getElementById('c-qr-img').src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(randomCode)}`;
-        }
+            ['1', '2'].forEach(id => {
+                document.getElementById(`c-issue-date-${id}`).textContent = formattedDate;
+                document.getElementById(`c-valid-date-${id}`).textContent = formattedValid;
 
-        function updatePriceCardPreview() {
-            const brand = document.getElementById('price-brand').value.trim();
-            const itemName = document.getElementById('price-itemname').value.trim();
-            const mrpInput = document.getElementById('price-mrp').value.trim();
+                if (couponType === 'pct') {
+                    document.getElementById(`c-offer-badge-${id}`).textContent = `FLAT ${currentPct}% OFF`;
+                } else {
+                    const rsVal = document.getElementById('rs-input-val').value || '0';
+                    document.getElementById(`c-offer-badge-${id}`).textContent = `FLAT ₹${rsVal} OFF`;
+                }
 
-            document.getElementById('p-brand-disp').textContent = brand || 'Lalitha Naturals';
-            document.getElementById('p-item-disp').textContent = itemName || 'Item Name';
+                document.getElementById(`c-staff-disp-${id}`).textContent = staffName || 'Staff';
 
-            const mrpNum = parseFloat(mrpInput);
-            if (!isNaN(mrpNum) && mrpNum > 0) {
-                document.getElementById('p-mrp-std-val').textContent = `MRP: ₹${mrpNum}`;
-            } else {
-                document.getElementById('p-mrp-std-val').textContent = 'MRP: ₹0';
-            }
+                if (custName || custPhone) {
+                    document.getElementById(`c-cust-table-${id}`).style.display = 'table';
+                    document.getElementById(`c-cust-name-disp-${id}`).textContent = custName || 'N/A';
+                    document.getElementById(`c-cust-phone-disp-${id}`).textContent = custPhone || 'N/A';
+                } else {
+                    document.getElementById(`c-cust-table-${id}`).style.display = 'none';
+                }
+
+                if (notesText) {
+                    document.getElementById(`c-notes-row-${id}`).style.display = 'block';
+                    document.getElementById(`c-notes-text-${id}`).textContent = notesText;
+                } else {
+                    document.getElementById(`c-notes-row-${id}`).style.display = 'none';
+                }
+
+                const randomCode = (id === '1' ? 'GAJ-' : 'KUR-') + Math.floor(1000 + Math.random() * 9000);
+                document.getElementById(`c-code-disp-${id}`).textContent = randomCode;
+            });
         }
 
         function printCouponAction() {
-            if (!document.getElementById('coupon-staff-name').value.trim()) {
-                alert('Please enter Staff Name');
+            let staffName = selectedStaff;
+            if (selectedStaff === 'Other') {
+                staffName = document.getElementById('coupon-staff-name').value.trim();
+            }
+            if (!staffName) {
+                alert('Please enter or select Staff Name');
                 return;
             }
-            triggerMobilePrint('coupon');
-        }
-
-        function printPriceAction() {
-            if (!document.getElementById('price-itemname').value.trim() || !document.getElementById('price-mrp').value.trim()) {
-                alert('Please fill Item Name and MRP');
-                return;
-            }
-            triggerMobilePrint('price');
+            triggerMobilePrint('coupon-' + couponBranch);
         }
 
         function handleEditorInput() {
             document.getElementById('customTextDisplay').innerHTML = document.getElementById('editorCanvas').innerHTML;
+            document.getElementById('multi-input-custom-text').value = document.getElementById('editorCanvas').innerText;
+            buildMultiPreview();
+        }
+
+        function syncMultiInputs(type) {
+            if(type === 'custom') {
+                const val = document.getElementById('multi-input-custom-text').value;
+                document.getElementById('editorCanvas').innerText = val;
+                document.getElementById('customTextDisplay').innerText = val;
+            }
+            buildMultiPreview();
         }
 
         function loadPresetTemplate(type) {
             const editor = document.getElementById('editorCanvas');
-            if (type === 'thankyou') editor.innerHTML = "<b>Welcome to Lalitha Naturals!</b><br>Thank you for shopping with us.";
-            else if (type === 'notice') editor.innerHTML = "<u><b>STORE NOTICE:</b></u><br>Open from 9 AM to 9 PM.";
-            else if (type === 'offer') editor.innerHTML = "<b>SPECIAL OFFER:</b><br>Discounts on organic staples today!";
+            if (type === 'thankyou') editor.innerHTML = "Welcome to Lalitha Naturals!<br>Thank you for shopping with us.";
+            else if (type === 'notice') editor.innerHTML = "STORE NOTICE:<br>Open from 9 AM to 9 PM.";
+            else if (type === 'offer') editor.innerHTML = "SPECIAL OFFER:<br>Discounts on organic staples today!";
             handleEditorInput();
         }
 
@@ -1400,16 +1844,179 @@
             reader.readAsText(e.target.files[0]);
         }
 
+        function buildMultiPreview() {
+            const container = document.getElementById('multi-preview-card-container');
+            container.innerHTML = '';
+
+            const checkboxes = document.querySelectorAll('#multi-checkboxes-container input[type="checkbox"]');
+            const selectedValues = [];
+            checkboxes.forEach(chk => {
+                if(chk.checked) selectedValues.push(chk.value);
+            });
+
+            if(selectedValues.length === 0) {
+                container.innerHTML = '<div style="padding: 20px; font-size:12px; font-weight:900; color:#64748b;">Please select at least one item above.</div>';
+                return;
+            }
+
+            let topHeaderHTML = `
+                <img src="Black Logo _3.png" class="thermal-logo" alt="Logo">
+                <div class="divider"></div>
+            `;
+            container.innerHTML = topHeaderHTML;
+
+            selectedValues.forEach((val, idx) => {
+                const section = document.createElement('div');
+                section.className = 'multi-print-section';
+
+                let contentHTML = '';
+
+                if(val === 'whatsapp') {
+                    contentHTML += `
+                        <div class="header">JOIN WHATSAPP GROUP</div>
+                        <div class="side-by-side-whatsapp">
+                            <div class="notice-box">
+                                <div class="notice-title">OFFICIAL UPDATES ON:</div>
+                                <ul class="notice-list">
+                                    <li>NEW ARRIVALS</li>
+                                    <li>SPECIAL OFFERS</li>
+                                    <li>STORE NEWS</li>
+                                    <li>REAL-TIME STOCK</li>
+                                </ul>
+                            </div>
+                            <div class="qr-container" style="width:75px;height:75px;">
+                                <img class="qr-code" src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Fchat.whatsapp.com%2FE8udXvgNXAOKSXWGvud4ct" alt="QR">
+                            </div>
+                        </div>
+                        <div class="footer-text" style="text-align:left; margin-top:4px;">Scan QR code to join group.</div>`;
+                } else if(val === 'exchange') {
+                    contentHTML += `
+                        <div class="offer-header">EXCHANGE YOUR OLD ITEMS</div>
+                        <table class="rate-table">
+                            <thead><tr><th>ITEM</th><th>RATE</th></tr></thead>
+                            <tbody>
+                                <tr><td>ALUMINIUM</td><td>₹150 / 1 KG</td></tr>
+                                <tr><td>STEEL</td><td>₹50 / 1 KG</td></tr>
+                            </tbody>
+                        </table>
+                        <div class="note-box" style="margin:4px 0; font-size:10px;"><strong>NOTE:</strong> 100 GM deducted for handles.</div>`;
+                } else if(val === 'custom') {
+                    const txt = document.getElementById('multi-input-custom-text').value || document.getElementById('editorCanvas').innerHTML || 'Custom text message goes here.';
+                    contentHTML += `<div class="custom-text-content" style="text-align:center;">${txt}</div>`;
+                } else if(val === 'coupon') {
+                    const badgeText = document.getElementById('c-offer-badge-1').innerText || 'FLAT 5% OFF';
+                    let staffDisp = selectedStaff;
+                    if (selectedStaff === 'Other') {
+                        staffDisp = document.getElementById('coupon-staff-name').value.trim() || 'Staff';
+                    }
+                    const custName = document.getElementById('coupon-cust-name').value.trim();
+                    const custPhone = document.getElementById('coupon-cust-phone').value.trim();
+                    const notesText = document.getElementById('coupon-notes').value.trim();
+
+                    let custHtml = (custName || custPhone) ? `<div style="font-size:11px; font-weight:900; margin:2px 0;">CUSTOMER: ${custName || 'N/A'} | PH: ${custPhone || 'N/A'}</div>` : '';
+                    let notesHtml = notesText ? `<div style="font-size:10.5px; font-weight:900; margin:2px 0; text-align:left;">NOTE: ${notesText}</div>` : '';
+
+                    contentHTML += `
+                        <div class="coupon-stamp">⚡ DISCOUNT COUPON ⚡</div>
+                        <div class="coupon-title-badge">${badgeText}</div>
+                        ${custHtml}
+                        <div style="font-size:11.5px; font-weight:900; margin:4px 0;">BY: ${staffDisp}</div>
+                        ${notesHtml}
+                        <div class="divider"></div>
+                        <div style="font-size:11px; font-weight:900; margin-bottom:4px;">SCAN FOR DIRECTIONS</div>
+                        <div style="display:flex; justify-content:center; margin:4px 0;">
+                            <div class="qr-container" style="width:75px; height:75px;">
+                                <img class="qr-code" src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https%3A%2F%2Fmaps.app.goo.gl%2FGzxq2iuM7fijRAQr6" alt="QR">
+                            </div>
+                        </div>
+                        <div class="location-card-branch" style="margin-top:4px;">GAJUWAKA BRANCH</div>
+                        <div class="location-card-address" style="font-size:10.5px;">MIG-20, Near Timpany School Vuda Colony, Gajuwaka</div>
+                        <div style="font-size:10.5px; font-weight:900;">📞 9676287766</div>`;
+                } else if(val === 'loc-gajuwaka') {
+                    contentHTML += `
+                        <div class="location-card-branch">GAJUWAKA BRANCH</div>
+                        <div class="location-card-address">MIG-20, Near Timpany School Vuda Colony, Gonthinavanipalem, Gajuwaka, Andhra Pradesh 530044</div>
+                        <div style="font-size:11px; font-weight:900; margin-bottom:4px;">📞 9676287766</div>
+                        <div style="display:flex; justify-content:center; margin:6px 0;">
+                            <div class="qr-container" style="width:85px; height:85px;">
+                                <img class="qr-code" src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=https%3A%2F%2Fmaps.app.goo.gl%2FGzxq2iuM7fijRAQr6" alt="QR">
+                            </div>
+                        </div>`;
+                } else if(val === 'loc-kurmannapalem') {
+                    contentHTML += `
+                        <div class="location-card-branch">KURMANNAPALEM BRANCH</div>
+                        <div class="location-card-address">Vuda phase 7, Hig 7, opposite Gloria Vidya Kendram, Vuda Colony, Gajuwaka, Andhra Pradesh 530049</div>
+                        <div style="font-size:11px; font-weight:900; margin-bottom:4px;">📞 9676287766</div>
+                        <div style="display:flex; justify-content:center; margin:6px 0;">
+                            <div class="qr-container" style="width:85px; height:85px;">
+                                <img class="qr-code" src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=https%3A%2F%2Fmaps.app.goo.gl%2Fdpn7MfYHNzjBDrch6" alt="QR">
+                            </div>
+                        </div>`;
+                } else if(val === 'price') {
+                    const brandName = document.getElementById('price-brand-name').value.trim() || 'Lalitha Naturals';
+                    const itemName = document.getElementById('price-item-name').value.trim() || 'ITEM NAME';
+                    const itemQty = document.getElementById('price-item-qty').value.trim();
+                    const itemVal = parseFloat(document.getElementById('price-item-value').value) || 0;
+                    const discVal = parseFloat(document.getElementById('price-disc-val').value) || 0;
+                    const notesVal = document.getElementById('price-notes').value.trim();
+
+                    let qtyHtml = itemQty ? `<div style="font-size:13px; font-weight:900; text-transform:uppercase; margin:3px 0;">${itemQty}</div>` : '';
+                    let priceHtml = '';
+                    if (itemVal > 0) {
+                        if (discVal > 0) {
+                            let finalPrice = priceDiscType === 'pct' ? itemVal - (itemVal * (discVal / 100)) : itemVal - discVal;
+                            if (finalPrice < 0) finalPrice = 0;
+                            priceHtml = `
+                                <div style="font-size:14px; font-weight:900; text-decoration:line-through; text-transform:uppercase; margin-top:4px;">MRP: ₹${itemVal.toFixed(2)} (${discVal}${priceDiscType === 'pct' ? '% OFF' : '₹ OFF'})</div>
+                                <div style="font-size:26px; font-weight:900; border:3px solid #000; padding:6px 4px; margin:4px 0;">PRICE: ₹${finalPrice.toFixed(2)}</div>
+                            `;
+                        } else {
+                            priceHtml = `<div style="font-size:26px; font-weight:900; border:3px solid #000; padding:6px 4px; margin:6px 0;">MRP: ₹${itemVal.toFixed(2)}</div>`;
+                        }
+                    } else {
+                        priceHtml = `<div style="font-size:26px; font-weight:900; border:3px solid #000; padding:6px 4px; margin:6px 0;">MRP: ₹0</div>`;
+                    }
+                    let notesHtml = notesVal ? `<div style="font-size:11px; font-weight:900; margin-top:2px;">NOTE: ${notesVal}</div>` : '';
+
+                    contentHTML += `
+                        <div style="font-size:15px; font-weight:900; text-transform:uppercase;">${brandName}</div>
+                        <div class="divider"></div>
+                        <div style="font-size:18px; font-weight:900; text-transform:uppercase; border:2px solid #000; padding:5px 4px; margin:4px 0;">${itemName}</div>
+                        ${qtyHtml}
+                        ${priceHtml}
+                        ${notesHtml}`;
+                }
+
+                section.innerHTML = contentHTML;
+                container.appendChild(section);
+
+                // Always add a dashed line divider (cut separator) after each selected section in the custom combined preview
+                const sep = document.createElement('div');
+                sep.className = 'cut-separator';
+                sep.style.display = 'block';
+                sep.innerHTML = '✂ - - - - - - CUT HERE - - - - - - ✂';
+                container.appendChild(sep);
+            });
+        }
+
+        function executeMultiPrint() {
+            buildMultiPreview();
+            document.body.className = '';
+            document.body.classList.add('print-multi');
+            window.print();
+        }
+
         function triggerMobilePrint(type) {
             document.body.className = '';
             if (type === 'whatsapp') document.body.classList.add('print-whatsapp');
             else if (type === 'exchange') document.body.classList.add('print-exchange');
             else if (type === 'custom') document.body.classList.add('print-custom');
-            else if (type === 'coupon') document.body.classList.add('print-coupon');
-            else if (type === 'price') document.body.classList.add('print-price');
+            else if (type === 'coupon-gajuwaka') document.body.classList.add('print-coupon', 'print-coupon-gajuwaka');
+            else if (type === 'coupon-kurmannapalem') document.body.classList.add('print-coupon', 'print-coupon-kurmannapalem');
+            else if (type === 'coupon-both') document.body.classList.add('print-coupon', 'print-coupon-both');
             else if (type === 'location') document.body.classList.add('print-location', 'print-' + locationBranch);
             else if (type === 'both-locations') document.body.classList.add('print-both-locations');
-            else if (type === 'both') document.body.classList.add('print-both');
+            else if (type === 'price') document.body.classList.add('print-price');
 
             window.print();
         }
