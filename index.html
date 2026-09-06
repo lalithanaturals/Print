@@ -185,7 +185,7 @@
 
         .panel-header-actions {
             display: flex;
-            gap: 8px;
+            gap: 10px;
             align-items: center;
             flex-wrap: wrap;
         }
@@ -302,11 +302,11 @@
         }
 
         .preset-select {
-            padding: 6px 10px;
-            font-size: 11px;
+            padding: 8px 12px;
+            font-size: 12px;
             font-weight: 900;
             border: 1.5px solid #cbd5e1;
-            border-radius: 8px;
+            border-radius: 10px;
             background: #f8fafc;
             color: #334155;
             cursor: pointer;
@@ -317,34 +317,52 @@
             background: #ef4444;
             color: #ffffff;
             border: none;
-            padding: 6px 10px;
-            border-radius: 8px;
-            font-size: 11px;
+            padding: 10px 16px;
+            border-radius: 10px;
+            font-size: 12px;
             font-weight: 900;
             cursor: pointer;
+            text-transform: uppercase;
         }
 
         .upload-file-btn {
             background: #0284c7;
             color: #ffffff;
             border: none;
-            padding: 6px 12px;
-            border-radius: 8px;
-            font-size: 11px;
-            font-weight: 900;
-            cursor: pointer;
-        }
-
-        .print-now-btn, .print-coupon-btn, .print-location-btn, .print-price-btn, .print-multi-btn {
-            background: #a855f7;
-            color: #ffffff;
-            border: none;
-            padding: 6px 14px;
-            border-radius: 8px;
-            font-size: 11px;
+            padding: 10px 16px;
+            border-radius: 10px;
+            font-size: 12px;
             font-weight: 900;
             cursor: pointer;
             text-transform: uppercase;
+        }
+
+        /* Uniform Big & Equal Action Buttons */
+        .print-now-btn, .print-coupon-btn, .print-location-btn, .print-price-btn, .print-multi-btn, .panel-action-btn {
+            flex: 1;
+            min-width: 170px;
+            height: 44px;
+            background: #a855f7;
+            color: #ffffff;
+            border: none;
+            padding: 0 16px;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: 900;
+            cursor: pointer;
+            text-transform: uppercase;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transition: transform 0.15s ease, background-color 0.15s ease;
+            white-space: nowrap;
+        }
+
+        .print-now-btn:hover, .print-coupon-btn:hover, .print-location-btn:hover, .print-price-btn:hover, .print-multi-btn:hover, .panel-action-btn:hover {
+            transform: translateY(-1px);
+            filter: brightness(1.05);
         }
 
         .print-coupon-btn   { background: #ec4899; }
@@ -1149,12 +1167,13 @@
         </div>
     </div>
 
+    <!-- Coupon Panel with Uniform Big Action Buttons -->
     <div class="coupon-panel" id="couponInputPanel">
         <div class="panel-header-row">
             <span class="panel-title">🎟️ Issue Store Discount Coupon</span>
             <div class="panel-header-actions">
                 <button class="print-coupon-btn" onclick="printCouponAction()">🖨️ Print Coupon</button>
-                <button class="print-now-btn" onclick="triggerMobilePrint('coupon-both')" style="background: #ec4899;">🖨️ Print Both Branches</button>
+                <button class="print-coupon-btn" onclick="triggerMobilePrint('coupon-both')">🖨️ Print Both Branches</button>
             </div>
         </div>
         <div class="coupon-grid">
@@ -1213,12 +1232,13 @@
         </div>
     </div>
 
+    <!-- Store Location Panel with Uniform Big Action Buttons -->
     <div class="location-panel" id="locationInputPanel">
         <div class="panel-header-row">
             <span class="panel-title">📍 Store Location QR Printer</span>
             <div class="panel-header-actions">
                 <button class="print-location-btn" onclick="triggerMobilePrint('location')">🖨️ Print Selected</button>
-                <button class="print-now-btn" onclick="triggerMobilePrint('both-locations')" style="background: #10b981;">🖨️ Print Both Locations</button>
+                <button class="print-location-btn" onclick="triggerMobilePrint('both-locations')">🖨️ Print Both Locations</button>
             </div>
         </div>
         <div class="location-grid">
