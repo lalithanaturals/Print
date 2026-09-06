@@ -338,7 +338,7 @@
         }
 
         /* Uniform Big & Equal Action Buttons */
-        .print-now-btn, .print-coupon-btn, .print-location-btn, .print-price-btn, .print-multi-btn, .panel-action-btn {
+        .print-now-btn, .print-coupon-btn, .print-location-btn, .print-price-btn, .print-multi-btn {
             flex: 1;
             min-width: 170px;
             height: 44px;
@@ -360,7 +360,7 @@
             white-space: nowrap;
         }
 
-        .print-now-btn:hover, .print-coupon-btn:hover, .print-location-btn:hover, .print-price-btn:hover, .print-multi-btn:hover, .panel-action-btn:hover {
+        .print-now-btn:hover, .print-coupon-btn:hover, .print-location-btn:hover, .print-price-btn:hover, .print-multi-btn:hover {
             transform: translateY(-1px);
             filter: brightness(1.05);
         }
@@ -581,18 +581,6 @@
             margin: 7px 0;
         }
 
-        .cut-separator {
-            display: none;
-            width: 100%;
-            text-align: center;
-            font-weight: 900;
-            font-size: 12px;
-            margin: 15px 0 10px;
-            border-top: 2px dashed #000000;
-            padding-top: 4px;
-            color: #000000;
-        }
-
         .side-by-side-whatsapp {
             display: flex;
             align-items: center;
@@ -745,7 +733,6 @@
             letter-spacing: 0.5px;
         }
 
-        /* When NO discount is entered */
         .price-tag-mrp-box {
             font-size: 26px;
             font-weight: 900;
@@ -756,7 +743,6 @@
             letter-spacing: 1px;
         }
 
-        /* When DISCOUNT is entered: MRP becomes small and struck through, Final Price becomes large */
         .price-tag-mrp-small-struck {
             font-size: 14px;
             font-weight: 900;
@@ -920,9 +906,6 @@
             body.print-both-locations #loc-kurmannapalem-wrapper {
                 display: block !important;
             }
-            body.print-both-locations .loc-card-wrapper .cut-separator {
-                display: block !important;
-            }
 
             /* Custom Multi-Select Combined Print */
             body.print-multi .multi-receipt-column {
@@ -931,10 +914,6 @@
             body.print-multi .multi-print-section {
                 display: block !important;
                 margin-bottom: 12px;
-            }
-            body.print-multi .multi-print-section .cut-separator {
-                display: block !important;
-                margin-top: 10px;
             }
 
             body.print-coupon.print-coupon-gajuwaka #coupon-kurmannapalem-section { display: none !important; }
@@ -1261,7 +1240,7 @@
             <div class="preview-box">
                 <div class="card whatsapp-card" id="whatsapp-card-el">
                     <div class="header">Join Our WhatsApp Group</div>
-                    <img src="Black Logo _3.png" class="thermal-logo" alt="Logo">
+                    <img src="Black Logo .png" class="thermal-logo" alt="Logo">
                     <div class="divider"></div>
                     <div class="side-by-side-whatsapp">
                         <div class="notice-box">
@@ -1290,7 +1269,6 @@
                     </div>
                 </div>
             </div>
-            <div class="cut-separator">✂ - - - - - - CUT HERE - - - - - - ✂</div>
         </div>
 
         <!-- Exchange Receipt -->
@@ -1298,7 +1276,7 @@
             <div class="card-label">Scrap Exchange (80mm)</div>
             <div class="preview-box">
                 <div class="card exchange-card" id="exchange-card-el">
-                    <img src="Black Logo _3.png" class="thermal-logo" alt="Logo">
+                    <img src="Black Logo .png" class="thermal-logo" alt="Logo">
                     <div class="tagline">Feel the earth</div>
                     <div class="divider"></div>
                     <div class="offer-header">EXCHANGE YOUR OLD ITEMS</div>
@@ -1341,7 +1319,7 @@
             <div class="card-label">Custom Text (80mm)</div>
             <div class="preview-box">
                 <div class="card custom-card" id="custom-card-el">
-                    <img src="Black Logo _3.png" class="thermal-logo" alt="Logo">
+                    <img src="Black Logo .png" class="thermal-logo" alt="Logo">
                     <div class="divider"></div>
                     <div class="custom-text-content" id="customTextDisplay" style="text-align: left; font-size: 12px; line-height: 1.4;"></div>
                     <div class="divider"></div>
@@ -1356,7 +1334,7 @@
                 <!-- Gajuwaka Coupon Wrapper -->
                 <div class="coupon-branch-wrapper" id="coupon-gajuwaka-section" style="width: 100%;">
                     <div class="card coupon-card" style="text-align: center;">
-                        <img src="Black Logo _3.png" class="thermal-logo" alt="Logo">
+                        <img src="Black Logo .png" class="thermal-logo" alt="Logo">
                         
                         <div class="coupon-stamp">⚡ DISCOUNT COUPON ⚡</div>
                         <div class="coupon-title-badge" id="c-offer-badge-1">FLAT 5% OFF</div>
@@ -1385,13 +1363,12 @@
                         <div class="location-card-address">MIG-20, Near Timpany School Vuda Colony, Gonthinavanipalem, Gajuwaka, Andhra Pradesh 530044</div>
                         <div style="font-size:11px; font-weight:900; margin-top:2px;">📞 9676287766</div>
                     </div>
-                    <div class="cut-separator">✂ - - - - - - CUT HERE - - - - - - ✂</div>
                 </div>
 
                 <!-- Kurmannapalem Coupon Wrapper -->
                 <div class="coupon-branch-wrapper" id="coupon-kurmannapalem-section" style="width: 100%;">
                     <div class="card coupon-card" style="text-align: center;">
-                        <img src="Black Logo _3.png" class="thermal-logo" alt="Logo">
+                        <img src="Black Logo .png" class="thermal-logo" alt="Logo">
 
                         <div class="coupon-stamp">⚡ DISCOUNT COUPON ⚡</div>
                         <div class="coupon-title-badge" id="c-offer-badge-2">FLAT 5% OFF</div>
@@ -1442,7 +1419,6 @@
                             </div>
                         </div>
                     </div>
-                    <div class="cut-separator">✂ - - - - - - CUT HERE - - - - - - ✂</div>
                 </div>
 
                 <div class="loc-card-wrapper" id="loc-kurmannapalem-wrapper" style="width: 100%;">
@@ -1880,7 +1856,7 @@
             }
 
             let topHeaderHTML = `
-                <img src="Black Logo _3.png" class="thermal-logo" alt="Logo">
+                <img src="Black Logo .png" class="thermal-logo" alt="Logo">
                 <div class="divider"></div>
             `;
             container.innerHTML = topHeaderHTML;
@@ -2010,12 +1986,12 @@
                 section.innerHTML = contentHTML;
                 container.appendChild(section);
 
-                // Always add a dashed line divider (cut separator) after each selected section in the custom combined preview
-                const sep = document.createElement('div');
-                sep.className = 'cut-separator';
-                sep.style.display = 'block';
-                sep.innerHTML = '✂ - - - - - - CUT HERE - - - - - - ✂';
-                container.appendChild(sep);
+                // Add a clean dashed divider line between sections without any text
+                if (idx < selectedValues.length - 1) {
+                    const sep = document.createElement('div');
+                    sep.className = 'divider';
+                    container.appendChild(sep);
+                }
             });
         }
 
