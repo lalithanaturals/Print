@@ -3,8 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Thermal Print Manager | Lalitha Naturals</title>
+    <title>Lalitha Naturals Thermal Print Manager</title>
     <style>
+        /* CRITICAL THERMAL PRINTER FIX: Force EXACT 80mm width & strip all browser margins/padding */
+        @page {
+            size: 80mm auto;
+            margin: 0mm;
+        }
+
         :root {
             --bg-color: #f8fafc;
             --card-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.02);
@@ -76,6 +82,7 @@
             transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             overflow: hidden;
+            text-decoration: none;
             -webkit-tap-highlight-color: transparent;
         }
 
@@ -90,11 +97,13 @@
 
         .icon-btn.whatsapp::before    { background: linear-gradient(90deg, #25D366, #128C7E); }
         .icon-btn.exchange::before    { background: linear-gradient(90deg, #f59e0b, #d97706); }
+        .icon-btn.calculator::before  { background: linear-gradient(90deg, #06b6d4, #0891b2); }
         .icon-btn.custom::before      { background: linear-gradient(90deg, #a855f7, #7e22ce); }
         .icon-btn.coupon::before      { background: linear-gradient(90deg, #ec4899, #be185d); }
         .icon-btn.location::before    { background: linear-gradient(90deg, #10b981, #047857); }
         .icon-btn.price::before       { background: linear-gradient(90deg, #0ea5e9, #0284c7); }
         .icon-btn.estimate::before    { background: linear-gradient(90deg, #8b5cf6, #6d28d9); }
+        .icon-btn.visiting::before    { background: linear-gradient(90deg, #3b82f6, #1d4ed8); }
         .icon-btn.multibutton::before { background: linear-gradient(90deg, #f97316, #c2410c); }
 
         .icon-btn:hover {
@@ -121,13 +130,15 @@
             letter-spacing: 0.5px;
         }
 
-        .whatsapp .btn-badge  { background: #25D366; }
-        .exchange .btn-badge  { background: #f59e0b; }
-        .custom .btn-badge    { background: #a855f7; }
-        .coupon .btn-badge    { background: #ec4899; }
-        .location .btn-badge  { background: #10b981; }
-        .price .btn-badge     { background: #0ea5e9; }
-        .estimate .btn-badge  { background: #8b5cf6; }
+        .whatsapp .btn-badge   { background: #25D366; }
+        .exchange .btn-badge   { background: #f59e0b; }
+        .calculator .btn-badge { background: #06b6d4; }
+        .custom .btn-badge     { background: #a855f7; }
+        .coupon .btn-badge     { background: #ec4899; }
+        .location .btn-badge   { background: #10b981; }
+        .price .btn-badge      { background: #0ea5e9; }
+        .estimate .btn-badge   { background: #8b5cf6; }
+        .visiting .btn-badge   { background: #3b82f6; }
 
         .icon-btn svg {
             width: 36px;
@@ -150,7 +161,7 @@
         }
 
         /* Panels Shared */
-        .text-input-panel, .coupon-panel, .location-panel, .price-panel, .estimate-panel, .multi-print-panel {
+        .text-input-panel, .coupon-panel, .location-panel, .price-panel, .estimate-panel, .visiting-panel, .multi-print-panel {
             display: none;
             width: 100%;
             max-width: 900px;
@@ -193,7 +204,7 @@
         }
 
         /* Form Elements */
-        .coupon-grid, .location-grid, .price-grid, .estimate-grid, .multi-grid {
+        .coupon-grid, .location-grid, .price-grid, .estimate-grid, .visiting-grid, .multi-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
             gap: 14px;
@@ -270,6 +281,11 @@
         .price-panel .type-btn.active {
             background: #0ea5e9;
             border-color: #0ea5e9;
+        }
+
+        .visiting-panel .type-btn.active {
+            background: #3b82f6;
+            border-color: #3b82f6;
         }
 
         /* Estimate Item Fast Entry Row */
@@ -419,7 +435,7 @@
         }
 
         /* Uniform Big & Equal Action Buttons */
-        .print-now-btn, .print-coupon-btn, .print-location-btn, .print-price-btn, .print-estimate-btn, .print-multi-btn {
+        .print-now-btn, .print-coupon-btn, .print-location-btn, .print-price-btn, .print-estimate-btn, .print-visiting-btn, .print-multi-btn {
             flex: 1;
             min-width: 170px;
             height: 44px;
@@ -441,7 +457,7 @@
             white-space: nowrap;
         }
 
-        .print-now-btn:hover, .print-coupon-btn:hover, .print-location-btn:hover, .print-price-btn:hover, .print-estimate-btn:hover, .print-multi-btn:hover {
+        .print-now-btn:hover, .print-coupon-btn:hover, .print-location-btn:hover, .print-price-btn:hover, .print-estimate-btn:hover, .print-visiting-btn:hover, .print-multi-btn:hover {
             transform: translateY(-1px);
             filter: brightness(1.05);
         }
@@ -450,6 +466,7 @@
         .print-location-btn { background: #10b981; }
         .print-price-btn    { background: #0ea5e9; }
         .print-estimate-btn { background: #8b5cf6; }
+        .print-visiting-btn { background: #3b82f6; }
         .print-multi-btn    { background: #f97316; }
 
         .editor-canvas {
@@ -603,7 +620,7 @@
             align-items: center;
         }
 
-        .custom-text-column, .coupon-receipt-column, .location-receipt-column, .price-receipt-column, .estimate-receipt-column, .multi-receipt-column {
+        .custom-text-column, .coupon-receipt-column, .location-receipt-column, .price-receipt-column, .estimate-receipt-column, .visiting-receipt-column, .multi-receipt-column {
             display: none;
         }
 
@@ -652,7 +669,7 @@
         .thermal-logo {
             width: 200px;
             max-height: 90px;
-            margin: 0 auto 6px;
+            margin: 0 auto 1px;
             display: block;
             object-fit: contain;
             mix-blend-mode: multiply;
@@ -734,6 +751,7 @@
             font-style: italic;
             font-weight: 900;
             margin-bottom: 5px;
+            margin-top: -2px;
             color: #000000;
         }
 
@@ -751,6 +769,7 @@
             border-collapse: collapse;
             margin: 6px 0;
             border: 2.5px solid #000000;
+            font-size: 12px;
         }
 
         .rate-table th, .rate-table td {
@@ -862,6 +881,87 @@
             margin-top: 4px;
         }
 
+        /* Visiting Card Specific Styles - High Contrast & Solid Black Highlights */
+        .visiting-card {
+            border: 2.5px solid #000 !important;
+            padding: 10px 10px !important;
+            text-align: left !important;
+            background: #fff !important;
+        }
+        .vc-top-box {
+            text-align: center;
+            border-bottom: 2px solid #000;
+            padding-bottom: 5px;
+            margin-bottom: 6px;
+        }
+        .vc-brand-title {
+            font-size: 20px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #000;
+        }
+        .vc-tagline {
+            font-size: 11.5px;
+            font-weight: 900;
+            font-style: italic;
+            margin-top: 1px;
+            color: #000;
+        }
+        .vc-section-header {
+            font-size: 11px;
+            font-weight: 900;
+            text-transform: uppercase;
+            background-color: #000000 !important;
+            color: #ffffff !important;
+            padding: 4px 6px;
+            margin: 6px 0 4px 0;
+            letter-spacing: 0.5px;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+        }
+        .vc-content-text {
+            font-size: 11.5px;
+            font-weight: 900;
+            line-height: 1.35;
+            text-transform: uppercase;
+            color: #000;
+        }
+        .vc-branch-box {
+            border-left: 3px solid #000;
+            padding-left: 6px;
+            margin-bottom: 5px;
+        }
+        .vc-branch-name {
+            font-size: 11px;
+            font-weight: 900;
+            text-transform: uppercase;
+            text-decoration: underline;
+            margin-bottom: 1px;
+        }
+        .vc-branch-addr {
+            font-size: 10.5px;
+            font-weight: 900;
+            line-height: 1.3;
+            text-transform: uppercase;
+        }
+        .vc-contact-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #000000 !important;
+            color: #ffffff !important;
+            padding: 5px 6px;
+            margin-top: 6px;
+            font-size: 11px;
+            font-weight: 900;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+        }
+        .vc-contact-footer span {
+            color: #ffffff !important;
+        }
+
         /* Location & Coupon Styles */
         .location-card-branch {
             font-size: 15px;
@@ -925,6 +1025,7 @@
             }
         }
 
+        /* CRITICAL THERMAL PRINTER FIX: Force EXACT 80mm width & strip all browser margins/padding */
         @page {
             size: 80mm auto;
             margin: 0mm;
@@ -932,14 +1033,14 @@
 
         @media print {
             * {
-                color: #000000 !important;
-                background: transparent !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
                 box-shadow: none !important;
                 text-shadow: none !important;
                 -webkit-font-smoothing: none !important;
             }
 
-            .app-header, .big-buttons-bar, .text-input-panel, .coupon-panel, .location-panel, .price-panel, .estimate-panel, .multi-print-panel, .card-label {
+            .app-header, .big-buttons-bar, .text-input-panel, .coupon-panel, .location-panel, .price-panel, .estimate-panel, .visiting-panel, .multi-print-panel, .card-label {
                 display: none !important;
             }
             
@@ -948,11 +1049,14 @@
                 padding: 0 !important;
                 margin: 0 !important;
                 width: 80mm !important;
+                max-width: 80mm !important;
+                overflow: visible !important;
             }
 
             .receipts-wrapper {
                 display: block !important;
                 width: 80mm !important;
+                max-width: 80mm !important;
                 margin: 0 !important;
                 padding: 0 !important;
             }
@@ -960,6 +1064,7 @@
             .receipt-column {
                 display: none !important;
                 width: 80mm !important;
+                max-width: 80mm !important;
                 margin: 0 !important;
                 padding: 0 !important;
             }
@@ -976,11 +1081,13 @@
             .card {
                 width: 80mm !important;
                 max-width: 80mm !important;
-                padding: 2px 4mm !important;
+                min-width: 80mm !important;
+                padding: 2px 2mm !important;
                 border: none !important;
                 border-radius: 0 !important;
-                margin: 0 auto !important;
+                margin: 0 !important;
                 display: block !important;
+                box-sizing: border-box !important;
             }
 
             /* Single Print Selectors */
@@ -991,6 +1098,7 @@
             body.print-location .location-receipt-column { display: block !important; }
             body.print-price .price-receipt-column { display: block !important; }
             body.print-estimate .estimate-receipt-column { display: block !important; }
+            body.print-visiting .visiting-receipt-column { display: block !important; }
 
             /* Print Both Locations */
             body.print-both-locations .location-receipt-column { 
@@ -1052,9 +1160,25 @@
             <span>Print Exchange</span>
         </button>
 
+        <!-- Scrap Calculator Link Button -->
+        <a class="icon-btn calculator" href="https://lalithanaturals.github.io/Bhargav/" target="_blank" rel="noopener noreferrer">
+            <span class="btn-badge">03</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="#06b6d4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect>
+                <line x1="8" y1="6" x2="16" y2="6"></line>
+                <line x1="8" y1="10" x2="10" y2="10"></line>
+                <line x1="14" y1="10" x2="16" y2="10"></line>
+                <line x1="8" y1="14" x2="10" y2="14"></line>
+                <line x1="14" y1="14" x2="16" y2="14"></line>
+                <line x1="8" y1="18" x2="10" y2="18"></line>
+                <line x1="14" y1="18" x2="16" y2="18"></line>
+            </svg>
+            <span>Scrap Calculator</span>
+        </a>
+
         <!-- 3. Custom Text -->
         <button class="icon-btn custom" id="btn-toggle-custom" onclick="toggleCustomTextPanel()">
-            <span class="btn-badge">03</span>
+            <span class="btn-badge">04</span>
             <svg viewBox="0 0 24 24" fill="none" stroke="#a855f7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path>
                 <polyline points="14 2 14 8 20 8"></polyline>
@@ -1066,7 +1190,7 @@
 
         <!-- 4. Coupon -->
         <button class="icon-btn coupon" id="btn-toggle-coupon" onclick="toggleCouponPanel()">
-            <span class="btn-badge">04</span>
+            <span class="btn-badge">05</span>
             <svg viewBox="0 0 24 24" fill="none" stroke="#ec4899" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v2z"></path>
                 <path d="M12 6v12" stroke-dasharray="2 2"></path>
@@ -1076,7 +1200,7 @@
 
         <!-- 5. Store Location -->
         <button class="icon-btn location" id="btn-toggle-location" onclick="toggleLocationPanel()">
-            <span class="btn-badge">05</span>
+            <span class="btn-badge">06</span>
             <svg viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
                 <circle cx="12" cy="10" r="3"></circle>
@@ -1086,7 +1210,7 @@
 
         <!-- 6. Price Print -->
         <button class="icon-btn price" id="btn-toggle-price" onclick="togglePricePanel()">
-            <span class="btn-badge">06</span>
+            <span class="btn-badge">07</span>
             <svg viewBox="0 0 24 24" fill="none" stroke="#0ea5e9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
                 <line x1="7" y1="7" x2="7.01" y2="7"></line>
@@ -1096,7 +1220,7 @@
 
         <!-- 7. Estimate / Bill Calculator -->
         <button class="icon-btn estimate" id="btn-toggle-estimate" onclick="toggleEstimatePanel()">
-            <span class="btn-badge">07</span>
+            <span class="btn-badge">08</span>
             <svg viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect>
                 <line x1="8" y1="6" x2="16" y2="6"></line>
@@ -1110,6 +1234,17 @@
                 <path d="M12 18h.01"></path>
             </svg>
             <span>Estimate Bill</span>
+        </button>
+
+        <!-- 8. Visiting Card -->
+        <button class="icon-btn visiting" id="btn-toggle-visiting" onclick="toggleVisitingPanel()">
+            <span class="btn-badge">09</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="5" width="20" height="14" rx="2"></rect>
+                <line x1="6" y1="9" x2="10" y2="9"></line>
+                <line x1="6" y1="13" x2="14" y2="13"></line>
+            </svg>
+            <span>Visiting Card</span>
         </button>
 
         <!-- Custom Multi-Select Combined Print Button -->
@@ -1146,6 +1281,7 @@
                     <label class="checkbox-card-item"><input type="checkbox" value="loc-kurmannapalem" onchange="buildMultiPreview()"> Location: Kurmannapalem</label>
                     <label class="checkbox-card-item"><input type="checkbox" value="price" onchange="buildMultiPreview()"> Price Tag</label>
                     <label class="checkbox-card-item"><input type="checkbox" value="estimate" onchange="buildMultiPreview()"> Estimate Bill</label>
+                    <label class="checkbox-card-item"><input type="checkbox" value="visiting" onchange="buildMultiPreview()"> Visiting Card</label>
                 </div>
             </div>
 
@@ -1355,6 +1491,21 @@
         </div>
     </div>
 
+    <!-- Visiting Card Input Panel -->
+    <div class="visiting-panel" id="visitingInputPanel">
+        <div class="panel-header-row">
+            <span class="panel-title">📇 Thermal Visiting Card Printer</span>
+            <div class="panel-header-actions">
+                <button class="print-visiting-btn" onclick="triggerMobilePrint('visiting')">🖨️ Print Visiting Card</button>
+            </div>
+        </div>
+        <div class="visiting-grid">
+            <div class="form-group full-width">
+                <label>Information preview loaded directly from verified business details.</label>
+            </div>
+        </div>
+    </div>
+
     <!-- Coupon Panel with Uniform Big Action Buttons -->
     <div class="coupon-panel" id="couponInputPanel">
         <div class="panel-header-row">
@@ -1426,7 +1577,7 @@
             <span class="panel-title">📍 Store Location QR Printer</span>
             <div class="panel-header-actions">
                 <button class="print-location-btn" onclick="triggerMobilePrint('location')">🖨️ Print Selected</button>
-                <button class="print-location-btn" onclick="triggerMobilePrint('both-locations')">🖨️ Print Both Locations</button>
+                <button class="print-location-btn" onclick="triggerMobilePrint('both-locations')">🖨️ Print Both Branches</button>
             </div>
         </div>
         <div class="location-grid">
@@ -1450,6 +1601,7 @@
                 <div class="card whatsapp-card" id="whatsapp-card-el">
                     <div class="header">Join Our WhatsApp Group</div>
                     <img src="Black Logo .png" class="thermal-logo" alt="Logo">
+                    <div class="tagline">Feel the earth</div>
                     <div class="divider"></div>
                     <div class="side-by-side-whatsapp">
                         <div class="notice-box">
@@ -1531,6 +1683,7 @@
                 <div class="card estimate-card" id="estimate-card-el" style="text-align: center;">
                     <div class="header">ESTIMATE BILL</div>
                     <img src="Black Logo .png" class="thermal-logo" alt="Logo">
+                    <div class="tagline">Feel the earth</div>
                     <div class="divider"></div>
                     <div id="est-card-cust-info" style="font-size:11px; font-weight:900; text-align:left; margin-bottom:4px; display:none;"></div>
                     <table class="rate-table" id="est-card-table">
@@ -1556,11 +1709,47 @@
             </div>
         </div>
 
+        <!-- Visiting Card Receipt Column (Redesigned for Maximum Clarity & Solid Black Highlighters) -->
+        <div class="receipt-column visiting-receipt-column" id="visitingReceiptCol">
+            <div class="card-label">Visiting Card (80mm)</div>
+            <div class="preview-box">
+                <div class="card visiting-card" id="visiting-card-el">
+                    <div class="vc-top-box">
+                        <img src="Black Logo .png" class="thermal-logo" alt="Logo" style="width:160px; margin-bottom:1px;">
+                        <div class="vc-tagline">Feel the earth</div>
+                    </div>
+                    
+                    <div class="vc-section-header">Core Offerings</div>
+                    <div class="vc-content-text" style="margin-bottom: 6px;">
+                        Organic Food Products, Cold-Pressed Oils, Spices & Millet-Based Groceries
+                    </div>
+
+                    <div class="vc-section-header">Store Locations</div>
+                    
+                    <div class="vc-branch-box">
+                        <div class="vc-branch-name">Branch 1 (Gajuwaka)</div>
+                        <div class="vc-branch-addr">MIG-20, Near Timpany School, Vuda Colony, Gonthinavanipalem, Gajuwaka, Visakhapatnam - 530044</div>
+                    </div>
+
+                    <div class="vc-branch-box">
+                        <div class="vc-branch-name">Branch 2 (Kurmannapalem)</div>
+                        <div class="vc-branch-addr">Vuda Phase 7, HIG-7, Opposite Gloria Vidya Kendram, Vuda Colony, Gajuwaka, Visakhapatnam - 530049</div>
+                    </div>
+
+                    <div class="vc-contact-footer">
+                        <span>📞 9676287766</span>
+                        <span>🌐 www.lalithanaturals.com</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="receipt-column custom-text-column" id="customReceiptCol">
             <div class="card-label">Custom Text (80mm)</div>
             <div class="preview-box">
                 <div class="card custom-card" id="custom-card-el">
                     <img src="Black Logo .png" class="thermal-logo" alt="Logo">
+                    <div class="tagline">Feel the earth</div>
                     <div class="divider"></div>
                     <div class="custom-text-content" id="customTextDisplay" style="text-align: left; font-size: 28px; line-height: 1.3;"></div>
                     <div class="divider"></div>
@@ -1576,6 +1765,7 @@
                 <div class="coupon-branch-wrapper" id="coupon-gajuwaka-section" style="width: 100%;">
                     <div class="card coupon-card" style="text-align: center;">
                         <img src="Black Logo .png" class="thermal-logo" alt="Logo">
+                        <div class="tagline">Feel the earth</div>
                         
                         <div class="coupon-stamp">⚡ DISCOUNT COUPON ⚡</div>
                         <div class="coupon-title-badge" id="c-offer-badge-1">FLAT 5% OFF</div>
@@ -1610,6 +1800,7 @@
                 <div class="coupon-branch-wrapper" id="coupon-kurmannapalem-section" style="width: 100%;">
                     <div class="card coupon-card" style="text-align: center;">
                         <img src="Black Logo .png" class="thermal-logo" alt="Logo">
+                        <div class="tagline">Feel the earth</div>
 
                         <div class="coupon-stamp">⚡ DISCOUNT COUPON ⚡</div>
                         <div class="coupon-title-badge" id="c-offer-badge-2">FLAT 5% OFF</div>
@@ -1667,7 +1858,7 @@
                         <div class="location-card-title">VISIT OUR STORE</div>
                         <div class="tagline">Scan for Google Map Directions</div>
                         <div class="divider"></div>
-                        <div class="location-card-branch">KURMANNAPALEM BRANCH</div>
+                        <div class="location-card-branch">KURMANNAPALEM KURMANNAPALEM BRANCH</div>
                         <div class="location-card-address">Vuda phase 7, Hig 7, opposite Gloria Vidya Kendram, Vuda Colony, Gajuwaka, Andhra Pradesh 530049</div>
                         <div style="font-size:11px; font-weight:900; margin-bottom:6px;">📞 9676287766</div>
                         <div style="display: flex; justify-content: center; margin: 10px 0;">
@@ -1699,7 +1890,7 @@
         let locationBranch = 'gajuwaka';
         let selectedStaff = 'Bhargav';
         let priceDiscType = 'pct';
-        let editingIndex = null; // Track if we are editing an item
+        let editingIndex = null;
 
         let quickEstimateItems = [];
 
@@ -1734,7 +1925,6 @@
             });
         }
 
-        // Dropdown & Manual Toggle Handlers + Automatic Brand Discount Rules
         function handleBrandSelectChange(selectEl) {
             const manualInput = document.getElementById('quickBrandManual');
             const val = selectEl.value;
@@ -1745,11 +1935,9 @@
             } else {
                 manualInput.style.display = 'none';
                 manualInput.value = '';
-                // When brand is selected from dropdown, jump cursor to item name (optional) or MRP
                 document.getElementById('quickName').focus();
             }
 
-            // Automatic discount rule based on brand selection
             if (val === 'The Indus Valley') {
                 selectAndAddPct('40%');
             } else if (val === 'Solara') {
@@ -1761,10 +1949,8 @@
             document.getElementById('quickDiscValue').value = pctVal;
             document.getElementById('manualDiscInput').value = '';
             
-            // Highlight active big button
             document.querySelectorAll('.big-pct-btn').forEach(btn => btn.classList.remove('active'));
             
-            // Find and highlight matching button if present
             document.querySelectorAll('.big-pct-btn').forEach(btn => {
                 if(btn.textContent.trim() === pctVal) {
                     btn.classList.add('active');
@@ -1776,10 +1962,8 @@
             let val = inputEl.value.trim();
             if(!val) return;
 
-            // Clear button highlights when manual typing
             document.querySelectorAll('.big-pct-btn').forEach(btn => btn.classList.remove('active'));
 
-            // Format input as discount (supports e.g. "15%" or "50₹" or just numbers)
             let formattedDisc = val;
             if(!val.endsWith('%') && !val.includes('₹') && !isNaN(val)) {
                 formattedDisc = val + '%';
@@ -1809,13 +1993,12 @@
 
             let nameVal = document.getElementById('quickName').value.trim();
             if (!nameVal) {
-                nameVal = 'Item'; // Default fallback since entering item name is optional
+                nameVal = 'Item';
             }
 
             const mrpVal = document.getElementById('quickMrp').value.trim();
             const discVal = document.getElementById('quickDiscValue').value.trim();
 
-            // Validation checks as requested
             if (!mrpVal) {
                 alert('Please enter MRP');
                 document.getElementById('quickMrp').focus();
@@ -1828,7 +2011,6 @@
             }
 
             if (editingIndex !== null) {
-                // Update existing item
                 quickEstimateItems[editingIndex] = {
                     brand: brand,
                     name: nameVal,
@@ -1839,7 +2021,6 @@
                 document.getElementById('quick-entry-form-title').textContent = 'Quick Add Item (Press Enter in Item Name to go to MRP, press Enter in MRP to add item):';
                 document.getElementById('quick-form-submit-btn').textContent = '+ Add';
             } else {
-                // Add new item
                 quickEstimateItems.push({
                     brand: brand,
                     name: nameVal,
@@ -1848,7 +2029,6 @@
                 });
             }
 
-            // Reset inputs for next fast entry and loop cursor back to Item Name
             document.getElementById('quickName').value = '';
             document.getElementById('quickMrp').value = '';
             document.getElementById('manualDiscInput').value = '';
@@ -1866,7 +2046,6 @@
             const item = quickEstimateItems[idx];
             editingIndex = idx;
 
-            // Populate form fields with item data
             const brandSelect = document.getElementById('quickBrandSelect');
             let foundOption = false;
             for(let opt of brandSelect.options) {
@@ -1888,7 +2067,6 @@
             document.getElementById('quickMrp').value = item.mrp;
             document.getElementById('quickDiscValue').value = item.disc;
 
-            // Highlight button if matching
             document.querySelectorAll('.big-pct-btn').forEach(btn => {
                 if(btn.textContent.trim() === item.disc) {
                     btn.classList.add('active');
@@ -2000,7 +2178,6 @@
             document.getElementById('est-card-total').textContent = `₹${grandTotal.toFixed(2)}`;
         }
 
-        // Custom Text Formatting Toolbar Functions
         function setTextAlignment(align) {
             const editor = document.getElementById('editorCanvas');
             const display = document.getElementById('customTextDisplay');
@@ -2087,18 +2264,18 @@
         }
 
         function hideAllPanelsKeepData() {
-            ['customInputPanel', 'couponInputPanel', 'locationInputPanel', 'priceInputPanel', 'estimateInputPanel', 'multiInputPanel'].forEach(id => {
+            ['customInputPanel', 'couponInputPanel', 'locationInputPanel', 'priceInputPanel', 'estimateInputPanel', 'visitingInputPanel', 'multiInputPanel'].forEach(id => {
                 const el = document.getElementById(id);
                 if(el) el.style.display = 'none';
             });
-            ['customReceiptCol', 'couponReceiptCol', 'locationReceiptCol', 'priceReceiptCol', 'estimateReceiptCol', 'multiReceiptCol'].forEach(id => {
+            ['customReceiptCol', 'couponReceiptCol', 'locationReceiptCol', 'priceReceiptCol', 'estimateReceiptCol', 'visitingReceiptCol', 'multiReceiptCol'].forEach(id => {
                 const el = document.getElementById(id);
                 if(el) el.style.display = 'none';
             });
             document.getElementById('waReceiptCol').style.display = 'flex';
             document.getElementById('exReceiptCol').style.display = 'flex';
 
-            ['btn-toggle-custom', 'btn-toggle-coupon', 'btn-toggle-location', 'btn-toggle-price', 'btn-toggle-estimate', 'btn-toggle-multi'].forEach(id => {
+            ['btn-toggle-custom', 'btn-toggle-coupon', 'btn-toggle-location', 'btn-toggle-price', 'btn-toggle-estimate', 'btn-toggle-visiting', 'btn-toggle-multi'].forEach(id => {
                 const btn = document.getElementById(id);
                 if(btn) btn.classList.remove('active-toggle');
             });
@@ -2170,11 +2347,23 @@
                 document.getElementById('exReceiptCol').style.display = 'none';
                 document.getElementById('btn-toggle-estimate').classList.add('active-toggle');
                 updateEstimateCardPreview();
-                // Set default discount if none selected yet
                 if(!document.getElementById('quickDiscValue').value) {
                     selectAndAddPct('10%');
                 }
                 document.getElementById('quickName').focus();
+            }
+        }
+
+        function toggleVisitingPanel() {
+            const panel = document.getElementById('visitingInputPanel');
+            if (panel.style.display === 'block') { hideAllPanelsKeepData(); } 
+            else {
+                hideAllPanelsKeepData();
+                panel.style.display = 'block';
+                document.getElementById('visitingReceiptCol').style.display = 'flex';
+                document.getElementById('waReceiptCol').style.display = 'none';
+                document.getElementById('exReceiptCol').style.display = 'none';
+                document.getElementById('btn-toggle-visiting').classList.add('active-toggle');
             }
         }
 
@@ -2444,6 +2633,7 @@
 
             let topHeaderHTML = `
                 <img src="Black Logo .png" class="thermal-logo" alt="Logo">
+                <div class="tagline">Feel the earth</div>
                 <div class="divider"></div>
             `;
             container.innerHTML = topHeaderHTML;
@@ -2605,6 +2795,20 @@
                             <span>TOTAL:</span>
                             <span>₹${grandTotal.toFixed(2)}</span>
                         </div>`;
+                } else if(val === 'visiting') {
+                    contentHTML += `
+                        <div style="text-align:center; border-bottom:2px solid #000; padding-bottom:4px; margin-bottom:4px;">
+                            <div style="font-size:10px; font-style:italic; font-weight:900;">Feel the earth</div>
+                        </div>
+                        <div style="font-size:10px; font-weight:900; background-color:#000000 !important; color:#ffffff !important; padding:3px 6px; margin:4px 0 2px 0; text-transform:uppercase; -webkit-print-color-adjust:exact !important; print-color-adjust:exact !important;">Core Offerings</div>
+                        <div style="font-size:10px; font-weight:900; text-transform:uppercase; margin-bottom:4px;">Organic food products, cold-pressed oils, spices & millet-based groceries</div>
+                        <div style="font-size:10px; font-weight:900; background-color:#000000 !important; color:#ffffff !important; padding:3px 6px; margin:4px 0 2px 0; text-transform:uppercase; -webkit-print-color-adjust:exact !important; print-color-adjust:exact !important;">Store Locations</div>
+                        <div style="font-size:9.5px; font-weight:900; text-transform:uppercase; margin-bottom:3px; border-left:2px solid #000; padding-left:4px;"><strong>Branch 1 (Gajuwaka):</strong> MIG-20, Near Timpany School, Vuda Colony, Gonthinavanipalem, Visakhapatnam - 530044</div>
+                        <div style="font-size:9.5px; font-weight:900; text-transform:uppercase; margin-bottom:4px; border-left:2px solid #000; padding-left:4px;"><strong>Branch 2 (Kurmannapalem):</strong> Vuda Phase 7, HIG-7, Opposite Gloria Vidya Kendram, Visakhapatnam - 530049</div>
+                        <div style="background-color:#000000 !important; color:#ffffff !important; padding:4px 6px; margin-top:4px; display:flex; justify-content:space-between; font-size:9.5px; font-weight:900; -webkit-print-color-adjust:exact !important; print-color-adjust:exact !important;">
+                            <span>📞 9676287766</span>
+                            <span>🌐 www.lalithanaturals.com</span>
+                        </div>`;
                 }
 
                 section.innerHTML = contentHTML;
@@ -2637,6 +2841,7 @@
             else if (type === 'both-locations') document.body.classList.add('print-both-locations');
             else if (type === 'price') document.body.classList.add('print-price');
             else if (type === 'estimate') document.body.classList.add('print-estimate');
+            else if (type === 'visiting') document.body.classList.add('print-visiting');
 
             window.print();
         }
