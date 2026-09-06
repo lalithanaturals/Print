@@ -94,6 +94,7 @@
         .icon-btn.coupon::before      { background: linear-gradient(90deg, #ec4899, #be185d); }
         .icon-btn.location::before    { background: linear-gradient(90deg, #10b981, #047857); }
         .icon-btn.price::before       { background: linear-gradient(90deg, #0ea5e9, #0284c7); }
+        .icon-btn.estimate::before    { background: linear-gradient(90deg, #8b5cf6, #6d28d9); }
         .icon-btn.multibutton::before { background: linear-gradient(90deg, #f97316, #c2410c); }
 
         .icon-btn:hover {
@@ -126,6 +127,7 @@
         .coupon .btn-badge    { background: #ec4899; }
         .location .btn-badge  { background: #10b981; }
         .price .btn-badge     { background: #0ea5e9; }
+        .estimate .btn-badge  { background: #8b5cf6; }
 
         .icon-btn svg {
             width: 36px;
@@ -148,7 +150,7 @@
         }
 
         /* Panels Shared */
-        .text-input-panel, .coupon-panel, .location-panel, .price-panel, .multi-print-panel {
+        .text-input-panel, .coupon-panel, .location-panel, .price-panel, .estimate-panel, .multi-print-panel {
             display: none;
             width: 100%;
             max-width: 900px;
@@ -191,7 +193,7 @@
         }
 
         /* Form Elements */
-        .coupon-grid, .location-grid, .price-grid, .multi-grid {
+        .coupon-grid, .location-grid, .price-grid, .estimate-grid, .multi-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
             gap: 14px;
@@ -216,8 +218,8 @@
         }
 
         .form-control {
-            padding: 8px 10px;
-            font-size: 12px;
+            padding: 10px 12px;
+            font-size: 14px;
             font-weight: 900;
             border: 1.5px solid #cbd5e1;
             border-radius: 8px;
@@ -236,8 +238,8 @@
 
         .type-btn {
             flex: 1;
-            min-width: 70px;
-            padding: 8px;
+            min-width: 50px;
+            padding: 8px 6px;
             border: 1.5px solid #cbd5e1;
             border-radius: 8px;
             background: #f8fafc;
@@ -250,9 +252,9 @@
         }
 
         .type-btn.active {
-            background: #0ea5e9;
+            background: #8b5cf6;
             color: #ffffff;
-            border-color: #0ea5e9;
+            border-color: #8b5cf6;
         }
 
         .coupon-panel .type-btn.active {
@@ -270,75 +272,154 @@
             border-color: #0ea5e9;
         }
 
-        .counter-box {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .cnt-btn {
-            width: 32px;
-            height: 32px;
-            border-radius: 8px;
+        /* Estimate Item Fast Entry Row */
+        .estimate-quick-bar {
+            background: #f1f5f9;
             border: 1.5px solid #cbd5e1;
-            background: #f8fafc;
-            font-weight: 900;
-            font-size: 16px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            border-radius: 12px;
+            padding: 14px;
+            margin-bottom: 14px;
         }
 
-        .cnt-btn:hover {
-            background: #e2e8f0;
+        .estimate-quick-grid {
+            display: grid;
+            grid-template-columns: 2fr 2fr auto;
+            gap: 10px;
+            align-items: flex-end;
         }
 
-        .cnt-value {
+        @media (max-width: 768px) {
+            .estimate-quick-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .add-fast-btn {
+            background: #8b5cf6;
+            color: #fff;
+            border: none;
+            padding: 0 20px;
+            height: 44px;
+            border-radius: 8px;
             font-size: 14px;
             font-weight: 900;
-            min-width: 45px;
+            cursor: pointer;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+        .add-fast-btn:hover {
+            filter: brightness(1.1);
+        }
+
+        /* BIG TOUCH BUTTONS FOR QUICK PERCENTAGES & RUPEES */
+        .big-pct-container {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr) 1.5fr;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        @media (max-width: 768px) {
+            .big-pct-container {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        .big-pct-btn {
+            background: #ffffff;
+            border: 2px solid #cbd5e1;
+            border-radius: 12px;
+            padding: 14px 6px;
+            font-size: 16px;
+            font-weight: 900;
+            color: #1e293b;
+            cursor: pointer;
+            text-align: center;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            transition: all 0.1s ease;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .big-pct-btn:hover {
+            border-color: #8b5cf6;
+            transform: translateY(-2px);
+        }
+
+        .big-pct-btn.active {
+            background: #8b5cf6;
+            color: #ffffff;
+            border-color: #8b5cf6;
+            box-shadow: 0 6px 12px -2px rgba(139, 92, 246, 0.3);
+        }
+
+        .manual-input-box {
+            display: flex;
+            align-items: center;
+            background: #fff;
+            border: 2px solid #cbd5e1;
+            border-radius: 12px;
+            padding: 0 8px;
+        }
+
+        .manual-input-box input {
+            width: 100%;
+            border: none;
+            outline: none;
+            font-size: 14px;
+            font-weight: 900;
+            padding: 10px 4px;
             text-align: center;
         }
 
-        .preset-select {
-            padding: 8px 12px;
-            font-size: 12px;
+        /* Estimate Item List Table */
+        .est-items-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            background: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid #cbd5e1;
+        }
+        .est-items-table th, .est-items-table td {
+            padding: 10px 12px;
+            font-size: 13px;
             font-weight: 900;
-            border: 1.5px solid #cbd5e1;
-            border-radius: 10px;
+            border-bottom: 1px solid #e2e8f0;
+            text-align: left;
+        }
+        .est-items-table th {
             background: #f8fafc;
-            color: #334155;
-            cursor: pointer;
-            outline: none;
+            color: #475569;
+            text-transform: uppercase;
         }
-
-        .clear-btn {
+        .table-action-btns {
+            display: flex;
+            gap: 6px;
+        }
+        .edit-item-btn {
+            background: #3b82f6;
+            color: #fff;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 900;
+            font-size: 12px;
+        }
+        .del-item-btn {
             background: #ef4444;
-            color: #ffffff;
+            color: #fff;
             border: none;
-            padding: 10px 16px;
-            border-radius: 10px;
-            font-size: 12px;
-            font-weight: 900;
+            padding: 4px 8px;
+            border-radius: 6px;
             cursor: pointer;
-            text-transform: uppercase;
-        }
-
-        .upload-file-btn {
-            background: #0284c7;
-            color: #ffffff;
-            border: none;
-            padding: 10px 16px;
-            border-radius: 10px;
-            font-size: 12px;
             font-weight: 900;
-            cursor: pointer;
-            text-transform: uppercase;
+            font-size: 12px;
         }
 
         /* Uniform Big & Equal Action Buttons */
-        .print-now-btn, .print-coupon-btn, .print-location-btn, .print-price-btn, .print-multi-btn {
+        .print-now-btn, .print-coupon-btn, .print-location-btn, .print-price-btn, .print-estimate-btn, .print-multi-btn {
             flex: 1;
             min-width: 170px;
             height: 44px;
@@ -360,7 +441,7 @@
             white-space: nowrap;
         }
 
-        .print-now-btn:hover, .print-coupon-btn:hover, .print-location-btn:hover, .print-price-btn:hover, .print-multi-btn:hover {
+        .print-now-btn:hover, .print-coupon-btn:hover, .print-location-btn:hover, .print-price-btn:hover, .print-estimate-btn:hover, .print-multi-btn:hover {
             transform: translateY(-1px);
             filter: brightness(1.05);
         }
@@ -368,6 +449,7 @@
         .print-coupon-btn   { background: #ec4899; }
         .print-location-btn { background: #10b981; }
         .print-price-btn    { background: #0ea5e9; }
+        .print-estimate-btn { background: #8b5cf6; }
         .print-multi-btn    { background: #f97316; }
 
         .editor-canvas {
@@ -521,7 +603,7 @@
             align-items: center;
         }
 
-        .custom-text-column, .coupon-receipt-column, .location-receipt-column, .price-receipt-column, .multi-receipt-column {
+        .custom-text-column, .coupon-receipt-column, .location-receipt-column, .price-receipt-column, .estimate-receipt-column, .multi-receipt-column {
             display: none;
         }
 
@@ -678,13 +760,13 @@
         }
 
         .rate-table td {
-            font-size: 16px !important;
+            font-size: 14px !important;
             font-weight: 900 !important;
         }
 
         .rate-table th {
             background-color: #ffffff;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 900;
             text-transform: uppercase;
         }
@@ -711,7 +793,6 @@
             text-align: left;
         }
 
-        /* Ensure bullets render properly inside previews */
         .custom-text-content ul, .editor-canvas ul {
             padding-left: 20px;
             list-style-type: disc;
@@ -858,7 +939,7 @@
                 -webkit-font-smoothing: none !important;
             }
 
-            .app-header, .big-buttons-bar, .text-input-panel, .coupon-panel, .location-panel, .price-panel, .multi-print-panel, .card-label {
+            .app-header, .big-buttons-bar, .text-input-panel, .coupon-panel, .location-panel, .price-panel, .estimate-panel, .multi-print-panel, .card-label {
                 display: none !important;
             }
             
@@ -909,6 +990,7 @@
             body.print-coupon .coupon-receipt-column { display: block !important; }
             body.print-location .location-receipt-column { display: block !important; }
             body.print-price .price-receipt-column { display: block !important; }
+            body.print-estimate .estimate-receipt-column { display: block !important; }
 
             /* Print Both Locations */
             body.print-both-locations .location-receipt-column { 
@@ -942,7 +1024,7 @@
 
     <div class="app-header">
         <h1>Lalitha Naturals Thermal Print Center</h1>
-        <p>Tap a print option below or manage store locations, coupons & custom text</p>
+        <p>Tap a print option below or manage store locations, estimates & custom text</p>
     </div>
 
     <!-- Dashboard Button Bar -->
@@ -1012,6 +1094,24 @@
             <span>Price Print</span>
         </button>
 
+        <!-- 7. Estimate / Bill Calculator -->
+        <button class="icon-btn estimate" id="btn-toggle-estimate" onclick="toggleEstimatePanel()">
+            <span class="btn-badge">07</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect>
+                <line x1="8" y1="6" x2="16" y2="6"></line>
+                <line x1="16" y1="14" x2="16" y2="18"></line>
+                <path d="M8 10h.01"></path>
+                <path d="M12 10h.01"></path>
+                <path d="M16 10h.01"></path>
+                <path d="M8 14h.01"></path>
+                <path d="M12 14h.01"></path>
+                <path d="M8 18h.01"></path>
+                <path d="M12 18h.01"></path>
+            </svg>
+            <span>Estimate Bill</span>
+        </button>
+
         <!-- Custom Multi-Select Combined Print Button -->
         <button class="icon-btn multibutton" id="btn-toggle-multi" onclick="toggleMultiPanel()">
             <span class="btn-badge" style="background:#f97316;">★</span>
@@ -1045,6 +1145,7 @@
                     <label class="checkbox-card-item"><input type="checkbox" value="loc-gajuwaka" onchange="buildMultiPreview()"> Location: Gajuwaka</label>
                     <label class="checkbox-card-item"><input type="checkbox" value="loc-kurmannapalem" onchange="buildMultiPreview()"> Location: Kurmannapalem</label>
                     <label class="checkbox-card-item"><input type="checkbox" value="price" onchange="buildMultiPreview()"> Price Tag</label>
+                    <label class="checkbox-card-item"><input type="checkbox" value="estimate" onchange="buildMultiPreview()"> Estimate Bill</label>
                 </div>
             </div>
 
@@ -1149,11 +1250,107 @@
             </div>
             <div class="form-group" id="price-disc-val-group">
                 <label id="price-disc-label">Discount Percentage (%)</label>
-                <input type="number" class="form-control" id="price-disc-val" placeholder="e.g. 10" value="" oninput="updatePriceCardPreview()">
+                <input type="number" class="form-control" id="price-disc-val" placeholder="e.g. 10" value="10" oninput="updatePriceCardPreview()">
             </div>
             <div class="form-group full-width">
                 <label>Notes (Optional)</label>
                 <input type="text" class="form-control sentence-case-input" id="price-notes" placeholder="e.g. Festival Batch" value="" oninput="updatePriceCardPreview()">
+            </div>
+        </div>
+    </div>
+
+    <!-- Estimate Bill Input Panel -->
+    <div class="estimate-panel" id="estimateInputPanel">
+        <div class="panel-header-row">
+            <span class="panel-title">🧮 Fast Estimate Bill Calculator</span>
+            <div class="panel-header-actions">
+                <button class="print-estimate-btn" onclick="triggerMobilePrint('estimate')">🖨️ Print Estimate</button>
+            </div>
+        </div>
+        
+        <div class="estimate-grid">
+            <div class="form-group">
+                <label>Customer Name (Optional)</label>
+                <input type="text" class="form-control sentence-case-input" id="est-cust-name" placeholder="e.g. Ramesh" oninput="updateEstimateCardPreview()">
+            </div>
+            <div class="form-group">
+                <label>Phone Number (Optional)</label>
+                <input type="text" class="form-control" id="est-cust-phone" placeholder="e.g. 9876543210" oninput="updateEstimateCardPreview()">
+            </div>
+
+            <!-- Fast Entry Bar with dropdown and manual option for Brand and Discount -->
+            <div class="form-group full-width estimate-quick-bar">
+                <label id="quick-entry-form-title">Quick Add Item (Press Enter in Item Name to go to MRP, press Enter in MRP to add item):</label>
+                <div class="estimate-quick-grid" style="margin-top: 6px;">
+                    
+                    <!-- Brand Dropdown + Manual Option -->
+                    <div class="form-group">
+                        <label>Brand Name</label>
+                        <select class="form-control" id="quickBrandSelect" onchange="handleBrandSelectChange(this)">
+                            <option value="Lalitha Naturals">Lalitha Naturals</option>
+                            <option value="The Indus Valley">The Indus Valley</option>
+                            <option value="Solara">Solara</option>
+                            <option value="Organic Tattva">Organic Tattva</option>
+                            <option value="Manual">[ Type Custom Brand ]</option>
+                        </select>
+                        <input type="text" class="form-control sentence-case-input" id="quickBrandManual" placeholder="Type Brand..." style="display:none; margin-top:4px;" onkeydown="handleQuickKey(event, 'brand')">
+                    </div>
+
+                    <!-- Item Name & MRP Grid -->
+                    <div class="form-group">
+                        <label>Item Name (Optional)</label>
+                        <input type="text" class="form-control sentence-case-input" id="quickName" placeholder="Item Name (optional)" onkeydown="handleQuickKey(event, 'name')">
+                    </div>
+
+                    <div class="form-group">
+                        <label>MRP (₹) <span style="color:#ef4444;">*</span></label>
+                        <input type="number" class="form-control" id="quickMrp" placeholder="MRP" onkeydown="handleQuickKey(event, 'mrp')">
+                    </div>
+
+                    <!-- Hidden field holding the active discount value -->
+                    <input type="hidden" id="quickDiscValue" value="">
+
+                    <div class="form-group" style="display:none;">
+                        <button class="add-fast-btn" id="quick-form-submit-btn" onclick="addQuickItemCustom()">+ Add</button>
+                    </div>
+                </div>
+
+                <!-- Big Touch Percentage & Rupees Buttons ordered: 40% 25% 10% 5% 0% custom -->
+                <div style="margin-top: 14px;">
+                    <label style="margin-bottom: 6px; display: block;">Select Discount & Tap to Add Instantly (Required):</label>
+                    <div class="big-pct-container">
+                        <button type="button" class="big-pct-btn" onclick="selectAndAddPct('40%')">40%</button>
+                        <button type="button" class="big-pct-btn" onclick="selectAndAddPct('25%')">25%</button>
+                        <button type="button" class="big-pct-btn" id="default-pct-btn" onclick="selectAndAddPct('10%')">10%</button>
+                        <button type="button" class="big-pct-btn" onclick="selectAndAddPct('5%')">5%</button>
+                        <button type="button" class="big-pct-btn" onclick="selectAndAddPct('0%')">0%</button>
+                        
+                        <!-- Manual custom input box for % or ₹ -->
+                        <div class="manual-input-box" title="Type custom value like 15% or 50₹">
+                            <input type="text" id="manualDiscInput" placeholder="custom..." oninput="handleManualDiscType(this)" onkeydown="handleQuickKey(event, 'mrp')">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Added Items Table Preview -->
+            <div class="form-group full-width">
+                <label>Added Items List:</label>
+                <table class="est-items-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 50px;">S.No</th>
+                            <th>Brand / Item</th>
+                            <th>MRP</th>
+                            <th>Disc</th>
+                            <th>Price</th>
+                            <th style="width:90px;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="quickItemsTableBody">
+                        <!-- Injected rows -->
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
@@ -1327,6 +1524,38 @@
             </div>
         </div>
 
+        <!-- Estimate Bill Receipt Column -->
+        <div class="receipt-column estimate-receipt-column" id="estimateReceiptCol">
+            <div class="card-label">Estimate Bill (80mm)</div>
+            <div class="preview-box">
+                <div class="card estimate-card" id="estimate-card-el" style="text-align: center;">
+                    <div class="header">ESTIMATE BILL</div>
+                    <img src="Black Logo .png" class="thermal-logo" alt="Logo">
+                    <div class="divider"></div>
+                    <div id="est-card-cust-info" style="font-size:11px; font-weight:900; text-align:left; margin-bottom:4px; display:none;"></div>
+                    <table class="rate-table" id="est-card-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 35px;">S.No</th>
+                                <th style="text-align:left;">Item</th>
+                                <th>MRP</th>
+                                <th>Price</th>
+                            </tr>
+                        </thead>
+                        <tbody id="est-card-tbody">
+                            <!-- Rows injected -->
+                        </tbody>
+                    </table>
+                    <div style="display: flex; justify-content: space-between; font-size: 13px; font-weight: 900; margin-top: 6px; padding: 4px 2px; border-top: 1.5px solid #000;">
+                        <span>TOTAL ESTIMATE:</span>
+                        <span id="est-card-total">₹0.00</span>
+                    </div>
+                    <div class="divider"></div>
+                    <div class="footer-text">THANK YOU! VISIT AGAIN</div>
+                </div>
+            </div>
+        </div>
+
         <div class="receipt-column custom-text-column" id="customReceiptCol">
             <div class="card-label">Custom Text (80mm)</div>
             <div class="preview-box">
@@ -1470,6 +1699,9 @@
         let locationBranch = 'gajuwaka';
         let selectedStaff = 'Bhargav';
         let priceDiscType = 'pct';
+        let editingIndex = null; // Track if we are editing an item
+
+        let quickEstimateItems = [];
 
         window.addEventListener('DOMContentLoaded', () => {
             const todayStr = new Date().toISOString().split('T')[0];
@@ -1479,11 +1711,11 @@
             updateLocationCardPreview();
             updateCouponCardPreview();
             updatePriceCardPreview();
+            renderQuickItemsTable();
             initSentenceCaseListeners();
             buildMultiPreview();
         });
 
-        // Automatically format text inputs to capitalize first letter after dots
         function initSentenceCaseListeners() {
             document.querySelectorAll('.sentence-case-input').forEach(input => {
                 input.addEventListener('input', function(e) {
@@ -1500,6 +1732,272 @@
             }).replace(/^\s*[a-z]/, function(match) {
                 return match.toUpperCase();
             });
+        }
+
+        // Dropdown & Manual Toggle Handlers + Automatic Brand Discount Rules
+        function handleBrandSelectChange(selectEl) {
+            const manualInput = document.getElementById('quickBrandManual');
+            const val = selectEl.value;
+
+            if (val === 'Manual') {
+                manualInput.style.display = 'block';
+                manualInput.focus();
+            } else {
+                manualInput.style.display = 'none';
+                manualInput.value = '';
+                // When brand is selected from dropdown, jump cursor to item name (optional) or MRP
+                document.getElementById('quickName').focus();
+            }
+
+            // Automatic discount rule based on brand selection
+            if (val === 'The Indus Valley') {
+                selectAndAddPct('40%');
+            } else if (val === 'Solara') {
+                selectAndAddPct('25%');
+            }
+        }
+
+        function selectAndAddPct(pctVal) {
+            document.getElementById('quickDiscValue').value = pctVal;
+            document.getElementById('manualDiscInput').value = '';
+            
+            // Highlight active big button
+            document.querySelectorAll('.big-pct-btn').forEach(btn => btn.classList.remove('active'));
+            
+            // Find and highlight matching button if present
+            document.querySelectorAll('.big-pct-btn').forEach(btn => {
+                if(btn.textContent.trim() === pctVal) {
+                    btn.classList.add('active');
+                }
+            });
+        }
+
+        function handleManualDiscType(inputEl) {
+            let val = inputEl.value.trim();
+            if(!val) return;
+
+            // Clear button highlights when manual typing
+            document.querySelectorAll('.big-pct-btn').forEach(btn => btn.classList.remove('active'));
+
+            // Format input as discount (supports e.g. "15%" or "50₹" or just numbers)
+            let formattedDisc = val;
+            if(!val.endsWith('%') && !val.includes('₹') && !isNaN(val)) {
+                formattedDisc = val + '%';
+            }
+            document.getElementById('quickDiscValue').value = formattedDisc;
+        }
+
+        function handleQuickKey(e, fieldType) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                if (fieldType === 'brand') {
+                    document.getElementById('quickName').focus();
+                } else if (fieldType === 'name') {
+                    document.getElementById('quickMrp').focus();
+                } else if (fieldType === 'mrp') {
+                    addQuickItemCustom();
+                }
+            }
+        }
+
+        function addQuickItemCustom() {
+            const brandSelect = document.getElementById('quickBrandSelect');
+            let brand = brandSelect.value;
+            if (brand === 'Manual') {
+                brand = document.getElementById('quickBrandManual').value.trim() || 'Lalitha Naturals';
+            }
+
+            let nameVal = document.getElementById('quickName').value.trim();
+            if (!nameVal) {
+                nameVal = 'Item'; // Default fallback since entering item name is optional
+            }
+
+            const mrpVal = document.getElementById('quickMrp').value.trim();
+            const discVal = document.getElementById('quickDiscValue').value.trim();
+
+            // Validation checks as requested
+            if (!mrpVal) {
+                alert('Please enter MRP');
+                document.getElementById('quickMrp').focus();
+                return;
+            }
+
+            if (!discVal) {
+                alert('Please select or enter a Discount');
+                return;
+            }
+
+            if (editingIndex !== null) {
+                // Update existing item
+                quickEstimateItems[editingIndex] = {
+                    brand: brand,
+                    name: nameVal,
+                    mrp: parseFloat(mrpVal) || 0,
+                    disc: discVal
+                };
+                editingIndex = null;
+                document.getElementById('quick-entry-form-title').textContent = 'Quick Add Item (Press Enter in Item Name to go to MRP, press Enter in MRP to add item):';
+                document.getElementById('quick-form-submit-btn').textContent = '+ Add';
+            } else {
+                // Add new item
+                quickEstimateItems.push({
+                    brand: brand,
+                    name: nameVal,
+                    mrp: parseFloat(mrpVal) || 0,
+                    disc: discVal
+                });
+            }
+
+            // Reset inputs for next fast entry and loop cursor back to Item Name
+            document.getElementById('quickName').value = '';
+            document.getElementById('quickMrp').value = '';
+            document.getElementById('manualDiscInput').value = '';
+            
+            if (brandSelect.value === 'Manual') {
+                document.getElementById('quickBrandManual').value = '';
+            }
+            
+            document.getElementById('quickName').focus();
+
+            renderQuickItemsTable();
+        }
+
+        function editQuickItem(idx) {
+            const item = quickEstimateItems[idx];
+            editingIndex = idx;
+
+            // Populate form fields with item data
+            const brandSelect = document.getElementById('quickBrandSelect');
+            let foundOption = false;
+            for(let opt of brandSelect.options) {
+                if(opt.value === item.brand) {
+                    brandSelect.value = item.brand;
+                    foundOption = true;
+                    break;
+                }
+            }
+            if(!foundOption) {
+                brandSelect.value = 'Manual';
+                document.getElementById('quickBrandManual').style.display = 'block';
+                document.getElementById('quickBrandManual').value = item.brand;
+            } else {
+                document.getElementById('quickBrandManual').style.display = 'none';
+            }
+
+            document.getElementById('quickName').value = item.name === 'Item' ? '' : item.name;
+            document.getElementById('quickMrp').value = item.mrp;
+            document.getElementById('quickDiscValue').value = item.disc;
+
+            // Highlight button if matching
+            document.querySelectorAll('.big-pct-btn').forEach(btn => {
+                if(btn.textContent.trim() === item.disc) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+
+            if(!['40%', '25%', '5%', '10%', '0%'].includes(item.disc)) {
+                document.getElementById('manualDiscInput').value = item.disc;
+            }
+
+            document.getElementById('quick-entry-form-title').textContent = '✏️ Editing Item (Modify and click Update):';
+            document.getElementById('quick-form-submit-btn').textContent = 'Update';
+            document.getElementById('quickName').focus();
+        }
+
+        function removeQuickItem(idx) {
+            if (editingIndex === idx) {
+                editingIndex = null;
+                document.getElementById('quick-entry-form-title').textContent = 'Quick Add Item (Press Enter in Item Name to go to MRP, press Enter in MRP to add item):';
+                document.getElementById('quick-form-submit-btn').textContent = '+ Add';
+                document.getElementById('quickName').value = '';
+                document.getElementById('quickMrp').value = '';
+            }
+            quickEstimateItems.splice(idx, 1);
+            renderQuickItemsTable();
+        }
+
+        function renderQuickItemsTable() {
+            const tbody = document.getElementById('quickItemsTableBody');
+            tbody.innerHTML = '';
+
+            quickEstimateItems.forEach((item, idx) => {
+                const mrp = item.mrp;
+                let discInput = String(item.disc).trim();
+                let finalPrice = mrp;
+
+                if (discInput.endsWith('%')) {
+                    let pct = parseFloat(discInput) || 0;
+                    finalPrice = mrp - (mrp * (pct / 100));
+                } else if (discInput.includes('₹') || (!isNaN(discInput) && discInput !== '')) {
+                    let discNum = parseFloat(discInput.replace('₹', '')) || 0;
+                    finalPrice = mrp - discNum;
+                }
+                if (finalPrice < 0) finalPrice = 0;
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td style="text-align:center;">${idx + 1}</td>
+                    <td><strong>${item.brand}</strong> - ${item.name}</td>
+                    <td>₹${mrp.toFixed(2)}</td>
+                    <td>${item.disc}</td>
+                    <td style="color:#8b5cf6;">₹${finalPrice.toFixed(2)}</td>
+                    <td>
+                        <div class="table-action-btns">
+                            <button class="edit-item-btn" onclick="editQuickItem(${idx})">Edit</button>
+                            <button class="del-item-btn" onclick="removeQuickItem(${idx})">×</button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            updateEstimateCardPreview();
+        }
+
+        function updateEstimateCardPreview() {
+            const custName = document.getElementById('est-cust-name').value.trim();
+            const custPhone = document.getElementById('est-cust-phone').value.trim();
+            const custInfoEl = document.getElementById('est-card-cust-info');
+
+            if(custName || custPhone) {
+                custInfoEl.style.display = 'block';
+                custInfoEl.innerHTML = `Customer: <strong>${custName || 'N/A'}</strong> | Ph: <strong>${custPhone || 'N/A'}</strong>`;
+            } else {
+                custInfoEl.style.display = 'none';
+            }
+
+            const tbody = document.getElementById('est-card-tbody');
+            tbody.innerHTML = '';
+            let grandTotal = 0;
+
+            quickEstimateItems.forEach((item, idx) => {
+                const mrp = item.mrp;
+                let discInput = String(item.disc).trim();
+                let finalPrice = mrp;
+
+                if (discInput.endsWith('%')) {
+                    let pct = parseFloat(discInput) || 0;
+                    finalPrice = mrp - (mrp * (pct / 100));
+                } else if (discInput.includes('₹') || (!isNaN(discInput) && discInput !== '')) {
+                    let discNum = parseFloat(discInput.replace('₹', '')) || 0;
+                    finalPrice = mrp - discNum;
+                }
+                if (finalPrice < 0) finalPrice = 0;
+                grandTotal += finalPrice;
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td style="text-align:center;">${idx + 1}</td>
+                    <td style="text-align:left;">${item.name}</td>
+                    <td>₹${mrp.toFixed(2)}</td>
+                    <td style="font-weight:900;">₹${finalPrice.toFixed(2)}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            document.getElementById('est-card-total').textContent = `₹${grandTotal.toFixed(2)}`;
         }
 
         // Custom Text Formatting Toolbar Functions
@@ -1538,7 +2036,6 @@
             handleEditorInput();
         }
 
-        // Updated font size function: applies ONLY to selected text if highlighted, otherwise defaults block
         function changeEditorFontSize(size) {
             const editor = document.getElementById('editorCanvas');
             const display = document.getElementById('customTextDisplay');
@@ -1590,18 +2087,18 @@
         }
 
         function hideAllPanelsKeepData() {
-            ['customInputPanel', 'couponInputPanel', 'locationInputPanel', 'priceInputPanel', 'multiInputPanel'].forEach(id => {
+            ['customInputPanel', 'couponInputPanel', 'locationInputPanel', 'priceInputPanel', 'estimateInputPanel', 'multiInputPanel'].forEach(id => {
                 const el = document.getElementById(id);
                 if(el) el.style.display = 'none';
             });
-            ['customReceiptCol', 'couponReceiptCol', 'locationReceiptCol', 'priceReceiptCol', 'multiReceiptCol'].forEach(id => {
+            ['customReceiptCol', 'couponReceiptCol', 'locationReceiptCol', 'priceReceiptCol', 'estimateReceiptCol', 'multiReceiptCol'].forEach(id => {
                 const el = document.getElementById(id);
                 if(el) el.style.display = 'none';
             });
             document.getElementById('waReceiptCol').style.display = 'flex';
             document.getElementById('exReceiptCol').style.display = 'flex';
 
-            ['btn-toggle-custom', 'btn-toggle-coupon', 'btn-toggle-location', 'btn-toggle-price', 'btn-toggle-multi'].forEach(id => {
+            ['btn-toggle-custom', 'btn-toggle-coupon', 'btn-toggle-location', 'btn-toggle-price', 'btn-toggle-estimate', 'btn-toggle-multi'].forEach(id => {
                 const btn = document.getElementById(id);
                 if(btn) btn.classList.remove('active-toggle');
             });
@@ -1659,6 +2156,25 @@
                 document.getElementById('exReceiptCol').style.display = 'none';
                 document.getElementById('btn-toggle-price').classList.add('active-toggle');
                 updatePriceCardPreview();
+            }
+        }
+
+        function toggleEstimatePanel() {
+            const panel = document.getElementById('estimateInputPanel');
+            if (panel.style.display === 'block') { hideAllPanelsKeepData(); } 
+            else {
+                hideAllPanelsKeepData();
+                panel.style.display = 'block';
+                document.getElementById('estimateReceiptCol').style.display = 'flex';
+                document.getElementById('waReceiptCol').style.display = 'none';
+                document.getElementById('exReceiptCol').style.display = 'none';
+                document.getElementById('btn-toggle-estimate').classList.add('active-toggle');
+                updateEstimateCardPreview();
+                // Set default discount if none selected yet
+                if(!document.getElementById('quickDiscValue').value) {
+                    selectAndAddPct('10%');
+                }
+                document.getElementById('quickName').focus();
             }
         }
 
@@ -2054,6 +2570,41 @@
                         ${qtyHtml}
                         ${priceHtml}
                         ${notesHtml}`;
+                } else if(val === 'estimate') {
+                    const custName = document.getElementById('est-cust-name').value.trim();
+                    const custPhone = document.getElementById('est-cust-phone').value.trim();
+                    let custHtml = (custName || custPhone) ? `<div style="font-size:11px; font-weight:900; text-align:left; margin-bottom:4px;">Customer: <strong>${custName || 'N/A'}</strong> | Ph: <strong>${custPhone || 'N/A'}</strong></div>` : '';
+                    
+                    let rowsHtml = '';
+                    let grandTotal = 0;
+                    quickEstimateItems.forEach((item, i) => {
+                        const mrp = item.mrp;
+                        let discInput = String(item.disc).trim();
+                        let finalPrice = mrp;
+                        if (discInput.endsWith('%')) {
+                            let pct = parseFloat(discInput) || 0;
+                            finalPrice = mrp - (mrp * (pct / 100));
+                        } else if (discInput.includes('₹') || (!isNaN(discInput) && discInput !== '')) {
+                            let discNum = parseFloat(discInput.replace('₹', '')) || 0;
+                            finalPrice = mrp - discNum;
+                        }
+                        if (finalPrice < 0) finalPrice = 0;
+                        grandTotal += finalPrice;
+
+                        rowsHtml += `<tr><td style="text-align:center;">${i + 1}</td><td style="text-align:left;">${item.name}</td><td>₹${mrp.toFixed(2)}</td><td style="font-weight:900;">₹${finalPrice.toFixed(2)}</td></tr>`;
+                    });
+
+                    contentHTML += `
+                        <div class="header">Estimate Bill</div>
+                        ${custHtml}
+                        <table class="rate-table">
+                            <thead><tr><th style="width:30px;">S.No</th><th style="text-align:left;">Item</th><th>MRP</th><th>Price</th></tr></thead>
+                            <tbody>${rowsHtml}</tbody>
+                        </table>
+                        <div style="display:flex; justify-content:space-between; font-size:12px; font-weight:900; margin-top:4px; padding:3px 2px; border-top:1.5px solid #000;">
+                            <span>TOTAL:</span>
+                            <span>₹${grandTotal.toFixed(2)}</span>
+                        </div>`;
                 }
 
                 section.innerHTML = contentHTML;
@@ -2085,6 +2636,7 @@
             else if (type === 'location') document.body.classList.add('print-location', 'print-' + locationBranch);
             else if (type === 'both-locations') document.body.classList.add('print-both-locations');
             else if (type === 'price') document.body.classList.add('print-price');
+            else if (type === 'estimate') document.body.classList.add('print-estimate');
 
             window.print();
         }
