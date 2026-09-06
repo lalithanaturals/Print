@@ -1533,10 +1533,10 @@
             </div>
             <div class="form-group" id="pct-controls-group">
                 <label>Discount Percentage (Max 10%)</label>
-                <div class="counter-box">
-                    <button class="cnt-btn" onclick="adjustPct(-1)">-</button>
-                    <span class="cnt-value" id="pct-val-display">5%</span>
-                    <button class="cnt-btn" onclick="adjustPct(1)">+</button>
+                <div class="counter-box" style="display: flex; align-items: center; gap: 10px;">
+                    <button class="cnt-btn type-btn" style="flex:0; width:40px;" onclick="adjustPct(-1)">-</button>
+                    <span class="cnt-value" id="pct-val-display" style="font-weight:900; font-size:16px;">5%</span>
+                    <button class="cnt-btn type-btn" style="flex:0; width:40px;" onclick="adjustPct(1)">+</button>
                 </div>
             </div>
             <div class="form-group" id="rs-controls-group" style="display: none;">
@@ -1619,14 +1619,14 @@
                     </div>
                     <div class="footer-text">Scan QR code to join group.</div>
                     <div class="divider"></div>
-                    <div class="address-section">
-                        <div class="address-title">OUR LOCATIONS</div>
-                        <div class="store-address-box">
+                    <div class="address-section" style="text-align: left;">
+                        <div class="address-title" style="font-size:12px; font-weight:900; margin-bottom:3px;">OUR LOCATIONS</div>
+                        <div class="store-address-box" style="font-size:11px; font-weight:900; line-height:1.3;">
                             <div class="address-line"><strong>Branch-1:</strong> MIG-20, Vuda Colony, Gajuwaka</div>
                             <div class="address-line"><strong>Branch-2:</strong> Vuda phase 7, Gajuwaka</div>
                         </div>
-                        <div class="contact-row">📞 CONTACT: 9676287766</div>
-                        <div class="social-row">🌐 www.lalithanaturals.com</div>
+                        <div class="contact-row" style="font-size:11px; font-weight:900; margin-top:3px;">📞 CONTACT: 9676287766</div>
+                        <div class="social-row" style="font-size:11px; font-weight:900;">🌐 www.lalithanaturals.com</div>
                     </div>
                 </div>
             </div>
@@ -1838,8 +1838,8 @@
             <div class="card-label">Store Location QR (80mm)</div>
             <div class="preview-box" style="flex-direction: column; align-items: center; gap: 15px;">
                 <div class="loc-card-wrapper" id="loc-gajuwaka-wrapper" style="width: 100%;">
-                    <div class="card location-card">
-                        <div class="location-card-title">VISIT OUR STORE</div>
+                    <div class="card location-card" style="text-align: center;">
+                        <div class="location-card-title" style="font-size:15px; font-weight:900;">VISIT OUR STORE</div>
                         <div class="tagline">Scan for Google Map Directions</div>
                         <div class="divider"></div>
                         <div class="location-card-branch">GAJUWAKA BRANCH</div>
@@ -1854,11 +1854,11 @@
                 </div>
 
                 <div class="loc-card-wrapper" id="loc-kurmannapalem-wrapper" style="width: 100%;">
-                    <div class="card location-card">
-                        <div class="location-card-title">VISIT OUR STORE</div>
+                    <div class="card location-card" style="text-align: center;">
+                        <div class="location-card-title" style="font-size:15px; font-weight:900;">VISIT OUR STORE</div>
                         <div class="tagline">Scan for Google Map Directions</div>
                         <div class="divider"></div>
-                        <div class="location-card-branch">KURMANNAPALEM KURMANNAPALEM BRANCH</div>
+                        <div class="location-card-branch">KURMANNAPALEM BRANCH</div>
                         <div class="location-card-address">Vuda phase 7, Hig 7, opposite Gloria Vidya Kendram, Vuda Colony, Gajuwaka, Andhra Pradesh 530049</div>
                         <div style="font-size:11px; font-weight:900; margin-bottom:6px;">📞 9676287766</div>
                         <div style="display: flex; justify-content: center; margin: 10px 0;">
@@ -2800,11 +2800,11 @@
                         <div style="text-align:center; border-bottom:2px solid #000; padding-bottom:4px; margin-bottom:4px;">
                             <div style="font-size:10px; font-style:italic; font-weight:900;">Feel the earth</div>
                         </div>
-                        <div style="font-size:10px; font-weight:900; background-color:#000000 !important; color:#ffffff !important; padding:3px 6px; margin:4px 0 2px 0; text-transform:uppercase; -webkit-print-color-adjust:exact !important; print-color-adjust:exact !important;">Core Offerings</div>
-                        <div style="font-size:10px; font-weight:900; text-transform:uppercase; margin-bottom:4px;">Organic food products, cold-pressed oils, spices & millet-based groceries</div>
-                        <div style="font-size:10px; font-weight:900; background-color:#000000 !important; color:#ffffff !important; padding:3px 6px; margin:4px 0 2px 0; text-transform:uppercase; -webkit-print-color-adjust:exact !important; print-color-adjust:exact !important;">Store Locations</div>
-                        <div style="font-size:9.5px; font-weight:900; text-transform:uppercase; margin-bottom:3px; border-left:2px solid #000; padding-left:4px;"><strong>Branch 1 (Gajuwaka):</strong> MIG-20, Near Timpany School, Vuda Colony, Gonthinavanipalem, Visakhapatnam - 530044</div>
-                        <div style="font-size:9.5px; font-weight:900; text-transform:uppercase; margin-bottom:4px; border-left:2px solid #000; padding-left:4px;"><strong>Branch 2 (Kurmannapalem):</strong> Vuda Phase 7, HIG-7, Opposite Gloria Vidya Kendram, Visakhapatnam - 530049</div>
+                        <div style="font-size:10px; font-weight:900; background-color:#000000 !important; color:#ffffff !important; padding:3px 6px; margin:4px 0 2px 0; text-align:left; text-transform:uppercase; -webkit-print-color-adjust:exact !important; print-color-adjust:exact !important;">Core Offerings</div>
+                        <div style="font-size:10px; font-weight:900; text-transform:uppercase; text-align:left; margin-bottom:4px;">Organic food products, cold-pressed oils, spices & millet-based groceries</div>
+                        <div style="font-size:10px; font-weight:900; background-color:#000000 !important; color:#ffffff !important; padding:3px 6px; margin:4px 0 2px 0; text-align:left; text-transform:uppercase; -webkit-print-color-adjust:exact !important; print-color-adjust:exact !important;">Store Locations</div>
+                        <div style="font-size:9.5px; font-weight:900; text-transform:uppercase; text-align:left; margin-bottom:3px; border-left:2px solid #000; padding-left:4px;"><strong>Branch 1 (Gajuwaka):</strong> MIG-20, Near Timpany School, Vuda Colony, Gonthinavanipalem, Visakhapatnam - 530044</div>
+                        <div style="font-size:9.5px; font-weight:900; text-transform:uppercase; text-align:left; margin-bottom:4px; border-left:2px solid #000; padding-left:4px;"><strong>Branch 2 (Kurmannapalem):</strong> Vuda Phase 7, HIG-7, Opposite Gloria Vidya Kendram, Visakhapatnam - 530049</div>
                         <div style="background-color:#000000 !important; color:#ffffff !important; padding:4px 6px; margin-top:4px; display:flex; justify-content:space-between; font-size:9.5px; font-weight:900; -webkit-print-color-adjust:exact !important; print-color-adjust:exact !important;">
                             <span>📞 9676287766</span>
                             <span>🌐 www.lalithanaturals.com</span>
