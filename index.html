@@ -378,7 +378,7 @@
             border: 1.5px solid #cbd5e1;
             border-radius: 10px;
             padding: 10px 12px;
-            font-size: 13px;
+            font-size: 28px;
             font-weight: 900;
             outline: none;
             line-height: 1.4;
@@ -566,11 +566,11 @@
             text-transform: uppercase;
         }
 
-        /* Pure Black & White Thermal Printer Optimized Logo Fix */
+        /* Larger Pure Black & White Thermal Printer Logo Size */
         .thermal-logo {
-            width: 130px;
-            max-height: 60px;
-            margin: 0 auto 4px;
+            width: 200px;
+            max-height: 90px;
+            margin: 0 auto 6px;
             display: block;
             object-fit: contain;
             mix-blend-mode: multiply;
@@ -625,13 +625,18 @@
             width: 95px;
             height: 95px;
             flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .qr-code {
             width: 100%;
             height: 100%;
             display: block;
+            object-fit: contain;
             image-rendering: pixelated;
+            filter: grayscale(100%) contrast(300%);
         }
 
         .footer-text {
@@ -696,10 +701,10 @@
         }
 
         .custom-text-content {
-            font-size: 12px;
+            font-size: 28px;
             font-weight: 900;
             color: #000000;
-            line-height: 1.4;
+            line-height: 1.3;
             white-space: pre-wrap;
             word-wrap: break-word;
             margin: 8px 0;
@@ -1042,7 +1047,7 @@
                 <div class="multi-config-row">
                     <div class="form-group">
                         <label>Custom Text Message</label>
-                        <input type="text" class="form-control capitalize-input" id="multi-input-custom-text" placeholder="Type custom text..." oninput="syncMultiInputs('custom')">
+                        <input type="text" class="form-control sentence-case-input" id="multi-input-custom-text" placeholder="Type custom text..." oninput="syncMultiInputs('custom')">
                     </div>
                 </div>
             </div>
@@ -1067,7 +1072,7 @@
             </div>
         </div>
         
-        <div class="editor-canvas" id="editorCanvas" contenteditable="true" placeholder="Type or upload text to print..." oninput="handleEditorInput()" style="text-align: left; font-size: 12px; line-height: 1.4;"></div>
+        <div class="editor-canvas" id="editorCanvas" contenteditable="true" placeholder="Type or upload text to print..." oninput="handleEditorInput()" style="text-align: left; font-size: 28px; line-height: 1.3;"></div>
 
         <div class="custom-toolbar">
             <div class="toolbar-group">
@@ -1084,18 +1089,18 @@
             <div class="toolbar-group">
                 <span>Font Size:</span>
                 <select class="tool-select" id="editor-fontsize-select" onchange="changeEditorFontSize(this.value)">
-                    <option value="10px">10px</option>
-                    <option value="12px" selected>12px</option>
-                    <option value="14px">14px</option>
                     <option value="16px">16px</option>
+                    <option value="20px">20px</option>
+                    <option value="24px">24px</option>
+                    <option value="28px" selected>28px (Max)</option>
                 </select>
             </div>
             <div class="toolbar-group">
                 <span>Spacing:</span>
                 <select class="tool-select" id="editor-spacing-select" onchange="changeEditorSpacing(this.value)">
-                    <option value="1.2">1.2x</option>
-                    <option value="1.4" selected>1.4x</option>
-                    <option value="1.6">1.6x</option>
+                    <option value="1.1">1.1x</option>
+                    <option value="1.3" selected>1.3x</option>
+                    <option value="1.5">1.5x</option>
                 </select>
             </div>
             <div class="toolbar-group">
@@ -1115,15 +1120,15 @@
         <div class="price-grid">
             <div class="form-group">
                 <label>Brand Name</label>
-                <input type="text" class="form-control capitalize-input" id="price-brand-name" placeholder="e.g. Lalitha Naturals" value="Lalitha Naturals" oninput="updatePriceCardPreview()">
+                <input type="text" class="form-control sentence-case-input" id="price-brand-name" placeholder="e.g. Lalitha Naturals" value="Lalitha Naturals" oninput="updatePriceCardPreview()">
             </div>
             <div class="form-group">
                 <label>Item Name <span style="color:#ef4444;">*</span></label>
-                <input type="text" class="form-control capitalize-input" id="price-item-name" placeholder="e.g. Groundnut Oil 1L" value="" oninput="updatePriceCardPreview()">
+                <input type="text" class="form-control sentence-case-input" id="price-item-name" placeholder="e.g. Groundnut Oil 1L" value="" oninput="updatePriceCardPreview()">
             </div>
             <div class="form-group">
                 <label>Net Weight / Quantity</label>
-                <input type="text" class="form-control capitalize-input" id="price-item-qty" placeholder="e.g. 1 Litre" value="" oninput="updatePriceCardPreview()">
+                <input type="text" class="form-control sentence-case-input" id="price-item-qty" placeholder="e.g. 1 Litre" value="" oninput="updatePriceCardPreview()">
             </div>
             <div class="form-group">
                 <label>MRP (₹) <span style="color:#ef4444;">*</span></label>
@@ -1142,7 +1147,7 @@
             </div>
             <div class="form-group full-width">
                 <label>Notes (Optional)</label>
-                <input type="text" class="form-control capitalize-input" id="price-notes" placeholder="e.g. Festival Batch" value="" oninput="updatePriceCardPreview()">
+                <input type="text" class="form-control sentence-case-input" id="price-notes" placeholder="e.g. Festival Batch" value="" oninput="updatePriceCardPreview()">
             </div>
         </div>
     </div>
@@ -1159,7 +1164,7 @@
         <div class="coupon-grid">
             <div class="form-group">
                 <label>Customer Name (Optional)</label>
-                <input type="text" class="form-control capitalize-input" id="coupon-cust-name" placeholder="e.g. John Doe" oninput="updateCouponCardPreview()">
+                <input type="text" class="form-control sentence-case-input" id="coupon-cust-name" placeholder="e.g. John Doe" oninput="updateCouponCardPreview()">
             </div>
             <div class="form-group">
                 <label>Customer Number (Optional)</label>
@@ -1203,11 +1208,11 @@
                     <button class="type-btn staff-option" id="staff-btn-vamsi" onclick="setStaffOption('Vamsi')">Vamsi</button>
                     <button class="type-btn staff-option" id="staff-btn-other" onclick="setStaffOption('Other')">Other</button>
                 </div>
-                <input type="text" class="form-control capitalize-input" id="coupon-staff-name" placeholder="Enter staff name..." value="Bhargav" oninput="updateCouponCardPreview()" style="display: none;">
+                <input type="text" class="form-control sentence-case-input" id="coupon-staff-name" placeholder="Enter staff name..." value="Bhargav" oninput="updateCouponCardPreview()" style="display: none;">
             </div>
             <div class="form-group full-width">
                 <label>Notes / Terms (Optional)</label>
-                <input type="text" class="form-control capitalize-input" id="coupon-notes" placeholder="e.g. Valid on minimum purchase of Rs.500" oninput="updateCouponCardPreview()">
+                <input type="text" class="form-control sentence-case-input" id="coupon-notes" placeholder="e.g. Valid on minimum purchase of Rs.500" oninput="updateCouponCardPreview()">
             </div>
         </div>
     </div>
@@ -1322,7 +1327,7 @@
                 <div class="card custom-card" id="custom-card-el">
                     <img src="Black Logo .png" class="thermal-logo" alt="Logo">
                     <div class="divider"></div>
-                    <div class="custom-text-content" id="customTextDisplay" style="text-align: left; font-size: 12px; line-height: 1.4;"></div>
+                    <div class="custom-text-content" id="customTextDisplay" style="text-align: left; font-size: 28px; line-height: 1.3;"></div>
                     <div class="divider"></div>
                 </div>
             </div>
@@ -1356,7 +1361,7 @@
                         <div style="font-size:12px; font-weight:900; margin-bottom:4px;">SCAN FOR DIRECTIONS</div>
                         <div style="display: flex; justify-content: center; margin: 4px 0;">
                             <div class="qr-container" style="width: 85px; height: 85px;">
-                                <img class="qr-code" src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https%3A%2F%2Fmaps.app.goo.gl%2FGzxq2iuM7fijRAQr6" alt="QR">
+                                <img class="qr-code" src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=https%3A%2F%2Fmaps.app.goo.gl%2FGzxq2iuM7fijRAQr6" alt="QR">
                             </div>
                         </div>
 
@@ -1390,7 +1395,7 @@
                         <div style="font-size:12px; font-weight:900; margin-bottom:4px;">SCAN FOR DIRECTIONS</div>
                         <div style="display: flex; justify-content: center; margin: 4px 0;">
                             <div class="qr-container" style="width: 85px; height: 85px;">
-                                <img class="qr-code" src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https%3A%2F%2Fmaps.app.goo.gl%2Fdpn7MfYHNzjBDrch6" alt="QR">
+                                <img class="qr-code" src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=https%3A%2F%2Fmaps.app.goo.gl%2Fdpn7MfYHNzjBDrch6" alt="QR">
                             </div>
                         </div>
 
@@ -1468,19 +1473,26 @@
             updateLocationCardPreview();
             updateCouponCardPreview();
             updatePriceCardPreview();
-            initCapitalizationListeners();
+            initSentenceCaseListeners();
             buildMultiPreview();
         });
 
-        // Automatically capitalize the first letter of text inputs
-        function initCapitalizationListeners() {
-            document.querySelectorAll('.capitalize-input').forEach(input => {
+        // Automatically format text inputs to capitalize the first letter and letters after dots
+        function initSentenceCaseListeners() {
+            document.querySelectorAll('.sentence-case-input').forEach(input => {
                 input.addEventListener('input', function(e) {
                     let val = this.value;
-                    if (val.length > 0) {
-                        this.value = val.charAt(0).toUpperCase() + val.slice(1);
-                    }
+                    this.value = formatSentenceCase(val);
                 });
+            });
+        }
+
+        function formatSentenceCase(str) {
+            if (!str) return '';
+            return str.toLowerCase().replace(/(^\s*|[.!?]\s+)([a-z])/g, function(match, separator, char) {
+                return separator + char.toUpperCase();
+            }).replace(/^\s*[a-z]/, function(match) {
+                return match.toUpperCase();
             });
         }
 
@@ -1805,25 +1817,32 @@
         }
 
         function handleEditorInput() {
-            document.getElementById('customTextDisplay').innerHTML = document.getElementById('editorCanvas').innerHTML;
-            document.getElementById('multi-input-custom-text').value = document.getElementById('editorCanvas').innerText;
-            buildMultiPreview();
+            const editor = document.getElementById('editorCanvas');
+            let rawText = editor.innerText;
+            let formattedText = formatSentenceCase(rawText);
+            
+            document.getElementById('customTextDisplay').innerText = formattedText;
+            document.getElementById('multi-input-custom-text').value = formattedText;
         }
 
         function syncMultiInputs(type) {
             if(type === 'custom') {
                 const val = document.getElementById('multi-input-custom-text').value;
-                document.getElementById('editorCanvas').innerText = val;
-                document.getElementById('customTextDisplay').innerText = val;
+                const formattedVal = formatSentenceCase(val);
+                document.getElementById('editorCanvas').innerText = formattedVal;
+                document.getElementById('customTextDisplay').innerText = formattedVal;
             }
             buildMultiPreview();
         }
 
         function loadPresetTemplate(type) {
             const editor = document.getElementById('editorCanvas');
-            if (type === 'thankyou') editor.innerHTML = "Welcome to Lalitha Naturals!<br>Thank you for shopping with us.";
-            else if (type === 'notice') editor.innerHTML = "STORE NOTICE:<br>Open from 9 AM to 9 PM.";
-            else if (type === 'offer') editor.innerHTML = "SPECIAL OFFER:<br>Discounts on organic staples today!";
+            let text = "";
+            if (type === 'thankyou') text = "Welcome to lalitha naturals. Thank you for shopping with us.";
+            else if (type === 'notice') text = "Store notice. Open from 9 am to 9 pm.";
+            else if (type === 'offer') text = "Special offer. Discounts on organic staples today.";
+            
+            editor.innerText = formatSentenceCase(text);
             handleEditorInput();
         }
 
@@ -1835,7 +1854,7 @@
         function handleFileUpload(e) {
             const reader = new FileReader();
             reader.onload = function(evt) {
-                document.getElementById('editorCanvas').innerText = evt.target.result;
+                document.getElementById('editorCanvas').innerText = formatSentenceCase(evt.target.result);
                 handleEditorInput();
             };
             reader.readAsText(e.target.files[0]);
@@ -1870,69 +1889,69 @@
 
                 if(val === 'whatsapp') {
                     contentHTML += `
-                        <div class="header">JOIN WHATSAPP GROUP</div>
+                        <div class="header">Join whatsapp group</div>
                         <div class="side-by-side-whatsapp">
                             <div class="notice-box">
-                                <div class="notice-title">OFFICIAL UPDATES ON:</div>
+                                <div class="notice-title">Official updates on:</div>
                                 <ul class="notice-list">
-                                    <li>NEW ARRIVALS</li>
-                                    <li>SPECIAL OFFERS</li>
-                                    <li>STORE NEWS</li>
-                                    <li>REAL-TIME STOCK</li>
+                                    <li>New arrivals</li>
+                                    <li>Special offers</li>
+                                    <li>Store news</li>
+                                    <li>Real-time stock</li>
                                 </ul>
                             </div>
                             <div class="qr-container" style="width:75px;height:75px;">
                                 <img class="qr-code" src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Fchat.whatsapp.com%2FE8udXvgNXAOKSXWGvud4ct" alt="QR">
                             </div>
                         </div>
-                        <div class="footer-text" style="text-align:left; margin-top:4px;">Scan QR code to join group.</div>`;
+                        <div class="footer-text" style="text-align:left; margin-top:4px;">Scan qr code to join group.</div>`;
                 } else if(val === 'exchange') {
                     contentHTML += `
-                        <div class="offer-header">EXCHANGE YOUR OLD ITEMS</div>
+                        <div class="offer-header">Exchange your old items</div>
                         <table class="rate-table">
-                            <thead><tr><th>ITEM</th><th>RATE</th></tr></thead>
+                            <thead><tr><th>Item</th><th>Rate</th></tr></thead>
                             <tbody>
-                                <tr><td>ALUMINIUM</td><td>₹150 / 1 KG</td></tr>
-                                <tr><td>STEEL</td><td>₹50 / 1 KG</td></tr>
+                                <tr><td>Aluminium</td><td>₹150 / 1 kg</td></tr>
+                                <tr><td>Steel</td><td>₹50 / 1 kg</td></tr>
                             </tbody>
                         </table>
-                        <div class="note-box" style="margin:4px 0; font-size:10px;"><strong>NOTE:</strong> 100 GM deducted for handles.</div>`;
+                        <div class="note-box" style="margin:4px 0; font-size:10px;"><strong>Note:</strong> 100 gm deducted for handles.</div>`;
                 } else if(val === 'custom') {
-                    const txt = document.getElementById('multi-input-custom-text').value || document.getElementById('editorCanvas').innerHTML || 'Custom text message goes here.';
-                    contentHTML += `<div class="custom-text-content" style="text-align:center;">${txt}</div>`;
+                    const txt = formatSentenceCase(document.getElementById('multi-input-custom-text').value || document.getElementById('editorCanvas').innerText || 'Custom text message goes here.');
+                    contentHTML += `<div class="custom-text-content" style="text-align:center; font-size: 28px;">${txt}</div>`;
                 } else if(val === 'coupon') {
-                    const badgeText = document.getElementById('c-offer-badge-1').innerText || 'FLAT 5% OFF';
+                    const badgeText = document.getElementById('c-offer-badge-1').innerText || 'Flat 5% off';
                     let staffDisp = selectedStaff;
                     if (selectedStaff === 'Other') {
                         staffDisp = document.getElementById('coupon-staff-name').value.trim() || 'Staff';
                     }
-                    const custName = document.getElementById('coupon-cust-name').value.trim();
+                    const custName = formatSentenceCase(document.getElementById('coupon-cust-name').value.trim());
                     const custPhone = document.getElementById('coupon-cust-phone').value.trim();
-                    const notesText = document.getElementById('coupon-notes').value.trim();
+                    const notesText = formatSentenceCase(document.getElementById('coupon-notes').value.trim());
 
-                    let custHtml = (custName || custPhone) ? `<div style="font-size:11px; font-weight:900; margin:2px 0;">CUSTOMER: ${custName || 'N/A'} | PH: ${custPhone || 'N/A'}</div>` : '';
-                    let notesHtml = notesText ? `<div style="font-size:10.5px; font-weight:900; margin:2px 0; text-align:left;">NOTE: ${notesText}</div>` : '';
+                    let custHtml = (custName || custPhone) ? `<div style="font-size:11px; font-weight:900; margin:2px 0;">Customer: ${custName || 'N/A'} | Ph: ${custPhone || 'N/A'}</div>` : '';
+                    let notesHtml = notesText ? `<div style="font-size:10.5px; font-weight:900; margin:2px 0; text-align:left;">Note: ${notesText}</div>` : '';
 
                     contentHTML += `
-                        <div class="coupon-stamp">⚡ DISCOUNT COUPON ⚡</div>
+                        <div class="coupon-stamp">⚡ Discount coupon ⚡</div>
                         <div class="coupon-title-badge">${badgeText}</div>
                         ${custHtml}
-                        <div style="font-size:11.5px; font-weight:900; margin:4px 0;">BY: ${staffDisp}</div>
+                        <div style="font-size:11.5px; font-weight:900; margin:4px 0;">By: ${staffDisp}</div>
                         ${notesHtml}
                         <div class="divider"></div>
-                        <div style="font-size:11px; font-weight:900; margin-bottom:4px;">SCAN FOR DIRECTIONS</div>
+                        <div style="font-size:11px; font-weight:900; margin-bottom:4px;">Scan for directions</div>
                         <div style="display:flex; justify-content:center; margin:4px 0;">
                             <div class="qr-container" style="width:75px; height:75px;">
-                                <img class="qr-code" src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https%3A%2F%2Fmaps.app.goo.gl%2FGzxq2iuM7fijRAQr6" alt="QR">
+                                <img class="qr-code" src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=https%3A%2F%2Fmaps.app.goo.gl%2FGzxq2iuM7fijRAQr6" alt="QR">
                             </div>
                         </div>
-                        <div class="location-card-branch" style="margin-top:4px;">GAJUWAKA BRANCH</div>
-                        <div class="location-card-address" style="font-size:10.5px;">MIG-20, Near Timpany School Vuda Colony, Gajuwaka</div>
+                        <div class="location-card-branch" style="margin-top:4px;">Gajuwaka branch</div>
+                        <div class="location-card-address" style="font-size:10.5px;">Mig-20, Near timpany school vuda colony, Gajuwaka</div>
                         <div style="font-size:10.5px; font-weight:900;">📞 9676287766</div>`;
                 } else if(val === 'loc-gajuwaka') {
                     contentHTML += `
-                        <div class="location-card-branch">GAJUWAKA BRANCH</div>
-                        <div class="location-card-address">MIG-20, Near Timpany School Vuda Colony, Gonthinavanipalem, Gajuwaka, Andhra Pradesh 530044</div>
+                        <div class="location-card-branch">Gajuwaka branch</div>
+                        <div class="location-card-address">Mig-20, Near timpany school vuda colony, Gonthinavanipalem, Gajuwaka, Andhra pradesh 530044</div>
                         <div style="font-size:11px; font-weight:900; margin-bottom:4px;">📞 9676287766</div>
                         <div style="display:flex; justify-content:center; margin:6px 0;">
                             <div class="qr-container" style="width:85px; height:85px;">
@@ -1941,8 +1960,8 @@
                         </div>`;
                 } else if(val === 'loc-kurmannapalem') {
                     contentHTML += `
-                        <div class="location-card-branch">KURMANNAPALEM BRANCH</div>
-                        <div class="location-card-address">Vuda phase 7, Hig 7, opposite Gloria Vidya Kendram, Vuda Colony, Gajuwaka, Andhra Pradesh 530049</div>
+                        <div class="location-card-branch">Kurmannapalem branch</div>
+                        <div class="location-card-address">Vuda phase 7, Hig 7, Opposite gloria vidya kendram, Vuda colony, Gajuwaka, Andhra pradesh 530049</div>
                         <div style="font-size:11px; font-weight:900; margin-bottom:4px;">📞 9676287766</div>
                         <div style="display:flex; justify-content:center; margin:6px 0;">
                             <div class="qr-container" style="width:85px; height:85px;">
@@ -1950,12 +1969,12 @@
                             </div>
                         </div>`;
                 } else if(val === 'price') {
-                    const brandName = document.getElementById('price-brand-name').value.trim() || 'Lalitha Naturals';
-                    const itemName = document.getElementById('price-item-name').value.trim() || 'ITEM NAME';
-                    const itemQty = document.getElementById('price-item-qty').value.trim();
+                    const brandName = formatSentenceCase(document.getElementById('price-brand-name').value.trim() || 'Lalitha naturals');
+                    const itemName = formatSentenceCase(document.getElementById('price-item-name').value.trim() || 'Item name');
+                    const itemQty = formatSentenceCase(document.getElementById('price-item-qty').value.trim());
                     const itemVal = parseFloat(document.getElementById('price-item-value').value) || 0;
                     const discVal = parseFloat(document.getElementById('price-disc-val').value) || 0;
-                    const notesVal = document.getElementById('price-notes').value.trim();
+                    const notesVal = formatSentenceCase(document.getElementById('price-notes').value.trim());
 
                     let qtyHtml = itemQty ? `<div style="font-size:13px; font-weight:900; text-transform:uppercase; margin:3px 0;">${itemQty}</div>` : '';
                     let priceHtml = '';
@@ -1964,16 +1983,16 @@
                             let finalPrice = priceDiscType === 'pct' ? itemVal - (itemVal * (discVal / 100)) : itemVal - discVal;
                             if (finalPrice < 0) finalPrice = 0;
                             priceHtml = `
-                                <div style="font-size:14px; font-weight:900; text-decoration:line-through; text-transform:uppercase; margin-top:4px;">MRP: ₹${itemVal.toFixed(2)} (${discVal}${priceDiscType === 'pct' ? '% OFF' : '₹ OFF'})</div>
-                                <div style="font-size:26px; font-weight:900; border:3px solid #000; padding:6px 4px; margin:4px 0;">PRICE: ₹${finalPrice.toFixed(2)}</div>
+                                <div style="font-size:14px; font-weight:900; text-decoration:line-through; text-transform:uppercase; margin-top:4px;">Mrp: ₹${itemVal.toFixed(2)} (${discVal}${priceDiscType === 'pct' ? '% off' : '₹ off'})</div>
+                                <div style="font-size:26px; font-weight:900; border:3px solid #000; padding:6px 4px; margin:4px 0;">Price: ₹${finalPrice.toFixed(2)}</div>
                             `;
                         } else {
-                            priceHtml = `<div style="font-size:26px; font-weight:900; border:3px solid #000; padding:6px 4px; margin:6px 0;">MRP: ₹${itemVal.toFixed(2)}</div>`;
+                            priceHtml = `<div style="font-size:26px; font-weight:900; border:3px solid #000; padding:6px 4px; margin:6px 0;">Mrp: ₹${itemVal.toFixed(2)}</div>`;
                         }
                     } else {
-                        priceHtml = `<div style="font-size:26px; font-weight:900; border:3px solid #000; padding:6px 4px; margin:6px 0;">MRP: ₹0</div>`;
+                        priceHtml = `<div style="font-size:26px; font-weight:900; border:3px solid #000; padding:6px 4px; margin:6px 0;">Mrp: ₹0</div>`;
                     }
-                    let notesHtml = notesVal ? `<div style="font-size:11px; font-weight:900; margin-top:2px;">NOTE: ${notesVal}</div>` : '';
+                    let notesHtml = notesVal ? `<div style="font-size:11px; font-weight:900; margin-top:2px;">Note: ${notesVal}</div>` : '';
 
                     contentHTML += `
                         <div style="font-size:15px; font-weight:900; text-transform:uppercase;">${brandName}</div>
