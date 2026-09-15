@@ -1376,7 +1376,7 @@
             </div>
         </div>
 
-        <!-- Custom Header Option Toggles & Persistent Logo Upload -->
+        <!-- Custom Header Option Toggles & Independent Custom Logo Upload -->
         <div class="custom-options-bar">
             <label class="custom-checkbox-label">
                 <input type="checkbox" id="custom-show-logo" checked onchange="updateCustomHeaderToggles()"> Include Logo
@@ -1385,8 +1385,8 @@
                 <input type="checkbox" id="custom-show-tagline" checked onchange="updateCustomHeaderToggles()"> Include Tagline ("Feel the earth")
             </label>
             <button class="upload-logo-action-btn" onclick="document.getElementById('customLogoUploadInput').click()">📁 Upload Logo (JPEG/PNG/SVG)</button>
-            <button class="reset-logo-btn" onclick="resetDefaultLogo()" title="Restore default logo">↺ Default Logo</button>
-            <input type="file" id="customLogoUploadInput" accept="image/jpeg,image/png,image/svg+xml" style="display: none;" onchange="handleLogoUpload(event)">
+            <button class="reset-logo-btn" onclick="resetDefaultCustomLogo()" title="Restore default logo for custom text">↺ Default Logo</button>
+            <input type="file" id="customLogoUploadInput" accept="image/jpeg,image/png,image/svg+xml" style="display: none;" onchange="handleCustomLogoUpload(event)">
         </div>
         
         <div class="editor-canvas" id="editorCanvas" contenteditable="true" placeholder="Type or upload text to print..." oninput="handleEditorInput()" style="text-align: left; font-size: 28px; line-height: 1.3;"></div>
@@ -1681,7 +1681,7 @@
             <div class="preview-box">
                 <div class="card whatsapp-card" id="whatsapp-card-el">
                     <div class="header">Join Our WhatsApp Group</div>
-                    <img src="Black Logo .png" class="thermal-logo global-logo-el" alt="Logo">
+                    <img src="Black Logo .png" class="thermal-logo" alt="Logo">
                     <div class="tagline">Feel the earth</div>
                     <div class="divider"></div>
                     <div class="side-by-side-whatsapp">
@@ -1725,7 +1725,7 @@
             <div class="card-label">Scrap Exchange (80mm)</div>
             <div class="preview-box">
                 <div class="card exchange-card" id="exchange-card-el">
-                    <img src="Black Logo .png" class="thermal-logo global-logo-el" alt="Logo">
+                    <img src="Black Logo .png" class="thermal-logo" alt="Logo">
                     <div class="tagline">Feel the earth</div>
                     <div class="divider"></div>
                     <div class="offer-header">EXCHANGE YOUR OLD ITEMS</div>
@@ -1770,7 +1770,7 @@
             <div class="preview-box">
                 <div class="card estimate-card" id="estimate-card-el" style="text-align: center;">
                     <div class="header">ESTIMATE BILL</div>
-                    <img src="Black Logo .png" class="thermal-logo global-logo-el" alt="Logo">
+                    <img src="Black Logo .png" class="thermal-logo" alt="Logo">
                     <div class="tagline">Feel the earth</div>
                     <div class="divider"></div>
                     <div id="est-card-cust-info" style="font-size:11px; font-weight:900; text-align:left; margin-bottom:4px; display:none;"></div>
@@ -1843,7 +1843,7 @@
             <div class="card-label">Custom Text (80mm)</div>
             <div class="preview-box">
                 <div class="card custom-card" id="custom-card-el">
-                    <img src="Black Logo .png" class="thermal-logo global-logo-el" id="custom-receipt-logo" alt="Logo">
+                    <img src="Black Logo .png" class="thermal-logo" id="custom-receipt-logo" alt="Logo">
                     <div class="tagline" id="custom-receipt-tagline">Feel the earth</div>
                     <div class="divider" id="custom-receipt-divider"></div>
                     <div class="custom-text-content" id="customTextDisplay" style="text-align: left; font-size: 28px; line-height: 1.3;"></div>
@@ -1859,7 +1859,7 @@
                 <!-- Gajuwaka Coupon Wrapper -->
                 <div class="coupon-branch-wrapper" id="coupon-gajuwaka-section" style="width: 100%;">
                     <div class="card coupon-card" style="text-align: center;">
-                        <img src="Black Logo .png" class="thermal-logo global-logo-el" alt="Logo">
+                        <img src="Black Logo .png" class="thermal-logo" alt="Logo">
                         <div class="tagline">Feel the earth</div>
                         
                         <div class="coupon-stamp">⚡ DISCOUNT COUPON ⚡</div>
@@ -1894,7 +1894,7 @@
                 <!-- Kurmannapalem Coupon Wrapper -->
                 <div class="coupon-branch-wrapper" id="coupon-kurmannapalem-section" style="width: 100%;">
                     <div class="card coupon-card" style="text-align: center;">
-                        <img src="Black Logo .png" class="thermal-logo global-logo-el" alt="Logo">
+                        <img src="Black Logo .png" class="thermal-logo" alt="Logo">
                         <div class="tagline">Feel the earth</div>
 
                         <div class="coupon-stamp">⚡ DISCOUNT COUPON ⚡</div>
@@ -1994,7 +1994,7 @@
             const dateInput = document.getElementById('coupon-from-date');
             if (dateInput) dateInput.value = todayStr;
 
-            loadSavedLogo();
+            loadSavedCustomLogo();
             updateLocationCardPreview();
             updateCouponCardPreview();
             updatePriceCardPreview();
@@ -2004,34 +2004,32 @@
             buildMultiPreview();
         });
 
-        function loadSavedLogo() {
-            const savedLogo = localStorage.getItem('lalitha_custom_logo');
+        function loadSavedCustomLogo() {
+            const savedLogo = localStorage.getItem('lalitha_custom_text_logo');
             if (savedLogo) {
-                document.querySelectorAll('.global-logo-el').forEach(img => {
-                    img.src = savedLogo;
-                });
+                const customLogoEl = document.getElementById('custom-receipt-logo');
+                if (customLogoEl) customLogoEl.src = savedLogo;
             }
         }
 
-        function handleLogoUpload(event) {
+        function handleCustomLogoUpload(event) {
             const file = event.target.files[0];
             if (!file) return;
             const reader = new FileReader();
             reader.onload = function(e) {
                 const dataUrl = e.target.result;
-                localStorage.setItem('lalitha_custom_logo', dataUrl);
-                loadSavedLogo();
+                localStorage.setItem('lalitha_custom_text_logo', dataUrl);
+                loadSavedCustomLogo();
                 document.getElementById('custom-show-logo').checked = true;
                 updateCustomHeaderToggles();
             };
             reader.readAsDataURL(file);
         }
 
-        function resetDefaultLogo() {
-            localStorage.removeItem('lalitha_custom_logo');
-            document.querySelectorAll('.global-logo-el').forEach(img => {
-                img.src = 'Black Logo .png';
-            });
+        function resetDefaultCustomLogo() {
+            localStorage.removeItem('lalitha_custom_text_logo');
+            const customLogoEl = document.getElementById('custom-receipt-logo');
+            if (customLogoEl) customLogoEl.src = 'Black Logo .png';
             document.getElementById('custom-show-logo').checked = true;
             updateCustomHeaderToggles();
         }
@@ -2800,9 +2798,9 @@
                 return;
             }
 
-            const activeLogoSrc = document.getElementById('custom-receipt-logo').src;
+            const activeCustomLogoSrc = document.getElementById('custom-receipt-logo').src;
             let topHeaderHTML = `
-                <img src="${activeLogoSrc}" class="thermal-logo" alt="Logo">
+                <img src="${activeCustomLogoSrc}" class="thermal-logo" alt="Logo">
                 <div class="tagline">Feel the earth</div>
                 <div class="divider"></div>
             `;
