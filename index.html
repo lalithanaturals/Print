@@ -817,7 +817,12 @@
             list-style-type: disc;
         }
 
-        /* Price Tag Styles */
+        /* Price Tag Styles - Optimized with 0 top padding and exactly 5mm margin below MRP */
+        .price-card {
+            padding-top: 0px !important;
+            padding-bottom: 5mm !important;
+        }
+
         .price-tag-brand {
             font-size: 15px;
             font-weight: 900;
@@ -881,57 +886,99 @@
             margin-top: 4px;
         }
 
-        /* Ultra-Clean Receipt-Style Visiting Card UI */
+        /* Bold Highlight Black Box Visiting Card UI with Large Visible Contact Number */
         .visiting-card {
-            border: 2px solid #000 !important;
+            border: 3px solid #000 !important;
             padding: 12px 10px !important;
-            text-align: left !important;
+            text-align: center !important;
             background: #fff !important;
         }
-        .vc-center-header {
-            text-align: center;
-            margin-bottom: 6px;
-        }
-        .vc-brand-title {
-            font-size: 19px;
-            font-weight: 900;
+
+        .vc-highlight-box {
+            border: 2.5px solid #000000;
+            background: #000000;
+            color: #ffffff !important;
+            padding: 6px 4px;
+            margin-bottom: 8px;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: #000;
         }
-        .vc-tagline {
+
+        .vc-highlight-box .vc-brand-title {
+            font-size: 18px;
+            font-weight: 900;
+            color: #ffffff !important;
+            letter-spacing: 0.5px;
+        }
+
+        .vc-highlight-box .vc-tagline {
             font-size: 11px;
             font-weight: 900;
+            color: #ffffff !important;
             font-style: italic;
-            color: #000;
         }
+
+        .vc-section-block {
+            border: 1.5px solid #000000;
+            padding: 6px;
+            margin-bottom: 6px;
+            text-align: left;
+            background: #ffffff;
+        }
+
+        .vc-section-title {
+            font-size: 11px;
+            font-weight: 900;
+            text-transform: uppercase;
+            margin-bottom: 3px;
+            border-bottom: 1px dashed #000000;
+            padding-bottom: 2px;
+        }
+
         .vc-bullet-list {
             list-style: none;
             padding-left: 0;
-            font-size: 11px;
+            font-size: 10.5px;
             font-weight: 900;
             line-height: 1.35;
             text-transform: uppercase;
-            margin: 4px 0;
+            margin: 0;
         }
+
         .vc-bullet-list li::before {
             content: "• ";
             font-weight: 900;
         }
-        .vc-row-label {
-            font-size: 11px;
+
+        .vc-address-text {
+            font-size: 10px;
             font-weight: 900;
-            text-transform: uppercase;
-            margin-top: 5px;
-            color: #000;
-        }
-        .vc-row-val {
-            font-size: 10.5px;
-            font-weight: 900;
-            text-transform: uppercase;
             line-height: 1.3;
-            color: #000;
-            margin-bottom: 3px;
+            text-transform: uppercase;
+        }
+
+        .vc-huge-phone-box {
+            border: 3px solid #000000;
+            background: #000000;
+            color: #ffffff !important;
+            padding: 8px 4px;
+            margin-top: 6px;
+            text-align: center;
+        }
+
+        .vc-huge-phone-box .vc-phone-label {
+            font-size: 10px;
+            font-weight: 900;
+            text-transform: uppercase;
+            color: #ffffff !important;
+            letter-spacing: 1px;
+            margin-bottom: 2px;
+        }
+
+        .vc-huge-phone-box .vc-phone-number {
+            font-size: 20px;
+            font-weight: 900;
+            color: #ffffff !important;
+            letter-spacing: 1.5px;
         }
 
         /* Location & Coupon Styles */
@@ -1054,12 +1101,16 @@
                 width: 80mm !important;
                 max-width: 80mm !important;
                 min-width: 80mm !important;
-                padding: 2px 2mm !important;
                 border: none !important;
                 border-radius: 0 !important;
                 margin: 0 !important;
                 display: block !important;
                 box-sizing: border-box !important;
+            }
+
+            .price-card {
+                padding-top: 0px !important;
+                padding-bottom: 5mm !important;
             }
 
             /* Single Print Selectors */
@@ -1476,7 +1527,7 @@
         </div>
         <div class="visiting-grid">
             <div class="form-group full-width">
-                <label>Clean, minimalist layout loaded from verified store details.</label>
+                <label>Black highlighted high-contrast layout with prominent contact number.</label>
             </div>
         </div>
     </div>
@@ -1684,36 +1735,41 @@
             </div>
         </div>
 
-        <!-- Redesigned Minimalist Receipt-Style Visiting Card Receipt Column -->
+        <!-- Black Highlight Visiting Card with Prominent Contact Number -->
         <div class="receipt-column visiting-receipt-column" id="visitingReceiptCol">
             <div class="card-label">Visiting Card (80mm)</div>
             <div class="preview-box">
                 <div class="card visiting-card" id="visiting-card-el">
-                    <div class="vc-center-header">
+                    <div class="vc-highlight-box">
                         <div class="vc-brand-title">Lalitha Naturals</div>
                         <div class="vc-tagline">Feel the earth</div>
                     </div>
-                    <div class="divider"></div>
-                    
-                    <div class="vc-row-label">Core Offerings:</div>
-                    <ul class="vc-bullet-list">
-                        <li>Organic Food Products & Spices</li>
-                        <li>Cold-Pressed Oils & Ghee</li>
-                        <li>Millet Groceries & Snacks</li>
-                    </ul>
 
-                    <div class="divider"></div>
+                    <div class="vc-section-block">
+                        <div class="vc-section-title">Core Offerings:</div>
+                        <ul class="vc-bullet-list">
+                            <li>Organic Food Products & Spices</li>
+                            <li>Cold-Pressed Oils & Ghee</li>
+                            <li>Millet Groceries & Snacks</li>
+                        </ul>
+                    </div>
 
-                    <div class="vc-row-label">Branch 1 (Gajuwaka):</div>
-                    <div class="vc-row-val">MIG-20, Near Timpany School, Vuda Colony, Gonthinavanipalem, Visakhapatnam - 530044</div>
+                    <div class="vc-section-block">
+                        <div class="vc-section-title">Branch 1 (Gajuwaka):</div>
+                        <div class="vc-address-text">MIG-20, Near Timpany School, Vuda Colony, Gonthinavanipalem, Visakhapatnam - 530044</div>
+                    </div>
 
-                    <div class="vc-row-label" style="margin-top: 6px;">Branch 2 (Kurmannapalem):</div>
-                    <div class="vc-row-val">Vuda Phase 7, HIG-7, Opposite Gloria Vidya Kendram, Visakhapatnam - 530049</div>
+                    <div class="vc-section-block">
+                        <div class="vc-section-title">Branch 2 (Kurmannapalem):</div>
+                        <div class="vc-address-text">Vuda Phase 7, HIG-7, Opposite Gloria Vidya Kendram, Visakhapatnam - 530049</div>
+                    </div>
 
-                    <div class="divider"></div>
-                    
-                    <div style="text-align: center; font-size: 11px; font-weight: 900; text-transform: uppercase;">
-                        📞 9676287766<br>
+                    <div class="vc-huge-phone-box">
+                        <div class="vc-phone-label">📞 Call / WhatsApp</div>
+                        <div class="vc-phone-number">9676287766</div>
+                    </div>
+
+                    <div style="text-align: center; font-size: 10px; font-weight: 900; text-transform: uppercase; margin-top: 6px;">
                         🌐 www.lalithanaturals.com
                     </div>
                 </div>
@@ -2802,19 +2858,18 @@
                         </div>`;
                 } else if(val === 'visiting') {
                     contentHTML += `
-                        <div style="text-align:center;">
-                            <div style="font-size:16px; font-weight:900; text-transform:uppercase;">Lalitha Naturals</div>
-                            <div style="font-size:10px; font-style:italic; font-weight:900; margin-bottom:4px;">Feel the earth</div>
+                        <div style="border:2.5px solid #000; background:#000; color:#fff; padding:6px; margin-bottom:6px; text-transform:uppercase;">
+                            <div style="font-size:15px; font-weight:900;">Lalitha Naturals</div>
+                            <div style="font-size:10px; font-style:italic; font-weight:900;">Feel the earth</div>
                         </div>
-                        <div class="divider"></div>
-                        <div style="font-size:10.5px; font-weight:900; text-transform:uppercase; margin-bottom:2px;">Core Offerings:</div>
-                        <div style="font-size:10px; font-weight:900; text-transform:uppercase; margin-bottom:4px;">Organic food, cold-pressed oils, spices & millets</div>
-                        <div style="font-size:10.5px; font-weight:900; text-transform:uppercase; margin-top:4px;">Branch 1 (Gajuwaka):</div>
-                        <div style="font-size:10px; font-weight:900; text-transform:uppercase; margin-bottom:4px;">MIG-20, Near Timpany School, Vuda Colony, Visakhapatnam</div>
-                        <div style="font-size:10.5px; font-weight:900; text-transform:uppercase; margin-top:4px;">Branch 2 (Kurmannapalem):</div>
-                        <div style="font-size:10px; font-weight:900; text-transform:uppercase; margin-bottom:4px;">Vuda Phase 7, HIG-7, Opposite Gloria Vidya Kendram</div>
-                        <div class="divider"></div>
-                        <div style="text-align:center; font-size:10px; font-weight:900; text-transform:uppercase;">📞 9676287766 | 🌐 www.lalithanaturals.com</div>`;
+                        <div style="border:1.5px solid #000; padding:5px; margin-bottom:5px; text-align:left;">
+                            <div style="font-size:10px; font-weight:900; text-transform:uppercase; border-bottom:1px dashed #000; margin-bottom:2px;">Core Offerings:</div>
+                            <div style="font-size:9.5px; font-weight:900; text-transform:uppercase;">Organic food, cold-pressed oils, spices & millets</div>
+                        </div>
+                        <div style="border:3px solid #000; background:#000; color:#fff; padding:6px; margin-top:6px; text-align:center;">
+                            <div style="font-size:9px; font-weight:900; text-transform:uppercase;">📞 Call / WhatsApp</div>
+                            <div style="font-size:18px; font-weight:900; letter-spacing:1px;">9676287766</div>
+                        </div>`;
                 }
 
                 section.innerHTML = contentHTML;
