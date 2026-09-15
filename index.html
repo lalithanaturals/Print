@@ -268,26 +268,6 @@
             border-color: #8b5cf6;
         }
 
-        .coupon-panel .type-btn.active {
-            background: #ec4899;
-            border-color: #ec4899;
-        }
-
-        .location-panel .type-btn.active {
-            background: #10b981;
-            border-color: #10b981;
-        }
-
-        .price-panel .type-btn.active {
-            background: #0ea5e9;
-            border-color: #0ea5e9;
-        }
-
-        .visiting-panel .type-btn.active {
-            background: #3b82f6;
-            border-color: #3b82f6;
-        }
-
         /* Estimate Item Fast Entry Row */
         .estimate-quick-bar {
             background: #f1f5f9;
@@ -548,6 +528,53 @@
             outline: none;
         }
 
+        /* Custom Header Controls inside Custom Panel */
+        .custom-options-bar {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 12px;
+            background: #f1f5f9;
+            padding: 10px 14px;
+            border-radius: 10px;
+            border: 1.5px solid #cbd5e1;
+        }
+
+        .custom-checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            font-weight: 900;
+            color: #334155;
+            cursor: pointer;
+        }
+
+        .custom-checkbox-label input {
+            width: 16px;
+            height: 16px;
+            accent-color: #a855f7;
+            cursor: pointer;
+        }
+
+        .upload-logo-action-btn {
+            background: #ffffff;
+            border: 1.5px solid #cbd5e1;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 900;
+            color: #334155;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .upload-logo-action-btn:hover {
+            background: #e2e8f0;
+        }
+
         /* Checkbox grid for Custom Combined Print */
         .checkbox-cards-grid {
             display: grid;
@@ -578,7 +605,6 @@
             cursor: pointer;
         }
 
-        /* Inline configuration inputs inside Custom Combined Panel */
         .multi-inline-config {
             background: #f1f5f9;
             border: 1px solid #cbd5e1;
@@ -665,15 +691,24 @@
             text-transform: uppercase;
         }
 
-        /* Larger Pure Black & White Thermal Printer Logo Size */
+        /* Larger Pure Black & White Thermal Printer Logo Size with Zero Gap */
         .thermal-logo {
             width: 200px;
             max-height: 90px;
-            margin: 0 auto 1px;
+            margin: 0 auto !important;
             display: block;
             object-fit: contain;
             mix-blend-mode: multiply;
             filter: grayscale(100%) contrast(300%);
+        }
+
+        .tagline {
+            font-size: 12px;
+            font-style: italic;
+            font-weight: 900;
+            margin-bottom: 5px;
+            margin-top: 0px !important;
+            color: #000000;
         }
 
         .divider {
@@ -744,15 +779,6 @@
             color: #000000;
             margin-top: 4px;
             text-transform: uppercase;
-        }
-
-        .tagline {
-            font-size: 12px;
-            font-style: italic;
-            font-weight: 900;
-            margin-bottom: 5px;
-            margin-top: -2px;
-            color: #000000;
         }
 
         .offer-header {
@@ -886,7 +912,7 @@
             margin-top: 4px;
         }
 
-        /* Bold Highlight Black Box Visiting Card UI with Large Visible Contact Number */
+        /* Bold Highlight Black Box UI */
         .visiting-card {
             border: 3px solid #000 !important;
             padding: 12px 10px !important;
@@ -1332,10 +1358,20 @@
                     <option value="offer">Special Offer</option>
                 </select>
                 <button class="clear-btn" onclick="clearTextSource()">✖ Clear</button>
-                <button class="upload-file-btn" onclick="document.getElementById('fileInput').click()">📁 Upload</button>
-                <input type="file" id="fileInput" accept=".txt,.log,.csv" style="display: none;" onchange="handleFileUpload(event)">
                 <button class="print-now-btn" onclick="triggerMobilePrint('custom')">🖨️ Print Custom Text</button>
             </div>
+        </div>
+
+        <!-- Custom Header Option Toggles -->
+        <div class="custom-options-bar">
+            <label class="custom-checkbox-label">
+                <input type="checkbox" id="custom-show-logo" checked onchange="updateCustomHeaderToggles()"> Include Logo
+            </label>
+            <label class="custom-checkbox-label">
+                <input type="checkbox" id="custom-show-tagline" checked onchange="updateCustomHeaderToggles()"> Include Tagline ("Feel the earth")
+            </label>
+            <button class="upload-logo-action-btn" onclick="document.getElementById('customLogoUploadInput').click()">📁 Upload Logo (JPEG/PNG/SVG)</button>
+            <input type="file" id="customLogoUploadInput" accept="image/jpeg,image/png,image/svg+xml" style="display: none;" onchange="handleLogoUpload(event)">
         </div>
         
         <div class="editor-canvas" id="editorCanvas" contenteditable="true" placeholder="Type or upload text to print..." oninput="handleEditorInput()" style="text-align: left; font-size: 28px; line-height: 1.3;"></div>
@@ -1620,7 +1656,7 @@
     <!-- Receipts Wrapper Container -->
     <div class="receipts-wrapper">
         
-        <!-- WhatsApp Receipt -->
+        <!-- WhatsApp Receipt with Prominent Contact Box -->
         <div class="receipt-column whatsapp-column" id="waReceiptCol">
             <div class="card-label">WhatsApp QR (80mm)</div>
             <div class="preview-box">
@@ -1643,16 +1679,23 @@
                             <img class="qr-code" src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https%3A%2F%2Fchat.whatsapp.com%2FE8udXvgNXAOKSXWGvud4ct" alt="QR">
                         </div>
                     </div>
-                    <div class="footer-text">Scan QR code to join group.</div>
+                    <div class="footer-text" style="text-align: left;">Scan QR code to join group.</div>
                     <div class="divider"></div>
                     <div class="address-section" style="text-align: left;">
                         <div class="address-title" style="font-size:12px; font-weight:900; margin-bottom:3px;">OUR LOCATIONS</div>
-                        <div class="store-address-box" style="font-size:11px; font-weight:900; line-height:1.3;">
+                        <div class="store-address-box" style="font-size:10.5px; font-weight:900; line-height:1.3;">
                             <div class="address-line"><strong>Branch-1:</strong> MIG-20, Vuda Colony, Gajuwaka</div>
                             <div class="address-line"><strong>Branch-2:</strong> Vuda phase 7, Gajuwaka</div>
                         </div>
-                        <div class="contact-row" style="font-size:11px; font-weight:900; margin-top:3px;">📞 CONTACT: 9676287766</div>
-                        <div class="social-row" style="font-size:11px; font-weight:900;">🌐 www.lalithanaturals.com</div>
+                    </div>
+                    
+                    <div class="vc-huge-phone-box">
+                        <div class="vc-phone-label">📞 Call / WhatsApp</div>
+                        <div class="vc-phone-number">9676287766</div>
+                    </div>
+
+                    <div style="font-size: 10px; font-weight: 900; text-transform: uppercase; margin-top: 5px;">
+                        🌐 www.lalithanaturals.com
                     </div>
                 </div>
             </div>
@@ -1776,13 +1819,14 @@
             </div>
         </div>
 
+        <!-- Custom Text Receipt Column -->
         <div class="receipt-column custom-text-column" id="customReceiptCol">
             <div class="card-label">Custom Text (80mm)</div>
             <div class="preview-box">
                 <div class="card custom-card" id="custom-card-el">
-                    <img src="Black Logo .png" class="thermal-logo" alt="Logo">
-                    <div class="tagline">Feel the earth</div>
-                    <div class="divider"></div>
+                    <img src="Black Logo .png" class="thermal-logo" id="custom-receipt-logo" alt="Logo">
+                    <div class="tagline" id="custom-receipt-tagline">Feel the earth</div>
+                    <div class="divider" id="custom-receipt-divider"></div>
                     <div class="custom-text-content" id="customTextDisplay" style="text-align: left; font-size: 28px; line-height: 1.3;"></div>
                     <div class="divider"></div>
                 </div>
@@ -1936,6 +1980,7 @@
             updatePriceCardPreview();
             renderQuickItemsTable();
             initSentenceCaseListeners();
+            updateCustomHeaderToggles();
             buildMultiPreview();
         });
 
@@ -2312,6 +2357,38 @@
             handleEditorInput();
         }
 
+        function updateCustomHeaderToggles() {
+            const showLogo = document.getElementById('custom-show-logo').checked;
+            const showTagline = document.getElementById('custom-show-tagline').checked;
+
+            const logoEl = document.getElementById('custom-receipt-logo');
+            const taglineEl = document.getElementById('custom-receipt-tagline');
+            const dividerEl = document.getElementById('custom-receipt-divider');
+
+            logoEl.style.display = showLogo ? 'block' : 'none';
+            taglineEl.style.display = showTagline ? 'block' : 'none';
+            
+            if (!showLogo && !showTagline) {
+                dividerEl.style.display = 'none';
+            } else {
+                dividerEl.style.display = 'block';
+            }
+            buildMultiPreview();
+        }
+
+        function handleLogoUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const dataUrl = e.target.result;
+                document.getElementById('custom-receipt-logo').src = dataUrl;
+                document.getElementById('custom-show-logo').checked = true;
+                updateCustomHeaderToggles();
+            };
+            reader.readAsDataURL(file);
+        }
+
         function hideAllPanelsKeepData() {
             ['customInputPanel', 'couponInputPanel', 'locationInputPanel', 'priceInputPanel', 'estimateInputPanel', 'visitingInputPanel', 'multiInputPanel'].forEach(id => {
                 const el = document.getElementById(id);
@@ -2667,15 +2744,6 @@
             handleEditorInput();
         }
 
-        function handleFileUpload(e) {
-            const reader = new FileReader();
-            reader.onload = function(evt) {
-                document.getElementById('editorCanvas').innerText = evt.target.result;
-                handleEditorInput();
-            };
-            reader.readAsText(e.target.files[0]);
-        }
-
         function buildMultiPreview() {
             const container = document.getElementById('multi-preview-card-container');
             container.innerHTML = '';
@@ -2737,7 +2805,18 @@
                         <div class="note-box" style="margin:4px 0; font-size:10px;"><strong>NOTE:</strong> 100 GM deducted for handles.</div>`;
                 } else if(val === 'custom') {
                     const customHtmlContent = document.getElementById('editorCanvas').innerHTML;
-                    contentHTML += `<div class="custom-text-content" style="text-align:${currentAlign};">${customHtmlContent || 'Custom text message goes here.'}</div>`;
+                    const showLogo = document.getElementById('custom-show-logo').checked;
+                    const showTagline = document.getElementById('custom-show-tagline').checked;
+                    const logoSrc = document.getElementById('custom-receipt-logo').src;
+
+                    let customHeaderHTML = '';
+                    if (showLogo) customHeaderHTML += `<img src="${logoSrc}" class="thermal-logo" alt="Logo">`;
+                    if (showTagline) customHeaderHTML += `<div class="tagline">Feel the earth</div>`;
+                    if (showLogo || showTagline) customHeaderHTML += `<div class="divider"></div>`;
+
+                    contentHTML += `
+                        ${customHeaderHTML}
+                        <div class="custom-text-content" style="text-align:${currentAlign};">${customHtmlContent || 'Custom text message goes here.'}</div>`;
                 } else if(val === 'coupon') {
                     const badgeText = document.getElementById('c-offer-badge-1').innerText || 'Flat 5% OFF';
                     let staffDisp = selectedStaff;
