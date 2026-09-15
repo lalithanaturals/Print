@@ -15,6 +15,7 @@
             --bg-color: #f8fafc;
             --card-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.02);
             --card-shadow-hover: 0 20px 25px -5px rgba(0, 0, 0, 0.08), 0 10px 10px -5px rgba(0, 0, 0, 0.03);
+            --logo-width: 200px; /* Default Logo Size */
         }
 
         * {
@@ -463,7 +464,7 @@
             line-height: 1.4;
             background: #ffffff;
             margin-bottom: 12px;
-            text-align: left;
+            text-align: center;
         }
 
         .editor-canvas[placeholder]:empty:before {
@@ -705,10 +706,10 @@
             text-transform: uppercase;
         }
 
-        /* Larger Pure Black & White Thermal Printer Logo Size with Zero Gap */
+        /* Pure Black & White Thermal Printer Logo Size with Dynamic CSS Variable */
         .thermal-logo {
-            width: 200px;
-            max-height: 90px;
+            width: var(--logo-width, 200px);
+            max-height: 120px;
             margin: 0 auto !important;
             display: block;
             object-fit: contain;
@@ -849,7 +850,7 @@
             white-space: pre-wrap;
             word-wrap: break-word;
             margin: 8px 0;
-            text-align: left;
+            text-align: center;
         }
 
         .custom-text-content ul, .editor-canvas ul {
@@ -1382,20 +1383,20 @@
                 <input type="checkbox" id="custom-show-logo" checked onchange="updateCustomHeaderToggles()"> Include Logo
             </label>
             <label class="custom-checkbox-label">
-                <input type="checkbox" id="custom-show-tagline" checked onchange="updateCustomHeaderToggles()"> Include Tagline ("Feel the earth")
+                <input type="checkbox" id="custom-show-tagline" onchange="updateCustomHeaderToggles()"> Include Tagline ("Feel the earth")
             </label>
             <button class="upload-logo-action-btn" onclick="document.getElementById('customLogoUploadInput').click()">📁 Upload Logo (JPEG/PNG/SVG)</button>
             <button class="reset-logo-btn" onclick="resetDefaultCustomLogo()" title="Restore default logo for custom text">↺ Default Logo</button>
             <input type="file" id="customLogoUploadInput" accept="image/jpeg,image/png,image/svg+xml" style="display: none;" onchange="handleCustomLogoUpload(event)">
         </div>
         
-        <div class="editor-canvas" id="editorCanvas" contenteditable="true" placeholder="Type or upload text to print..." oninput="handleEditorInput()" style="text-align: left; font-size: 28px; line-height: 1.3;"></div>
+        <div class="editor-canvas" id="editorCanvas" contenteditable="true" placeholder="Type or upload text to print..." oninput="handleEditorInput()" style="text-align: center; font-size: 28px; line-height: 1.3;"></div>
 
         <div class="custom-toolbar">
             <div class="toolbar-group">
                 <span>Align:</span>
-                <button class="tool-btn" id="align-center-btn" onclick="setTextAlignment('center')">Center</button>
-                <button class="tool-btn active" id="align-left-btn" onclick="setTextAlignment('left')">Left</button>
+                <button class="tool-btn active" id="align-center-btn" onclick="setTextAlignment('center')">Center</button>
+                <button class="tool-btn" id="align-left-btn" onclick="setTextAlignment('left')">Left</button>
                 <button class="tool-btn" id="align-right-btn" onclick="setTextAlignment('right')">Right</button>
             </div>
             <div class="toolbar-group">
@@ -1404,16 +1405,46 @@
                 <button class="tool-btn" id="format-ul-btn" onclick="toggleBulletList()">• Bullets</button>
             </div>
             <div class="toolbar-group">
+                <span>Font Family:</span>
+                <select class="tool-select" id="editor-fontfamily-select" onchange="changeEditorFontFamily(this.value)">
+                    <option value="Arial, sans-serif" selected>Arial (Default)</option>
+                    <option value="'Helvetica Neue', Helvetica, sans-serif">Helvetica</option>
+                    <option value="Verdana, sans-serif">Verdana</option>
+                    <option value="Tahoma, sans-serif">Tahoma</option>
+                    <option value="'Trebuchet MS', sans-serif">Trebuchet MS</option>
+                    <option value="Georgia, serif">Georgia</option>
+                    <option value="'Times New Roman', serif">Times New Roman</option>
+                    <option value="'Courier New', monospace">Courier New</option>
+                </select>
+            </div>
+            <div class="toolbar-group">
                 <span>Font Size:</span>
                 <select class="tool-select" id="editor-fontsize-select" onchange="changeEditorFontSize(this.value)">
+                    <option value="12px">12px (Tiny)</option>
+                    <option value="14px">14px</option>
                     <option value="16px">16px</option>
+                    <option value="18px">18px</option>
                     <option value="20px">20px</option>
-                    <option value="28px" selected>28px</option>
+                    <option value="24px">24px</option>
+                    <option value="28px" selected>28px (Default)</option>
+                    <option value="32px">32px</option>
                     <option value="36px">36px</option>
-                    <option value="48px">48px</option>
+                    <option value="42px">42px</option>
+                    <option value="48px">48px (Large)</option>
+                    <option value="56px">56px</option>
                     <option value="64px">64px</option>
-                    <option value="80px">80px</option>
+                    <option value="80px">80px (Very Large)</option>
                     <option value="100px">100px (Massive)</option>
+                </select>
+            </div>
+            <div class="toolbar-group">
+                <span>Logo Size:</span>
+                <select class="tool-select" id="logo-size-select" onchange="changeLogoSize(this.value)">
+                    <option value="100px">100px (Small)</option>
+                    <option value="150px">150px</option>
+                    <option value="200px" selected>200px (Default)</option>
+                    <option value="250px">250px</option>
+                    <option value="300px">300px (Large)</option>
                 </select>
             </div>
             <div class="toolbar-group">
@@ -1844,9 +1875,9 @@
             <div class="preview-box">
                 <div class="card custom-card" id="custom-card-el">
                     <img src="Black Logo .png" class="thermal-logo" id="custom-receipt-logo" alt="Logo">
-                    <div class="tagline" id="custom-receipt-tagline">Feel the earth</div>
+                    <div class="tagline" id="custom-receipt-tagline" style="display: none;">Feel the earth</div>
                     <div class="divider" id="custom-receipt-divider"></div>
-                    <div class="custom-text-content" id="customTextDisplay" style="text-align: left; font-size: 28px; line-height: 1.3;"></div>
+                    <div class="custom-text-content" id="customTextDisplay" style="text-align: center; font-size: 28px; line-height: 1.3;"></div>
                     <div class="divider"></div>
                 </div>
             </div>
@@ -2007,8 +2038,8 @@
         function loadSavedCustomLogo() {
             const savedLogo = localStorage.getItem('lalitha_custom_text_logo');
             if (savedLogo) {
-                const customLogoEl = document.getElementById('custom-receipt-logo');
-                if (customLogoEl) customLogoEl.src = savedLogo;
+                const customLogoEls = document.querySelectorAll('.thermal-logo');
+                customLogoEls.forEach(el => el.src = savedLogo);
             }
         }
 
@@ -2028,10 +2059,14 @@
 
         function resetDefaultCustomLogo() {
             localStorage.removeItem('lalitha_custom_text_logo');
-            const customLogoEl = document.getElementById('custom-receipt-logo');
-            if (customLogoEl) customLogoEl.src = 'Black Logo .png';
+            const customLogoEls = document.querySelectorAll('.thermal-logo');
+            customLogoEls.forEach(el => el.src = 'Black Logo .png');
             document.getElementById('custom-show-logo').checked = true;
             updateCustomHeaderToggles();
+        }
+
+        function changeLogoSize(sizeValue) {
+            document.documentElement.style.setProperty('--logo-width', sizeValue);
         }
 
         function initSentenceCaseListeners() {
@@ -2338,7 +2373,16 @@
             const editor = document.getElementById('editorCanvas');
             editor.focus();
             document.execCommand(command, false, null);
+            checkToolbarActiveStates();
             handleEditorInput();
+        }
+
+        function checkToolbarActiveStates() {
+            const isBold = document.queryCommandState('bold');
+            const isUnderline = document.queryCommandState('underline');
+
+            document.getElementById('format-b-btn').classList.toggle('active', isBold);
+            document.getElementById('format-u-btn').classList.toggle('active', isUnderline);
         }
 
         function toggleBulletList() {
@@ -2355,6 +2399,27 @@
             } else {
                 document.execCommand('insertUnorderedList', false, null);
                 document.getElementById('format-ul-btn').classList.add('active');
+            }
+            handleEditorInput();
+        }
+
+        function changeEditorFontFamily(fontFamily) {
+            const editor = document.getElementById('editorCanvas');
+            const display = document.getElementById('customTextDisplay');
+            const selection = window.getSelection();
+
+            if (selection.rangeCount > 0 && !selection.isCollapsed) {
+                const range = selection.getRangeAt(0);
+                if (editor.contains(range.commonAncestorContainer)) {
+                    const span = document.createElement('span');
+                    span.style.fontFamily = fontFamily;
+                    span.appendChild(range.extractContents());
+                    range.insertNode(span);
+                    selection.removeAllRanges();
+                }
+            } else {
+                editor.style.fontFamily = fontFamily;
+                display.style.fontFamily = fontFamily;
             }
             handleEditorInput();
         }
@@ -2752,8 +2817,31 @@
             const editor = document.getElementById('editorCanvas');
             const display = document.getElementById('customTextDisplay');
             
+            // Auto-capitalize the very first letter entered if it is lowercase
+            let textContent = editor.innerText;
+            if (textContent.length > 0) {
+                let firstChar = textContent.charAt(0);
+                if (firstChar !== firstChar.toUpperCase() && firstChar === firstChar.toLowerCase()) {
+                    let selection = window.getSelection();
+                    let offset = selection.rangeCount > 0 ? selection.getRangeAt(0).startOffset : 0;
+                    
+                    editor.innerText = firstChar.toUpperCase() + textContent.slice(1);
+                    
+                    // Restore cursor position
+                    try {
+                        let range = document.createRange();
+                        let sel = window.getSelection();
+                        range.setStart(editor.childNodes[0], Math.min(offset, editor.childNodes[0].length));
+                        range.collapse(true);
+                        sel.removeAllRanges();
+                        sel.addRange(range);
+                    } catch(err) {}
+                }
+            }
+
             display.innerHTML = editor.innerHTML;
             document.getElementById('multi-input-custom-text').value = editor.innerText;
+            checkToolbarActiveStates();
             buildMultiPreview();
         }
 
@@ -2806,7 +2894,7 @@
             `;
             container.innerHTML = topHeaderHTML;
 
-            const currentAlign = document.getElementById('editorCanvas').style.textAlign || 'left';
+            const currentAlign = document.getElementById('editorCanvas').style.textAlign || 'center';
 
             selectedValues.forEach((val, idx) => {
                 const section = document.createElement('div');
