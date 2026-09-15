@@ -208,14 +208,14 @@
         .coupon-grid, .location-grid, .price-grid, .estimate-grid, .visiting-grid, .multi-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 14px;
-            margin-top: 10px;
+            gap: 12px;
+            margin-top: 6px;
         }
 
         .form-group {
             display: flex;
             flex-direction: column;
-            gap: 5px;
+            gap: 4px;
         }
 
         .form-group.full-width {
@@ -230,7 +230,7 @@
         }
 
         .form-control {
-            padding: 10px 12px;
+            padding: 9px 12px;
             font-size: 14px;
             font-weight: 900;
             border: 1.5px solid #cbd5e1;
@@ -267,6 +267,36 @@
             background: #8b5cf6;
             color: #ffffff;
             border-color: #8b5cf6;
+        }
+
+        /* Collapsible Font Customization Drawer for Price Tag */
+        .collapsible-section {
+            background: #f8fafc;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 10px 14px;
+            margin-top: 4px;
+        }
+
+        .collapsible-toggle-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 11px;
+            font-weight: 900;
+            color: #475569;
+            text-transform: uppercase;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .collapsible-content {
+            display: none;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px dashed #cbd5e1;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 10px;
         }
 
         /* Estimate Item Fast Entry Row */
@@ -1461,7 +1491,7 @@
         </div>
     </div>
 
-    <!-- Price Print Input Panel -->
+    <!-- Price Print Input Panel (Simplified & Space Efficient) -->
     <div class="price-panel" id="priceInputPanel">
         <div class="panel-header-row">
             <span class="panel-title">🏷️ Item Price Tag Creator</span>
@@ -1469,9 +1499,41 @@
                 <button class="print-price-btn" onclick="triggerMobilePrint('price')">🖨️ Print Price Tag</button>
             </div>
         </div>
+
+        <!-- Price Tag Header Option Toggles & Logo Controls (Clean UI: hidden until Include Logo is checked) -->
+        <div class="custom-options-bar">
+            <label class="custom-checkbox-label">
+                <input type="checkbox" id="price-show-logo" onchange="togglePriceLogoControls()"> Include Logo
+            </label>
+            <label class="custom-checkbox-label price-logo-opt" id="price-tagline-opt-wrap" style="display: none;">
+                <input type="checkbox" id="price-show-tagline" onchange="updatePriceCardPreview()"> Include Tagline
+            </label>
+            <button class="upload-logo-action-btn price-logo-opt" id="price-upload-btn-wrap" style="display: none;" onclick="document.getElementById('priceLogoUploadInput').click()">📁 Upload Logo</button>
+            <button class="reset-logo-btn price-logo-opt" id="price-reset-btn-wrap" style="display: none;" onclick="resetPriceLogo()" title="Restore default logo for price tag">↺ Default Logo</button>
+            <input type="file" id="priceLogoUploadInput" accept="image/jpeg,image/png,image/svg+xml" style="display: none;" onchange="handlePriceLogoUpload(event)">
+            
+            <div class="toolbar-group price-logo-opt" id="price-size-select-wrap" style="display: none; margin-left: auto;">
+                <span style="font-size: 11px;">Logo Size:</span>
+                <select class="tool-select" id="price-logo-size-select" onchange="updatePriceCardPreview()">
+                    <option value="100px">100px</option>
+                    <option value="150px">150px</option>
+                    <option value="200px" selected>200px</option>
+                    <option value="250px">250px</option>
+                </select>
+            </div>
+        </div>
+
         <div class="price-grid">
             <div class="form-group full-width">
-                <button type="button" class="type-btn" id="price-brand-toggle-btn" onclick="togglePriceBrandInput()" style="background:#f1f5f9; border-style: dashed; padding: 10px;">+ Add Brand Name</button>
+                <label>Layout Structure Options:</label>
+                <div class="type-selector-btns">
+                    <button class="type-btn active" id="p-layout-1-btn" onclick="setPriceLayout(1)">1. Item Name Big / Price Small</button>
+                    <button class="type-btn" id="p-layout-2-btn" onclick="setPriceLayout(2)">2. Price Big / Item Name Small</button>
+                </div>
+            </div>
+
+            <div class="form-group full-width">
+                <button type="button" class="type-btn" id="price-brand-toggle-btn" onclick="togglePriceBrandInput()" style="background:#f1f5f9; border-style: dashed; padding: 8px;">+ Add Brand Name</button>
             </div>
             <div class="form-group full-width" id="price-brand-group" style="display: none;">
                 <label>Brand Name</label>
@@ -1503,6 +1565,60 @@
             <div class="form-group full-width">
                 <label>Notes (Optional)</label>
                 <input type="text" class="form-control sentence-case-input" id="price-notes" placeholder="" value="" oninput="updatePriceCardPreview()">
+            </div>
+
+            <!-- Clean Collapsible Drawer for Optional Font Size Customization -->
+            <div class="form-group full-width collapsible-section">
+                <div class="collapsible-toggle-header" onclick="toggleFontDrawer()">
+                    <span>⚙️ Detailed Font Sizes (Optional)</span>
+                    <span id="font-drawer-arrow">▼ Show</span>
+                </div>
+                <div class="collapsible-content" id="fontDrawerContent">
+                    <div class="form-group">
+                        <label>Item Name Font</label>
+                        <select class="form-control" id="p-font-name" onchange="updatePriceCardPreview()">
+                            <option value="16px">16px (Small)</option>
+                            <option value="18px">18px</option>
+                            <option value="22px">22px</option>
+                            <option value="26px" selected>26px (Big)</option>
+                            <option value="32px">32px</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Price Font</label>
+                        <select class="form-control" id="p-font-price" onchange="updatePriceCardPreview()">
+                            <option value="16px">16px (Small)</option>
+                            <option value="20px" selected>20px</option>
+                            <option value="26px">26px</option>
+                            <option value="32px">32px (Big)</option>
+                            <option value="40px">40px</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Brand Font</label>
+                        <select class="form-control" id="p-font-brand" onchange="updatePriceCardPreview()">
+                            <option value="12px">12px</option>
+                            <option value="15px" selected>15px (Default)</option>
+                            <option value="18px">18px</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Quantity Font</label>
+                        <select class="form-control" id="p-font-qty" onchange="updatePriceCardPreview()">
+                            <option value="11px">11px</option>
+                            <option value="13px" selected>13px (Default)</option>
+                            <option value="16px">16px</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Notes Font</label>
+                        <select class="form-control" id="p-font-notes" onchange="updatePriceCardPreview()">
+                            <option value="10px">10px</option>
+                            <option value="11px" selected>11px (Default)</option>
+                            <option value="14px">14px</option>
+                        </select>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -1779,13 +1895,17 @@
             <div class="card-label">Price Tag Sticker (80mm)</div>
             <div class="preview-box">
                 <div class="card price-card" id="price-card-el" style="text-align: center;">
+                    <!-- Price Tag Header Logo & Tagline Containers (Independent to Price Tag) -->
+                    <img src="Black Logo .png" class="thermal-logo" id="price-receipt-logo" alt="Logo" style="display: none;">
+                    <div class="tagline" id="price-receipt-tagline" style="display: none;">Feel the earth</div>
+                    <div class="divider" id="price-receipt-divider" style="display: none;"></div>
+
                     <div class="price-tag-brand" id="p-card-brand" style="display: none;"></div>
                     <div class="divider" id="p-card-brand-divider" style="display: none;"></div>
-                    <div class="price-tag-item-name" id="p-card-name">ITEM NAME</div>
-                    <div class="price-tag-qty" id="p-card-qty" style="display: none;"></div>
                     
-                    <div id="p-card-price-container">
-                        <div class="price-tag-mrp-box" id="p-card-mrp-box">MRP: ₹0</div>
+                    <!-- Dynamic rendering order based on layout option -->
+                    <div id="p-card-content-wrapper">
+                        <!-- Injected dynamically via JS -->
                     </div>
 
                     <div id="p-card-notes-wrapper" style="display: none;">
@@ -2016,6 +2136,7 @@
         let locationBranch = 'gajuwaka';
         let selectedStaff = 'Bhargav';
         let priceDiscType = 'pct';
+        let priceLayoutOption = 1;
         let editingIndex = null;
 
         let quickEstimateItems = [];
@@ -2026,20 +2147,42 @@
             if (dateInput) dateInput.value = todayStr;
 
             loadSavedCustomLogo();
+            loadSavedPriceLogo();
             updateLocationCardPreview();
             updateCouponCardPreview();
             updatePriceCardPreview();
             renderQuickItemsTable();
             initSentenceCaseListeners();
             updateCustomHeaderToggles();
+            togglePriceLogoControls();
             buildMultiPreview();
         });
+
+        function toggleFontDrawer() {
+            const content = document.getElementById('fontDrawerContent');
+            const arrow = document.getElementById('font-drawer-arrow');
+            if (content.style.display === 'grid') {
+                content.style.display = 'none';
+                arrow.textContent = '▼ Show';
+            } else {
+                content.style.display = 'grid';
+                arrow.textContent = '▲ Hide';
+            }
+        }
 
         function loadSavedCustomLogo() {
             const savedLogo = localStorage.getItem('lalitha_custom_text_logo');
             if (savedLogo) {
-                const customLogoEls = document.querySelectorAll('.thermal-logo');
-                customLogoEls.forEach(el => el.src = savedLogo);
+                const customLogoEl = document.getElementById('custom-receipt-logo');
+                if(customLogoEl) customLogoEl.src = savedLogo;
+            }
+        }
+
+        function loadSavedPriceLogo() {
+            const savedLogo = localStorage.getItem('lalitha_price_tag_logo');
+            if (savedLogo) {
+                const priceLogoEl = document.getElementById('price-receipt-logo');
+                if(priceLogoEl) priceLogoEl.src = savedLogo;
             }
         }
 
@@ -2057,16 +2200,48 @@
             reader.readAsDataURL(file);
         }
 
+        function handlePriceLogoUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const dataUrl = e.target.result;
+                localStorage.setItem('lalitha_price_tag_logo', dataUrl);
+                loadSavedPriceLogo();
+                document.getElementById('price-show-logo').checked = true;
+                togglePriceLogoControls();
+            };
+            reader.readAsDataURL(file);
+        }
+
         function resetDefaultCustomLogo() {
             localStorage.removeItem('lalitha_custom_text_logo');
-            const customLogoEls = document.querySelectorAll('.thermal-logo');
-            customLogoEls.forEach(el => el.src = 'Black Logo .png');
+            const customLogoEl = document.getElementById('custom-receipt-logo');
+            if(customLogoEl) customLogoEl.src = 'Black Logo .png';
             document.getElementById('custom-show-logo').checked = true;
             updateCustomHeaderToggles();
         }
 
+        function resetPriceLogo() {
+            localStorage.removeItem('lalitha_price_tag_logo');
+            const priceLogoEl = document.getElementById('price-receipt-logo');
+            if(priceLogoEl) priceLogoEl.src = 'Black Logo .png';
+            document.getElementById('price-show-logo').checked = true;
+            togglePriceLogoControls();
+        }
+
         function changeLogoSize(sizeValue) {
             document.documentElement.style.setProperty('--logo-width', sizeValue);
+        }
+
+        function togglePriceLogoControls() {
+            const showLogo = document.getElementById('price-show-logo').checked;
+            const logoOpts = document.querySelectorAll('.price-logo-opt');
+            
+            logoOpts.forEach(el => {
+                el.style.display = showLogo ? 'inline-flex' : 'none';
+            });
+            updatePriceCardPreview();
         }
 
         function initSentenceCaseListeners() {
@@ -2102,6 +2277,21 @@
                 document.getElementById('price-brand-name').value = '';
                 updatePriceCardPreview();
             }
+        }
+
+        function setPriceLayout(opt) {
+            priceLayoutOption = opt;
+            document.getElementById('p-layout-1-btn').classList.toggle('active', opt === 1);
+            document.getElementById('p-layout-2-btn').classList.toggle('active', opt === 2);
+
+            if(opt === 1) {
+                document.getElementById('p-font-name').value = '26px';
+                document.getElementById('p-font-price').value = '20px';
+            } else {
+                document.getElementById('p-font-name').value = '16px';
+                document.getElementById('p-font-price').value = '32px';
+            }
+            updatePriceCardPreview();
         }
 
         function handleBrandSelectChange(selectEl) {
@@ -2626,13 +2816,37 @@
         }
 
         function updatePriceCardPreview() {
+            const showLogo = document.getElementById('price-show-logo').checked;
+            const showTagline = document.getElementById('price-show-tagline').checked;
+            const logoSizeVal = document.getElementById('price-logo-size-select').value;
+
+            const logoEl = document.getElementById('price-receipt-logo');
+            const taglineEl = document.getElementById('price-receipt-tagline');
+            const dividerEl = document.getElementById('price-receipt-divider');
+
+            logoEl.style.display = showLogo ? 'block' : 'none';
+            logoEl.style.width = logoSizeVal;
+            taglineEl.style.display = showTagline ? 'block' : 'none';
+
+            if (!showLogo && !showTagline) {
+                dividerEl.style.display = 'none';
+            } else {
+                dividerEl.style.display = 'block';
+            }
+
             const brandGroup = document.getElementById('price-brand-group');
             const brandName = document.getElementById('price-brand-name').value.trim();
-            const itemName = document.getElementById('price-item-name').value.trim();
+            const itemName = document.getElementById('price-item-name').value.trim() || 'Item Name';
             const itemQty = document.getElementById('price-item-qty').value.trim();
             const itemVal = parseFloat(document.getElementById('price-item-value').value) || 0;
             const discVal = parseFloat(document.getElementById('price-disc-val').value) || 0;
             const notesVal = document.getElementById('price-notes').value.trim();
+
+            const fName = document.getElementById('p-font-name').value;
+            const fPrice = document.getElementById('p-font-price').value;
+            const fBrand = document.getElementById('p-font-brand').value;
+            const fQty = document.getElementById('p-font-qty').value;
+            const fNotes = document.getElementById('p-font-notes').value;
 
             const brandEl = document.getElementById('p-card-brand');
             const brandDivider = document.getElementById('p-card-brand-divider');
@@ -2641,45 +2855,44 @@
                 brandEl.style.display = 'block';
                 brandDivider.style.display = 'block';
                 brandEl.textContent = brandName;
+                brandEl.style.fontSize = fBrand;
             } else {
                 brandEl.style.display = 'none';
                 brandDivider.style.display = 'none';
             }
-            
-            const nameEl = document.getElementById('p-card-name');
-            if (itemName) {
-                nameEl.style.display = 'block';
-                nameEl.textContent = itemName;
-            } else {
-                nameEl.textContent = 'ITEM NAME';
-            }
 
-            const qtyEl = document.getElementById('p-card-qty');
-            if (itemQty) {
-                qtyEl.style.display = 'block';
-                qtyEl.textContent = itemQty;
-            } else {
-                qtyEl.style.display = 'none';
-            }
-
-            const priceContainer = document.getElementById('p-card-price-container');
+            const contentWrapper = document.getElementById('p-card-content-wrapper');
             
+            let qtyHtml = itemQty ? `<div style="font-size:${fQty}; font-weight:900; text-transform:uppercase; margin:3px 0;">${itemQty}</div>` : '';
+            let nameHtml = `<div style="font-size:${fName}; font-weight:900; text-transform:uppercase; border:2px solid #000; padding:5px 4px; margin:4px 0; background:#fff;">${itemName}</div>`;
+            
+            let priceHtml = '';
             if (itemVal > 0) {
                 if (discVal > 0) {
                     let finalPrice = priceDiscType === 'pct' ? itemVal - (itemVal * (discVal / 100)) : itemVal - discVal;
                     if (finalPrice < 0) finalPrice = 0;
-                    priceContainer.innerHTML = `
-                        <div class="price-tag-mrp-small-struck">MRP: ₹${itemVal.toFixed(2)} (${discVal}${priceDiscType === 'pct' ? '% OFF' : '₹ OFF'})</div>
-                        <div class="price-tag-final-price-box">PRICE: ₹${finalPrice.toFixed(2)}</div>
+                    priceHtml = `
+                        <div style="font-size:13px; font-weight:900; text-decoration:line-through; text-transform:uppercase; margin-top:4px;">MRP: ₹${itemVal.toFixed(2)} (${discVal}${priceDiscType === 'pct' ? '% OFF' : '₹ OFF'})</div>
+                        <div style="font-size:${fPrice}; font-weight:900; border:3px solid #000; padding:6px 4px; margin:4px 0; background:#fff;">PRICE: ₹${finalPrice.toFixed(2)}</div>
                     `;
                 } else {
-                    priceContainer.innerHTML = `
-                        <div class="price-tag-mrp-box">MRP: ₹${itemVal.toFixed(2)}</div>
-                    `;
+                    priceHtml = `<div style="font-size:${fPrice}; font-weight:900; border:3px solid #000; padding:6px 4px; margin:6px 0; background:#fff;">MRP: ₹${itemVal.toFixed(2)}</div>`;
                 }
             } else {
-                priceContainer.innerHTML = `
-                    <div class="price-tag-mrp-box">MRP: ₹0</div>
+                priceHtml = `<div style="font-size:${fPrice}; font-weight:900; border:3px solid #000; padding:6px 4px; margin:6px 0; background:#fff;">MRP: ₹0</div>`;
+            }
+
+            if (priceLayoutOption === 1) {
+                contentWrapper.innerHTML = `
+                    ${nameHtml}
+                    ${qtyHtml}
+                    ${priceHtml}
+                `;
+            } else {
+                contentWrapper.innerHTML = `
+                    ${priceHtml}
+                    ${nameHtml}
+                    ${qtyHtml}
                 `;
             }
 
@@ -2688,6 +2901,7 @@
             if (notesVal) {
                 notesWrapper.style.display = 'block';
                 notesEl.textContent = `NOTE: ${notesVal}`;
+                notesEl.style.fontSize = fNotes;
             } else {
                 notesWrapper.style.display = 'none';
             }
@@ -2817,7 +3031,6 @@
             const editor = document.getElementById('editorCanvas');
             const display = document.getElementById('customTextDisplay');
             
-            // Auto-capitalize the very first letter entered if it is lowercase
             let textContent = editor.innerText;
             if (textContent.length > 0) {
                 let firstChar = textContent.charAt(0);
@@ -2827,7 +3040,6 @@
                     
                     editor.innerText = firstChar.toUpperCase() + textContent.slice(1);
                     
-                    // Restore cursor position
                     try {
                         let range = document.createRange();
                         let sel = window.getSelection();
@@ -2995,6 +3207,16 @@
                             </div>
                         </div>`;
                 } else if(val === 'price') {
+                    const showLogo = document.getElementById('price-show-logo').checked;
+                    const showTagline = document.getElementById('price-show-tagline').checked;
+                    const logoSizeVal = document.getElementById('price-logo-size-select').value;
+                    const activePriceLogoSrc = document.getElementById('price-receipt-logo').src;
+
+                    let priceHeaderHTML = '';
+                    if (showLogo) priceHeaderHTML += `<img src="${activePriceLogoSrc}" class="thermal-logo" style="width:${logoSizeVal};" alt="Logo">`;
+                    if (showTagline) priceHeaderHTML += `<div class="tagline">Feel the earth</div>`;
+                    if (showLogo || showTagline) priceHeaderHTML += `<div class="divider"></div>`;
+
                     const brandGroup = document.getElementById('price-brand-group');
                     const brandName = document.getElementById('price-brand-name').value.trim();
                     const itemName = document.getElementById('price-item-name').value.trim() || 'Item Name';
@@ -3003,30 +3225,39 @@
                     const discVal = parseFloat(document.getElementById('price-disc-val').value) || 0;
                     const notesVal = document.getElementById('price-notes').value.trim();
 
-                    let brandHtml = (brandGroup.style.display !== 'none' && brandName) ? `<div style="font-size:15px; font-weight:900; text-transform:uppercase;">${brandName}</div><div class="divider"></div>` : '';
-                    let qtyHtml = itemQty ? `<div style="font-size:13px; font-weight:900; text-transform:uppercase; margin:3px 0;">${itemQty}</div>` : '';
+                    const fName = document.getElementById('p-font-name').value;
+                    const fPrice = document.getElementById('p-font-price').value;
+                    const fBrand = document.getElementById('p-font-brand').value;
+                    const fQty = document.getElementById('p-font-qty').value;
+                    const fNotes = document.getElementById('p-font-notes').value;
+
+                    let brandHtml = (brandGroup.style.display !== 'none' && brandName) ? `<div style="font-size:${fBrand}; font-weight:900; text-transform:uppercase;">${brandName}</div><div class="divider"></div>` : '';
+                    let qtyHtml = itemQty ? `<div style="font-size:${fQty}; font-weight:900; text-transform:uppercase; margin:3px 0;">${itemQty}</div>` : '';
+                    let nameHtml = `<div style="font-size:${fName}; font-weight:900; text-transform:uppercase; border:2px solid #000; padding:5px 4px; margin:4px 0;">${itemName}</div>`;
+                    
                     let priceHtml = '';
                     if (itemVal > 0) {
                         if (discVal > 0) {
                             let finalPrice = priceDiscType === 'pct' ? itemVal - (itemVal * (discVal / 100)) : itemVal - discVal;
                             if (finalPrice < 0) finalPrice = 0;
                             priceHtml = `
-                                <div style="font-size:14px; font-weight:900; text-decoration:line-through; text-transform:uppercase; margin-top:4px;">MRP: ₹${itemVal.toFixed(2)} (${discVal}${priceDiscType === 'pct' ? '% OFF' : '₹ OFF'})</div>
-                                <div style="font-size:26px; font-weight:900; border:3px solid #000; padding:6px 4px; margin:4px 0;">PRICE: ₹${finalPrice.toFixed(2)}</div>
+                                <div style="font-size:13px; font-weight:900; text-decoration:line-through; text-transform:uppercase; margin-top:4px;">MRP: ₹${itemVal.toFixed(2)} (${discVal}${priceDiscType === 'pct' ? '% OFF' : '₹ OFF'})</div>
+                                <div style="font-size:${fPrice}; font-weight:900; border:3px solid #000; padding:6px 4px; margin:4px 0;">PRICE: ₹${finalPrice.toFixed(2)}</div>
                             `;
                         } else {
-                            priceHtml = `<div style="font-size:26px; font-weight:900; border:3px solid #000; padding:6px 4px; margin:6px 0;">MRP: ₹${itemVal.toFixed(2)}</div>`;
+                            priceHtml = `<div style="font-size:${fPrice}; font-weight:900; border:3px solid #000; padding:6px 4px; margin:6px 0;">MRP: ₹${itemVal.toFixed(2)}</div>`;
                         }
                     } else {
-                        priceHtml = `<div style="font-size:26px; font-weight:900; border:3px solid #000; padding:6px 4px; margin:6px 0;">MRP: ₹0</div>`;
+                        priceHtml = `<div style="font-size:${fPrice}; font-weight:900; border:3px solid #000; padding:6px 4px; margin:6px 0;">MRP: ₹0</div>`;
                     }
-                    let notesHtml = notesVal ? `<div style="font-size:11px; font-weight:900; margin-top:2px;">NOTE: ${notesVal}</div>` : '';
+                    let notesHtml = notesVal ? `<div style="font-size:${fNotes}; font-weight:900; margin-top:2px;">NOTE: ${notesVal}</div>` : '';
+
+                    let innerPriceContent = (priceLayoutOption === 1) ? `${nameHtml}${qtyHtml}${priceHtml}` : `${priceHtml}${nameHtml}${qtyHtml}`;
 
                     contentHTML += `
+                        ${priceHeaderHTML}
                         ${brandHtml}
-                        <div style="font-size:18px; font-weight:900; text-transform:uppercase; border:2px solid #000; padding:5px 4px; margin:4px 0;">${itemName}</div>
-                        ${qtyHtml}
-                        ${priceHtml}
+                        ${innerPriceContent}
                         ${notesHtml}`;
                 } else if(val === 'estimate') {
                     const custName = document.getElementById('est-cust-name').value.trim();
