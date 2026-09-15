@@ -881,85 +881,57 @@
             margin-top: 4px;
         }
 
-        /* Visiting Card Specific Styles - High Contrast & Solid Black Highlights */
+        /* Ultra-Clean Receipt-Style Visiting Card UI */
         .visiting-card {
-            border: 2.5px solid #000 !important;
-            padding: 10px 10px !important;
+            border: 2px solid #000 !important;
+            padding: 12px 10px !important;
             text-align: left !important;
             background: #fff !important;
         }
-        .vc-top-box {
+        .vc-center-header {
             text-align: center;
-            border-bottom: 2px solid #000;
-            padding-bottom: 5px;
             margin-bottom: 6px;
         }
         .vc-brand-title {
-            font-size: 20px;
+            font-size: 19px;
             font-weight: 900;
             text-transform: uppercase;
             letter-spacing: 0.5px;
             color: #000;
         }
         .vc-tagline {
-            font-size: 11.5px;
-            font-weight: 900;
-            font-style: italic;
-            margin-top: 1px;
-            color: #000;
-        }
-        .vc-section-header {
             font-size: 11px;
             font-weight: 900;
-            text-transform: uppercase;
-            background-color: #000000 !important;
-            color: #ffffff !important;
-            padding: 4px 6px;
-            margin: 6px 0 4px 0;
-            letter-spacing: 0.5px;
-            -webkit-print-color-adjust: exact !important;
-            print-color-adjust: exact !important;
+            font-style: italic;
+            color: #000;
         }
-        .vc-content-text {
-            font-size: 11.5px;
+        .vc-bullet-list {
+            list-style: none;
+            padding-left: 0;
+            font-size: 11px;
             font-weight: 900;
             line-height: 1.35;
             text-transform: uppercase;
+            margin: 4px 0;
+        }
+        .vc-bullet-list li::before {
+            content: "• ";
+            font-weight: 900;
+        }
+        .vc-row-label {
+            font-size: 11px;
+            font-weight: 900;
+            text-transform: uppercase;
+            margin-top: 5px;
             color: #000;
         }
-        .vc-branch-box {
-            border-left: 3px solid #000;
-            padding-left: 6px;
-            margin-bottom: 5px;
-        }
-        .vc-branch-name {
-            font-size: 11px;
-            font-weight: 900;
-            text-transform: uppercase;
-            text-decoration: underline;
-            margin-bottom: 1px;
-        }
-        .vc-branch-addr {
+        .vc-row-val {
             font-size: 10.5px;
             font-weight: 900;
-            line-height: 1.3;
             text-transform: uppercase;
-        }
-        .vc-contact-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background-color: #000000 !important;
-            color: #ffffff !important;
-            padding: 5px 6px;
-            margin-top: 6px;
-            font-size: 11px;
-            font-weight: 900;
-            -webkit-print-color-adjust: exact !important;
-            print-color-adjust: exact !important;
-        }
-        .vc-contact-footer span {
-            color: #ffffff !important;
+            line-height: 1.3;
+            color: #000;
+            margin-bottom: 3px;
         }
 
         /* Location & Coupon Styles */
@@ -1361,36 +1333,39 @@
             </div>
         </div>
         <div class="price-grid">
-            <div class="form-group">
+            <div class="form-group full-width">
+                <button type="button" class="type-btn" id="price-brand-toggle-btn" onclick="togglePriceBrandInput()" style="background:#f1f5f9; border-style: dashed; padding: 10px;">+ Add Brand Name</button>
+            </div>
+            <div class="form-group full-width" id="price-brand-group" style="display: none;">
                 <label>Brand Name</label>
-                <input type="text" class="form-control sentence-case-input" id="price-brand-name" placeholder="e.g. Lalitha Naturals" value="Lalitha Naturals" oninput="updatePriceCardPreview()">
+                <input type="text" class="form-control sentence-case-input" id="price-brand-name" placeholder="" value="" oninput="updatePriceCardPreview()">
             </div>
             <div class="form-group">
                 <label>Item Name <span style="color:#ef4444;">*</span></label>
-                <input type="text" class="form-control sentence-case-input" id="price-item-name" placeholder="e.g. Groundnut Oil 1L" value="" oninput="updatePriceCardPreview()">
+                <input type="text" class="form-control sentence-case-input" id="price-item-name" placeholder="" value="" oninput="updatePriceCardPreview()">
             </div>
             <div class="form-group">
                 <label>Net Weight / Quantity</label>
-                <input type="text" class="form-control sentence-case-input" id="price-item-qty" placeholder="e.g. 1 Litre" value="" oninput="updatePriceCardPreview()">
+                <input type="text" class="form-control sentence-case-input" id="price-item-qty" placeholder="" value="" oninput="updatePriceCardPreview()">
             </div>
             <div class="form-group">
                 <label>MRP (₹) <span style="color:#ef4444;">*</span></label>
-                <input type="number" class="form-control" id="price-item-value" placeholder="e.g. 250" value="" oninput="updatePriceCardPreview()">
+                <input type="number" class="form-control" id="price-item-value" placeholder="" value="" oninput="updatePriceCardPreview()">
             </div>
             <div class="form-group">
                 <label>Discount Type</label>
                 <div class="type-selector-btns">
-                    <button class="type-btn active" id="price-disc-pct-btn" onclick="setPriceDiscType('pct')">Discount %</button>
+                    <button class="type-btn" id="price-disc-pct-btn" onclick="setPriceDiscType('pct')">Discount %</button>
                     <button class="type-btn" id="price-disc-rs-btn" onclick="setPriceDiscType('rs')">Discount ₹</button>
                 </div>
             </div>
             <div class="form-group" id="price-disc-val-group">
                 <label id="price-disc-label">Discount Percentage (%)</label>
-                <input type="number" class="form-control" id="price-disc-val" placeholder="e.g. 10" value="10" oninput="updatePriceCardPreview()">
+                <input type="number" class="form-control" id="price-disc-val" placeholder="" value="" oninput="updatePriceCardPreview()">
             </div>
             <div class="form-group full-width">
                 <label>Notes (Optional)</label>
-                <input type="text" class="form-control sentence-case-input" id="price-notes" placeholder="e.g. Festival Batch" value="" oninput="updatePriceCardPreview()">
+                <input type="text" class="form-control sentence-case-input" id="price-notes" placeholder="" value="" oninput="updatePriceCardPreview()">
             </div>
         </div>
     </div>
@@ -1501,7 +1476,7 @@
         </div>
         <div class="visiting-grid">
             <div class="form-group full-width">
-                <label>Information preview loaded directly from verified business details.</label>
+                <label>Clean, minimalist layout loaded from verified store details.</label>
             </div>
         </div>
     </div>
@@ -1660,8 +1635,8 @@
             <div class="card-label">Price Tag Sticker (80mm)</div>
             <div class="preview-box">
                 <div class="card price-card" id="price-card-el" style="text-align: center;">
-                    <div class="price-tag-brand" id="p-card-brand">LALITHA NATURALS</div>
-                    <div class="divider"></div>
+                    <div class="price-tag-brand" id="p-card-brand" style="display: none;"></div>
+                    <div class="divider" id="p-card-brand-divider" style="display: none;"></div>
                     <div class="price-tag-item-name" id="p-card-name">ITEM NAME</div>
                     <div class="price-tag-qty" id="p-card-qty" style="display: none;"></div>
                     
@@ -1709,36 +1684,37 @@
             </div>
         </div>
 
-        <!-- Visiting Card Receipt Column (Redesigned for Maximum Clarity & Solid Black Highlighters) -->
+        <!-- Redesigned Minimalist Receipt-Style Visiting Card Receipt Column -->
         <div class="receipt-column visiting-receipt-column" id="visitingReceiptCol">
             <div class="card-label">Visiting Card (80mm)</div>
             <div class="preview-box">
                 <div class="card visiting-card" id="visiting-card-el">
-                    <div class="vc-top-box">
-                        <img src="Black Logo .png" class="thermal-logo" alt="Logo" style="width:160px; margin-bottom:1px;">
+                    <div class="vc-center-header">
+                        <div class="vc-brand-title">Lalitha Naturals</div>
                         <div class="vc-tagline">Feel the earth</div>
                     </div>
+                    <div class="divider"></div>
                     
-                    <div class="vc-section-header">Core Offerings</div>
-                    <div class="vc-content-text" style="margin-bottom: 6px;">
-                        Organic Food Products, Cold-Pressed Oils, Spices & Millet-Based Groceries
-                    </div>
+                    <div class="vc-row-label">Core Offerings:</div>
+                    <ul class="vc-bullet-list">
+                        <li>Organic Food Products & Spices</li>
+                        <li>Cold-Pressed Oils & Ghee</li>
+                        <li>Millet Groceries & Snacks</li>
+                    </ul>
 
-                    <div class="vc-section-header">Store Locations</div>
+                    <div class="divider"></div>
+
+                    <div class="vc-row-label">Branch 1 (Gajuwaka):</div>
+                    <div class="vc-row-val">MIG-20, Near Timpany School, Vuda Colony, Gonthinavanipalem, Visakhapatnam - 530044</div>
+
+                    <div class="vc-row-label" style="margin-top: 6px;">Branch 2 (Kurmannapalem):</div>
+                    <div class="vc-row-val">Vuda Phase 7, HIG-7, Opposite Gloria Vidya Kendram, Visakhapatnam - 530049</div>
+
+                    <div class="divider"></div>
                     
-                    <div class="vc-branch-box">
-                        <div class="vc-branch-name">Branch 1 (Gajuwaka)</div>
-                        <div class="vc-branch-addr">MIG-20, Near Timpany School, Vuda Colony, Gonthinavanipalem, Gajuwaka, Visakhapatnam - 530044</div>
-                    </div>
-
-                    <div class="vc-branch-box">
-                        <div class="vc-branch-name">Branch 2 (Kurmannapalem)</div>
-                        <div class="vc-branch-addr">Vuda Phase 7, HIG-7, Opposite Gloria Vidya Kendram, Vuda Colony, Gajuwaka, Visakhapatnam - 530049</div>
-                    </div>
-
-                    <div class="vc-contact-footer">
-                        <span>📞 9676287766</span>
-                        <span>🌐 www.lalithanaturals.com</span>
+                    <div style="text-align: center; font-size: 11px; font-weight: 900; text-transform: uppercase;">
+                        📞 9676287766<br>
+                        🌐 www.lalithanaturals.com
                     </div>
                 </div>
             </div>
@@ -1923,6 +1899,23 @@
             }).replace(/^\s*[a-z]/, function(match) {
                 return match.toUpperCase();
             });
+        }
+
+        function togglePriceBrandInput() {
+            const group = document.getElementById('price-brand-group');
+            const btn = document.getElementById('price-brand-toggle-btn');
+            if (group.style.display === 'none') {
+                group.style.display = 'flex';
+                btn.textContent = '✕ Remove Brand Name';
+                btn.style.background = '#e2e8f0';
+                document.getElementById('price-brand-name').focus();
+            } else {
+                group.style.display = 'none';
+                btn.textContent = '+ Add Brand Name';
+                btn.style.background = '#f1f5f9';
+                document.getElementById('price-brand-name').value = '';
+                updatePriceCardPreview();
+            }
         }
 
         function handleBrandSelectChange(selectEl) {
@@ -2396,14 +2389,25 @@
         }
 
         function updatePriceCardPreview() {
-            const brandName = document.getElementById('price-brand-name').value.trim() || 'Lalitha Naturals';
+            const brandGroup = document.getElementById('price-brand-group');
+            const brandName = document.getElementById('price-brand-name').value.trim();
             const itemName = document.getElementById('price-item-name').value.trim();
             const itemQty = document.getElementById('price-item-qty').value.trim();
             const itemVal = parseFloat(document.getElementById('price-item-value').value) || 0;
             const discVal = parseFloat(document.getElementById('price-disc-val').value) || 0;
             const notesVal = document.getElementById('price-notes').value.trim();
 
-            document.getElementById('p-card-brand').textContent = brandName;
+            const brandEl = document.getElementById('p-card-brand');
+            const brandDivider = document.getElementById('p-card-brand-divider');
+
+            if (brandGroup.style.display !== 'none' && brandName) {
+                brandEl.style.display = 'block';
+                brandDivider.style.display = 'block';
+                brandEl.textContent = brandName;
+            } else {
+                brandEl.style.display = 'none';
+                brandDivider.style.display = 'none';
+            }
             
             const nameEl = document.getElementById('p-card-name');
             if (itemName) {
@@ -2728,13 +2732,15 @@
                             </div>
                         </div>`;
                 } else if(val === 'price') {
-                    const brandName = document.getElementById('price-brand-name').value.trim() || 'Lalitha Naturals';
+                    const brandGroup = document.getElementById('price-brand-group');
+                    const brandName = document.getElementById('price-brand-name').value.trim();
                     const itemName = document.getElementById('price-item-name').value.trim() || 'Item Name';
                     const itemQty = document.getElementById('price-item-qty').value.trim();
                     const itemVal = parseFloat(document.getElementById('price-item-value').value) || 0;
                     const discVal = parseFloat(document.getElementById('price-disc-val').value) || 0;
                     const notesVal = document.getElementById('price-notes').value.trim();
 
+                    let brandHtml = (brandGroup.style.display !== 'none' && brandName) ? `<div style="font-size:15px; font-weight:900; text-transform:uppercase;">${brandName}</div><div class="divider"></div>` : '';
                     let qtyHtml = itemQty ? `<div style="font-size:13px; font-weight:900; text-transform:uppercase; margin:3px 0;">${itemQty}</div>` : '';
                     let priceHtml = '';
                     if (itemVal > 0) {
@@ -2754,8 +2760,7 @@
                     let notesHtml = notesVal ? `<div style="font-size:11px; font-weight:900; margin-top:2px;">NOTE: ${notesVal}</div>` : '';
 
                     contentHTML += `
-                        <div style="font-size:15px; font-weight:900; text-transform:uppercase;">${brandName}</div>
-                        <div class="divider"></div>
+                        ${brandHtml}
                         <div style="font-size:18px; font-weight:900; text-transform:uppercase; border:2px solid #000; padding:5px 4px; margin:4px 0;">${itemName}</div>
                         ${qtyHtml}
                         ${priceHtml}
@@ -2797,18 +2802,19 @@
                         </div>`;
                 } else if(val === 'visiting') {
                     contentHTML += `
-                        <div style="text-align:center; border-bottom:2px solid #000; padding-bottom:4px; margin-bottom:4px;">
-                            <div style="font-size:10px; font-style:italic; font-weight:900;">Feel the earth</div>
+                        <div style="text-align:center;">
+                            <div style="font-size:16px; font-weight:900; text-transform:uppercase;">Lalitha Naturals</div>
+                            <div style="font-size:10px; font-style:italic; font-weight:900; margin-bottom:4px;">Feel the earth</div>
                         </div>
-                        <div style="font-size:10px; font-weight:900; background-color:#000000 !important; color:#ffffff !important; padding:3px 6px; margin:4px 0 2px 0; text-align:left; text-transform:uppercase; -webkit-print-color-adjust:exact !important; print-color-adjust:exact !important;">Core Offerings</div>
-                        <div style="font-size:10px; font-weight:900; text-transform:uppercase; text-align:left; margin-bottom:4px;">Organic food products, cold-pressed oils, spices & millet-based groceries</div>
-                        <div style="font-size:10px; font-weight:900; background-color:#000000 !important; color:#ffffff !important; padding:3px 6px; margin:4px 0 2px 0; text-align:left; text-transform:uppercase; -webkit-print-color-adjust:exact !important; print-color-adjust:exact !important;">Store Locations</div>
-                        <div style="font-size:9.5px; font-weight:900; text-transform:uppercase; text-align:left; margin-bottom:3px; border-left:2px solid #000; padding-left:4px;"><strong>Branch 1 (Gajuwaka):</strong> MIG-20, Near Timpany School, Vuda Colony, Gonthinavanipalem, Visakhapatnam - 530044</div>
-                        <div style="font-size:9.5px; font-weight:900; text-transform:uppercase; text-align:left; margin-bottom:4px; border-left:2px solid #000; padding-left:4px;"><strong>Branch 2 (Kurmannapalem):</strong> Vuda Phase 7, HIG-7, Opposite Gloria Vidya Kendram, Visakhapatnam - 530049</div>
-                        <div style="background-color:#000000 !important; color:#ffffff !important; padding:4px 6px; margin-top:4px; display:flex; justify-content:space-between; font-size:9.5px; font-weight:900; -webkit-print-color-adjust:exact !important; print-color-adjust:exact !important;">
-                            <span>📞 9676287766</span>
-                            <span>🌐 www.lalithanaturals.com</span>
-                        </div>`;
+                        <div class="divider"></div>
+                        <div style="font-size:10.5px; font-weight:900; text-transform:uppercase; margin-bottom:2px;">Core Offerings:</div>
+                        <div style="font-size:10px; font-weight:900; text-transform:uppercase; margin-bottom:4px;">Organic food, cold-pressed oils, spices & millets</div>
+                        <div style="font-size:10.5px; font-weight:900; text-transform:uppercase; margin-top:4px;">Branch 1 (Gajuwaka):</div>
+                        <div style="font-size:10px; font-weight:900; text-transform:uppercase; margin-bottom:4px;">MIG-20, Near Timpany School, Vuda Colony, Visakhapatnam</div>
+                        <div style="font-size:10.5px; font-weight:900; text-transform:uppercase; margin-top:4px;">Branch 2 (Kurmannapalem):</div>
+                        <div style="font-size:10px; font-weight:900; text-transform:uppercase; margin-bottom:4px;">Vuda Phase 7, HIG-7, Opposite Gloria Vidya Kendram</div>
+                        <div class="divider"></div>
+                        <div style="text-align:center; font-size:10px; font-weight:900; text-transform:uppercase;">📞 9676287766 | 🌐 www.lalithanaturals.com</div>`;
                 }
 
                 section.innerHTML = contentHTML;
