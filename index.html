@@ -49,6 +49,10 @@
             margin-bottom: 24px;
             width: 100%;
             max-width: 900px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
         .app-header h1 {
@@ -63,6 +67,40 @@
             color: #64748b;
             margin-top: 4px;
             font-weight: 700;
+        }
+
+        /* Top Share App Button */
+        .share-app-btn {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: #ffffff;
+            border: 1.5px solid #cbd5e1;
+            color: #0ea5e9;
+            padding: 6px 12px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 900;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            transition: all 0.15s ease;
+        }
+
+        .share-app-btn:hover {
+            background: #f0f9ff;
+            border-color: #0ea5e9;
+            transform: translateY(-1px);
+        }
+
+        @media (max-width: 768px) {
+            .share-app-btn {
+                position: relative;
+                margin-top: 10px;
+                right: auto;
+            }
         }
 
         /* Dashboard Buttons Grid Layout */
@@ -1236,6 +1274,10 @@
 <body>
 
     <div class="app-header">
+        <!-- Share App Button at the top right -->
+        <button class="share-app-btn" onclick="shareAppUrl()">
+            📤 Share App
+        </button>
         <h1>Lalitha Naturals Thermal Print Center</h1>
         <p>Tap a print option below or manage store locations, estimates & custom text</p>
     </div>
@@ -2175,6 +2217,27 @@
             togglePriceLogoControls();
             buildMultiPreview();
         });
+
+        // Share App function using native Web Share API with clipboard fallback
+        function shareAppUrl() {
+            const shareData = {
+                title: 'Lalitha Naturals Thermal Print Center',
+                text: 'Check out the Lalitha Naturals Thermal Print Center app:',
+                url: 'https://lalithanaturals.github.io/Print/'
+            };
+
+            if (navigator.share) {
+                navigator.share(shareData).catch((err) => {
+                    console.log('Share error:', err);
+                });
+            } else {
+                navigator.clipboard.writeText('https://lalithanaturals.github.io/Print/').then(() => {
+                    alert('App link copied to clipboard: https://lalithanaturals.github.io/Print/');
+                }).catch(() => {
+                    prompt('Copy app link:', 'https://lalithanaturals.github.io/Print/');
+                });
+            }
+        }
 
         function toggleFontDrawer() {
             const content = document.getElementById('fontDrawerContent');
