@@ -1,0 +1,15 @@
+{
+  "name": "Lalitha Naturals Thermal Print Center",
+  "short_name": "Lalitha Print",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f8fafc",
+  "theme_color": "#0ea5e9",
+  "icons": [
+    {
+      "src": "icon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
