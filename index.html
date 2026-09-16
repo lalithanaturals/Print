@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lalitha Naturals Thermal Print Manager</title>
-    <!-- Web App Favicon / Browser Tab Icon -->
+    <!-- Web App Favicon / Browser Tab Icon Only -->
     <link rel="icon" type="image/jpeg" href="icon.jpg">
     <style>
         /* CRITICAL THERMAL PRINTER FIX: Force EXACT 80mm width & strip all browser margins/padding */
@@ -1841,7 +1841,7 @@
             <div class="preview-box">
                 <div class="card whatsapp-card" id="whatsapp-card-el">
                     <div class="header">Join Our WhatsApp Group</div>
-                    <img src="icon.jpg" class="thermal-logo" alt="Logo">
+                    <img src="Black Logo .png" class="thermal-logo" alt="Logo">
                     <div class="tagline">Feel the earth</div>
                     <div class="divider"></div>
                     <div class="side-by-side-whatsapp">
@@ -1885,7 +1885,7 @@
             <div class="card-label">Scrap Exchange (80mm)</div>
             <div class="preview-box">
                 <div class="card exchange-card" id="exchange-card-el">
-                    <img src="icon.jpg" class="thermal-logo" alt="Logo">
+                    <img src="Black Logo .png" class="thermal-logo" alt="Logo">
                     <div class="tagline">Feel the earth</div>
                     <div class="divider"></div>
                     <div class="offer-header">EXCHANGE YOUR OLD ITEMS</div>
@@ -1909,7 +1909,7 @@
             <div class="preview-box">
                 <div class="card price-card" id="price-card-el" style="text-align: center;">
                     <!-- Price Tag Header Logo & Tagline Containers (Independent to Price Tag) -->
-                    <img src="icon.jpg" class="thermal-logo" id="price-receipt-logo" alt="Logo" style="display: none;">
+                    <img src="Black Logo .png" class="thermal-logo" id="price-receipt-logo" alt="Logo" style="display: none;">
                     <div class="tagline" id="price-receipt-tagline" style="display: none;">Feel the earth</div>
                     <div class="divider" id="price-receipt-divider" style="display: none;"></div>
 
@@ -1934,7 +1934,7 @@
             <div class="preview-box">
                 <div class="card estimate-card" id="estimate-card-el" style="text-align: center;">
                     <div class="header">ESTIMATE BILL</div>
-                    <img src="icon.jpg" class="thermal-logo" alt="Logo">
+                    <img src="Black Logo .png" class="thermal-logo" alt="Logo">
                     <div class="tagline">Feel the earth</div>
                     <div class="divider"></div>
                     <div id="est-card-cust-info" style="font-size:11px; font-weight:900; text-align:left; margin-bottom:4px; display:none;"></div>
@@ -2007,7 +2007,7 @@
             <div class="card-label">Custom Text (80mm)</div>
             <div class="preview-box">
                 <div class="card custom-card" id="custom-card-el">
-                    <img src="icon.jpg" class="thermal-logo" id="custom-receipt-logo" alt="Logo">
+                    <img src="Black Logo .png" class="thermal-logo" id="custom-receipt-logo" alt="Logo">
                     <div class="tagline" id="custom-receipt-tagline" style="display: none;">Feel the earth</div>
                     <div class="divider" id="custom-receipt-divider"></div>
                     <div class="custom-text-content" id="customTextDisplay" style="text-align: center; font-size: 28px; line-height: 1.3;"></div>
@@ -2023,7 +2023,7 @@
                 <!-- Gajuwaka Coupon Wrapper -->
                 <div class="coupon-branch-wrapper" id="coupon-gajuwaka-section" style="width: 100%;">
                     <div class="card coupon-card" style="text-align: center;">
-                        <img src="icon.jpg" class="thermal-logo" alt="Logo">
+                        <img src="Black Logo .png" class="thermal-logo" alt="Logo">
                         <div class="tagline">Feel the earth</div>
                         
                         <div class="coupon-stamp">⚡ DISCOUNT COUPON ⚡</div>
@@ -2058,7 +2058,7 @@
                 <!-- Kurmannapalem Coupon Wrapper -->
                 <div class="coupon-branch-wrapper" id="coupon-kurmannapalem-section" style="width: 100%;">
                     <div class="card coupon-card" style="text-align: center;">
-                        <img src="icon.jpg" class="thermal-logo" alt="Logo">
+                        <img src="Black Logo .png" class="thermal-logo" alt="Logo">
                         <div class="tagline">Feel the earth</div>
 
                         <div class="coupon-stamp">⚡ DISCOUNT COUPON ⚡</div>
@@ -2230,7 +2230,7 @@
         function resetDefaultCustomLogo() {
             localStorage.removeItem('lalitha_custom_text_logo');
             const customLogoEl = document.getElementById('custom-receipt-logo');
-            if(customLogoEl) customLogoEl.src = 'icon.jpg';
+            if(customLogoEl) customLogoEl.src = 'Black Logo .png';
             document.getElementById('custom-show-logo').checked = true;
             updateCustomHeaderToggles();
         }
@@ -2238,7 +2238,7 @@
         function resetPriceLogo() {
             localStorage.removeItem('lalitha_price_tag_logo');
             const priceLogoEl = document.getElementById('price-receipt-logo');
-            if(priceLogoEl) priceLogoEl.src = 'icon.jpg';
+            if(priceLogoEl) priceLogoEl.src = 'Black Logo .png';
             document.getElementById('price-show-logo').checked = true;
             togglePriceLogoControls();
         }
@@ -3303,7 +3303,7 @@
                             <thead><tr><th style="width:30px;">S.No</th><th style="text-align:left;">Item</th><th>MRP</th><th>Price</th></tr></thead>
                             <tbody>${rowsHtml}</tbody>
                         </table>
-                        <div style="display:flex; justify-content:space-between; font-size:12px; font-weight:900; margin-top:4px; padding:3px 2px; border-top:1.5px solid #000;">
+                        <div style="display:flex; justify-content:space-space-between; font-size:12px; font-weight:900; margin-top:4px; padding:3px 2px; border-top:1.5px solid #000;">
                             <span>TOTAL:</span>
                             <span>₹${grandTotal.toFixed(2)}</span>
                         </div>`;
@@ -3351,8 +3351,7 @@
             else if (type === 'coupon-both') document.body.classList.add('print-coupon', 'print-coupon-both');
             else if (type === 'location') document.body.classList.add('print-location', 'print-' + locationBranch);
             else if (type === 'both-locations') document.body.classList.add('print-both-locations');
-            else if (type === 'price') document.body.classList.0 = ''; // clear class safety
-            if (type === 'price') document.body.classList.add('print-price');
+            else if (type === 'price') document.body.classList.add('print-price');
             else if (type === 'estimate') document.body.classList.add('print-estimate');
             else if (type === 'visiting') document.body.classList.add('print-visiting');
 
