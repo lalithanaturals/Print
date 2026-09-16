@@ -96,16 +96,17 @@
             height: 4px;
         }
 
-        .icon-btn.whatsapp::before    { background: linear-gradient(90deg, #25D366, #128C7E); }
-        .icon-btn.exchange::before    { background: linear-gradient(90deg, #f59e0b, #d97706); }
-        .icon-btn.calculator::before  { background: linear-gradient(90deg, #06b6d4, #0891b2); }
-        .icon-btn.custom::before      { background: linear-gradient(90deg, #a855f7, #7e22ce); }
-        .icon-btn.coupon::before      { background: linear-gradient(90deg, #ec4899, #be185d); }
-        .icon-btn.location::before    { background: linear-gradient(90deg, #10b981, #047857); }
-        .icon-btn.price::before       { background: linear-gradient(90deg, #0ea5e9, #0284c7); }
-        .icon-btn.estimate::before    { background: linear-gradient(90deg, #8b5cf6, #6d28d9); }
-        .icon-btn.visiting::before    { background: linear-gradient(90deg, #3b82f6, #1d4ed8); }
-        .icon-btn.multibutton::before { background: linear-gradient(90deg, #f97316, #c2410c); }
+        .icon-btn.whatsapp::before     { background: linear-gradient(90deg, #25D366, #128C7E); }
+        .icon-btn.exchange::before     { background: linear-gradient(90deg, #f59e0b, #d97706); }
+        .icon-btn.calculator::before   { background: linear-gradient(90deg, #06b6d4, #0891b2); }
+        .icon-btn.transfer::before     { background: linear-gradient(90deg, #3b82f6, #1d4ed8); }
+        .icon-btn.custom::before       { background: linear-gradient(90deg, #a855f7, #7e22ce); }
+        .icon-btn.coupon::before       { background: linear-gradient(90deg, #ec4899, #be185d); }
+        .icon-btn.location::before     { background: linear-gradient(90deg, #10b981, #047857); }
+        .icon-btn.price::before        { background: linear-gradient(90deg, #0ea5e9, #0284c7); }
+        .icon-btn.estimate::before     { background: linear-gradient(90deg, #8b5cf6, #6d28d9); }
+        .icon-btn.visiting::before     { background: linear-gradient(90deg, #6366f1, #4338ca); }
+        .icon-btn.multibutton::before  { background: linear-gradient(90deg, #f97316, #c2410c); }
 
         .icon-btn:hover {
             transform: translateY(-4px);
@@ -134,21 +135,24 @@
         .whatsapp .btn-badge   { background: #25D366; }
         .exchange .btn-badge   { background: #f59e0b; }
         .calculator .btn-badge { background: #06b6d4; }
+        .transfer .btn-badge   { background: #3b82f6; }
         .custom .btn-badge     { background: #a855f7; }
         .coupon .btn-badge     { background: #ec4899; }
         .location .btn-badge   { background: #10b981; }
         .price .btn-badge      { background: #0ea5e9; }
         .estimate .btn-badge   { background: #8b5cf6; }
-        .visiting .btn-badge   { background: #3b82f6; }
+        .visiting .btn-badge   { background: #6366f1; }
 
-        .icon-btn svg {
-            width: 36px;
-            height: 36px;
+        .icon-btn svg, .icon-btn img.btn-img-icon {
+            width: 38px;
+            height: 38px;
             margin-top: 2px;
             transition: transform 0.2s ease;
+            object-fit: contain;
+            border-radius: 50%;
         }
 
-        .icon-btn:hover svg {
+        .icon-btn:hover svg, .icon-btn:hover img.btn-img-icon {
             transform: scale(1.08);
         }
 
@@ -477,7 +481,7 @@
         .print-location-btn { background: #10b981; }
         .print-price-btn    { background: #0ea5e9; }
         .print-estimate-btn { background: #8b5cf6; }
-        .print-visiting-btn { background: #3b82f6; }
+        .print-visiting-btn { background: #6366f1; }
         .print-multi-btn    { background: #f97316; }
 
         .editor-canvas {
@@ -1270,9 +1274,16 @@
             <span>Scrap Calculator</span>
         </a>
 
+        <!-- Stock Transfer Link Button with van logo.png -->
+        <a class="icon-btn transfer" href="https://lalithanaturals.github.io/Stock-transfer/" target="_blank" rel="noopener noreferrer">
+            <span class="btn-badge">04</span>
+            <img src="van logo.png" class="btn-img-icon" alt="Stock Transfer">
+            <span>Stock Transfer</span>
+        </a>
+
         <!-- 3. Custom Text -->
         <button class="icon-btn custom" id="btn-toggle-custom" onclick="toggleCustomTextPanel()">
-            <span class="btn-badge">04</span>
+            <span class="btn-badge">05</span>
             <svg viewBox="0 0 24 24" fill="none" stroke="#a855f7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path>
                 <polyline points="14 2 14 8 20 8"></polyline>
@@ -1284,7 +1295,7 @@
 
         <!-- 4. Coupon -->
         <button class="icon-btn coupon" id="btn-toggle-coupon" onclick="toggleCouponPanel()">
-            <span class="btn-badge">05</span>
+            <span class="btn-badge">06</span>
             <svg viewBox="0 0 24 24" fill="none" stroke="#ec4899" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v2z"></path>
                 <path d="M12 6v12" stroke-dasharray="2 2"></path>
@@ -1294,7 +1305,7 @@
 
         <!-- 5. Store Location -->
         <button class="icon-btn location" id="btn-toggle-location" onclick="toggleLocationPanel()">
-            <span class="btn-badge">06</span>
+            <span class="btn-badge">07</span>
             <svg viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
                 <circle cx="12" cy="10" r="3"></circle>
@@ -1304,7 +1315,7 @@
 
         <!-- 6. Price Print -->
         <button class="icon-btn price" id="btn-toggle-price" onclick="togglePricePanel()">
-            <span class="btn-badge">07</span>
+            <span class="btn-badge">08</span>
             <svg viewBox="0 0 24 24" fill="none" stroke="#0ea5e9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
                 <line x1="7" y1="7" x2="7.01" y2="7"></line>
@@ -1314,7 +1325,7 @@
 
         <!-- 7. Estimate / Bill Calculator -->
         <button class="icon-btn estimate" id="btn-toggle-estimate" onclick="toggleEstimatePanel()">
-            <span class="btn-badge">08</span>
+            <span class="btn-badge">09</span>
             <svg viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect>
                 <line x1="8" y1="6" x2="16" y2="6"></line>
@@ -1332,8 +1343,8 @@
 
         <!-- 8. Visiting Card -->
         <button class="icon-btn visiting" id="btn-toggle-visiting" onclick="toggleVisitingPanel()">
-            <span class="btn-badge">09</span>
-            <svg viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <span class="btn-badge">10</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <rect x="2" y="5" width="20" height="14" rx="2"></rect>
                 <line x1="6" y1="9" x2="10" y2="9"></line>
                 <line x1="6" y1="13" x2="14" y2="13"></line>
