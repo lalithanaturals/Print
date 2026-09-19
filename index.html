@@ -1217,6 +1217,18 @@
                 overflow: visible !important;
             }
 
+            /* Keep a visible gap (with a cut line) between two branch cards printed together */
+            .coupon-branch-wrapper, .loc-card-wrapper {
+                margin-bottom: 8mm !important;
+                padding-bottom: 6mm !important;
+                border-bottom: 2px dashed #000 !important;
+            }
+            .coupon-branch-wrapper:last-of-type, .loc-card-wrapper:last-of-type {
+                margin-bottom: 0 !important;
+                padding-bottom: 0 !important;
+                border-bottom: none !important;
+            }
+
             .card {
                 width: 80mm !important;
                 max-width: 80mm !important;
@@ -1308,7 +1320,7 @@
         </button>
 
         <!-- Scrap Calculator Link Button -->
-        <a class="icon-btn calculator" href="https://lalithanaturals.github.io/Bhargav/" target="_blank" rel="noopener noreferrer">
+        <a class="icon-btn calculator" href="https://lalithanaturals.github.io/scrap-calc/" target="_blank" rel="noopener noreferrer">
             <span class="btn-badge">03</span>
             <svg viewBox="0 0 24 24" fill="none" stroke="#06b6d4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect>
@@ -1734,7 +1746,8 @@
                     <!-- Hidden field holding the active discount value -->
                     <input type="hidden" id="quickDiscValue" value="">
 
-                    <div class="form-group" style="display:none;">
+                    <div class="form-group">
+                        <label>&nbsp;</label>
                         <button class="add-fast-btn" id="quick-form-submit-btn" onclick="addQuickItemCustom()">+ Add</button>
                     </div>
                 </div>
@@ -1800,7 +1813,8 @@
             <span class="panel-title">🎟️ Issue Store Discount Coupon</span>
             <div class="panel-header-actions">
                 <button class="print-coupon-btn" onclick="printCouponAction()">🖨️ Print Coupon</button>
-                <button class="print-coupon-btn" onclick="triggerMobilePrint('coupon-both')">🖨️ Print Both Branches</button>
+                <button class="print-coupon-btn" onclick="printBothBranchesCouponAction()">🖨️ Print Both Branches</button>
+                <button class="reset-logo-btn" onclick="regenerateCouponCode()" title="Issue a fresh coupon code for this branch">↺ New Code</button>
             </div>
         </div>
         <div class="coupon-grid">
@@ -2201,8 +2215,22 @@
 
         let quickEstimateItems = [];
 
+        // Coupon codes are generated once and kept stable for the life of the page
+        // (instead of re-randomizing on every keystroke), so the code shown in the
+        // preview is always the code that actually gets printed.
+        let couponCode1 = null;
+        let couponCode2 = null;
+
+        function getLocalDateStr(d) {
+            d = d || new Date();
+            const y = d.getFullYear();
+            const m = String(d.getMonth() + 1).padStart(2, '0');
+            const day = String(d.getDate()).padStart(2, '0');
+            return `${y}-${m}-${day}`;
+        }
+
         window.addEventListener('DOMContentLoaded', () => {
-            const todayStr = new Date().toISOString().split('T')[0];
+            const todayStr = getLocalDateStr();
             const dateInput = document.getElementById('coupon-from-date');
             if (dateInput) dateInput.value = todayStr;
 
@@ -2328,18 +2356,27 @@
         function initSentenceCaseListeners() {
             document.querySelectorAll('.sentence-case-input').forEach(input => {
                 input.addEventListener('input', function(e) {
-                    let val = this.value;
-                    this.value = formatSentenceCase(val);
+                    const start = this.selectionStart;
+                    const end = this.selectionEnd;
+                    const formatted = formatSentenceCase(this.value);
+                    if (formatted !== this.value) {
+                        this.value = formatted;
+                        // The replacement only ever swaps a lowercase letter for its
+                        // uppercase version (same length), so the caret can be put back
+                        // exactly where it was instead of jumping to the end.
+                        try { this.setSelectionRange(start, end); } catch (err) {}
+                    }
                 });
             });
         }
 
         function formatSentenceCase(str) {
             if (!str) return '';
-            return str.toLowerCase().replace(/(^\s*|[.!?]\s+)([a-z])/g, function(match, separator, char) {
+            // Only capitalizes the letter at the start of the string or right after
+            // a ".", "!" or "?" — everything else the user typed (including
+            // intentional uppercase like "ML" or "USA") is left exactly as typed.
+            return str.replace(/(^\s*|[.!?]\s+)([a-z])/g, function(match, separator, char) {
                 return separator + char.toUpperCase();
-            }).replace(/^\s*[a-z]/, function(match) {
-                return match.toUpperCase();
             });
         }
 
@@ -2389,18 +2426,19 @@
             }
 
             if (val === 'The Indus Valley') {
-                selectAndAddPct('40%');
+                armDiscount('40%');
             } else if (val === 'Solara') {
-                selectAndAddPct('25%');
+                armDiscount('25%');
             }
         }
 
-        function selectAndAddPct(pctVal) {
+        // Arms a discount value and highlights its button, without adding an item.
+        function armDiscount(pctVal) {
             document.getElementById('quickDiscValue').value = pctVal;
             document.getElementById('manualDiscInput').value = '';
-            
+
             document.querySelectorAll('.big-pct-btn').forEach(btn => btn.classList.remove('active'));
-            
+
             document.querySelectorAll('.big-pct-btn').forEach(btn => {
                 if(btn.textContent.trim() === pctVal) {
                     btn.classList.add('active');
@@ -2408,15 +2446,47 @@
             });
         }
 
+        function selectAndAddPct(pctVal) {
+            armDiscount(pctVal);
+
+            // "Tap to Add Instantly": if the item is already filled in (MRP present),
+            // tapping a discount button adds the item right away instead of just
+            // arming a value that silently carries over to the next item.
+            const mrpVal = document.getElementById('quickMrp').value.trim();
+            if (mrpVal) {
+                addQuickItemCustom();
+            } else {
+                document.getElementById('quickMrp').focus();
+            }
+        }
+
         function handleManualDiscType(inputEl) {
             let val = inputEl.value.trim();
-            if(!val) return;
-
             document.querySelectorAll('.big-pct-btn').forEach(btn => btn.classList.remove('active'));
 
-            let formattedDisc = val;
-            if(!val.endsWith('%') && !val.includes('₹') && !isNaN(val)) {
+            if (!val) {
+                // Clearing the custom box also clears the armed discount, instead of
+                // silently keeping whatever value was last typed.
+                document.getElementById('quickDiscValue').value = '';
+                return;
+            }
+
+            let formattedDisc;
+            if (val.includes('₹')) {
+                const num = parseFloat(val.replace('₹', ''));
+                if (isNaN(num)) { document.getElementById('quickDiscValue').value = ''; return; }
+                formattedDisc = '₹' + num;
+            } else if (val.endsWith('%')) {
+                const num = parseFloat(val);
+                if (isNaN(num)) { document.getElementById('quickDiscValue').value = ''; return; }
+                formattedDisc = num + '%';
+            } else if (!isNaN(val)) {
                 formattedDisc = val + '%';
+            } else {
+                // Not a recognizable number, "%", or "₹" value — don't store garbage
+                // that would silently apply zero discount while showing text in the table.
+                document.getElementById('quickDiscValue').value = '';
+                return;
             }
             document.getElementById('quickDiscValue').value = formattedDisc;
         }
@@ -2482,11 +2552,15 @@
             document.getElementById('quickName').value = '';
             document.getElementById('quickMrp').value = '';
             document.getElementById('manualDiscInput').value = '';
-            
+
+            // Reset the discount back to the visible 10% default rather than leaving
+            // the just-used discount (e.g. 40%) silently armed for the next item.
+            armDiscount('10%');
+
             if (brandSelect.value === 'Manual') {
                 document.getElementById('quickBrandManual').value = '';
             }
-            
+
             document.getElementById('quickName').focus();
 
             renderQuickItemsTable();
@@ -2723,24 +2797,37 @@
             display.style.lineHeight = spacing;
         }
 
+        // Toggles case for every text node under an element in place, without
+        // touching element structure — so bold/underline spans and bullet lists
+        // survive the case change.
+        function toggleCaseTextNodes(el) {
+            const combined = el.textContent;
+            if (!combined || combined.trim() === '') return;
+            const goUpper = combined !== combined.toUpperCase();
+            (function walk(node) {
+                node.childNodes.forEach(child => {
+                    if (child.nodeType === Node.TEXT_NODE) {
+                        child.nodeValue = goUpper ? child.nodeValue.toUpperCase() : child.nodeValue.toLowerCase();
+                    } else {
+                        walk(child);
+                    }
+                });
+            })(el);
+        }
+
         function toggleEditorCase() {
             const editor = document.getElementById('editorCanvas');
             const selection = window.getSelection();
 
-            if (selection.rangeCount > 0 && !selection.isCollapsed) {
+            if (selection.rangeCount > 0 && !selection.isCollapsed && editor.contains(selection.anchorNode)) {
                 const range = selection.getRangeAt(0);
                 const selectedText = range.toString();
                 const toggledText = (selectedText === selectedText.toUpperCase()) ? selectedText.toLowerCase() : selectedText.toUpperCase();
-                
+
                 range.deleteContents();
                 range.insertNode(document.createTextNode(toggledText));
             } else {
-                let text = editor.innerText;
-                if (text === text.toUpperCase()) {
-                    editor.innerText = text.toLowerCase();
-                } else {
-                    editor.innerText = text.toUpperCase();
-                }
+                toggleCaseTextNodes(editor);
             }
             handleEditorInput();
         }
@@ -3046,7 +3133,13 @@
             document.getElementById('coupon-kurmannapalem-section').style.display = couponBranch === 'kurmannapalem' ? 'block' : 'none';
 
             const manualDateVal = document.getElementById('coupon-from-date').value;
-            let startDate = manualDateVal ? new Date(manualDateVal) : new Date();
+            let startDate;
+            if (manualDateVal) {
+                const [yy, mm, dd] = manualDateVal.split('-').map(Number);
+                startDate = new Date(yy, mm - 1, dd);
+            } else {
+                startDate = new Date();
+            }
             let validUntil = new Date(startDate);
             validUntil.setDate(startDate.getDate() + 30);
 
@@ -3091,46 +3184,73 @@
                     document.getElementById(`c-notes-row-${id}`).style.display = 'none';
                 }
 
-                const randomCode = (id === '1' ? 'GAJ-' : 'KUR-') + Math.floor(1000 + Math.random() * 9000);
-                document.getElementById(`c-code-disp-${id}`).textContent = randomCode;
+                // Generate the code once and reuse it — re-randomizing on every
+                // preview refresh meant the printed code could differ from whatever
+                // was last shown on screen.
+                if (id === '1' && !couponCode1) couponCode1 = 'GAJ-' + Math.floor(1000 + Math.random() * 9000);
+                if (id === '2' && !couponCode2) couponCode2 = 'KUR-' + Math.floor(1000 + Math.random() * 9000);
+                document.getElementById(`c-code-disp-${id}`).textContent = id === '1' ? couponCode1 : couponCode2;
             });
         }
 
-        function printCouponAction() {
+        // Issues a fresh code for the currently selected branch (e.g. for a new
+        // customer), instead of reusing the one already shown.
+        function regenerateCouponCode() {
+            if (couponBranch === 'gajuwaka') {
+                couponCode1 = 'GAJ-' + Math.floor(1000 + Math.random() * 9000);
+            } else {
+                couponCode2 = 'KUR-' + Math.floor(1000 + Math.random() * 9000);
+            }
+            updateCouponCardPreview();
+        }
+
+        function getRequiredStaffName() {
             let staffName = selectedStaff;
             if (selectedStaff === 'Other') {
                 staffName = document.getElementById('coupon-staff-name').value.trim();
             }
-            if (!staffName) {
+            return staffName;
+        }
+
+        function printCouponAction() {
+            if (!getRequiredStaffName()) {
                 alert('Please enter or select Staff Name');
                 return;
             }
             triggerMobilePrint('coupon-' + couponBranch);
         }
 
+        function printBothBranchesCouponAction() {
+            if (!getRequiredStaffName()) {
+                alert('Please enter or select Staff Name');
+                return;
+            }
+            triggerMobilePrint('coupon-both');
+        }
+
+        // Capitalizes the first letter of the editor's text in place (mutating just
+        // that one character of its text node) instead of overwriting innerText,
+        // which used to wipe bold/underline/bullet formatting and required a fragile
+        // caret-restore hack. Mutating in place leaves the caret exactly where it was.
+        function autoCapitalizeFirstLetter(editor) {
+            const walker = document.createTreeWalker(editor, NodeFilter.SHOW_TEXT, null);
+            let node = walker.nextNode();
+            while (node && node.nodeValue.trim() === '') {
+                node = walker.nextNode();
+            }
+            if (!node) return;
+            const text = node.nodeValue;
+            const firstChar = text.charAt(0);
+            if (firstChar && firstChar !== firstChar.toUpperCase() && firstChar === firstChar.toLowerCase()) {
+                node.nodeValue = firstChar.toUpperCase() + text.slice(1);
+            }
+        }
+
         function handleEditorInput() {
             const editor = document.getElementById('editorCanvas');
             const display = document.getElementById('customTextDisplay');
-            
-            let textContent = editor.innerText;
-            if (textContent.length > 0) {
-                let firstChar = textContent.charAt(0);
-                if (firstChar !== firstChar.toUpperCase() && firstChar === firstChar.toLowerCase()) {
-                    let selection = window.getSelection();
-                    let offset = selection.rangeCount > 0 ? selection.getRangeAt(0).startOffset : 0;
-                    
-                    editor.innerText = firstChar.toUpperCase() + textContent.slice(1);
-                    
-                    try {
-                        let range = document.createRange();
-                        let sel = window.getSelection();
-                        range.setStart(editor.childNodes[0], Math.min(offset, editor.childNodes[0].length));
-                        range.collapse(true);
-                        sel.removeAllRanges();
-                        sel.addRange(range);
-                    } catch(err) {}
-                }
-            }
+
+            autoCapitalizeFirstLetter(editor);
 
             display.innerHTML = editor.innerHTML;
             document.getElementById('multi-input-custom-text').value = editor.innerText;
@@ -3179,12 +3299,20 @@
                 return;
             }
 
-            const activeCustomLogoSrc = document.getElementById('custom-receipt-logo').src;
-            let topHeaderHTML = `
-                <img src="${activeCustomLogoSrc}" class="thermal-logo" alt="Logo">
-                <div class="tagline">Feel the earth</div>
-                <div class="divider"></div>
-            `;
+            // Custom Text and Price Tag sections render their own logo/tagline header
+            // (controlled by their own "Include Logo/Tagline" checkboxes), so only show
+            // the generic top header when neither of those is part of this print —
+            // otherwise the logo would print twice.
+            const sectionsWithOwnHeader = selectedValues.includes('custom') || selectedValues.includes('price');
+            let topHeaderHTML = '';
+            if (!sectionsWithOwnHeader) {
+                const activeCustomLogoSrc = document.getElementById('custom-receipt-logo').src;
+                topHeaderHTML = `
+                    <img src="${activeCustomLogoSrc}" class="thermal-logo" alt="Logo">
+                    <div class="tagline">Feel the earth</div>
+                    <div class="divider"></div>
+                `;
+            }
             container.innerHTML = topHeaderHTML;
 
             const currentAlign = document.getElementById('editorCanvas').style.textAlign || 'center';
@@ -3371,7 +3499,7 @@
                             <thead><tr><th style="width:30px;">S.No</th><th style="text-align:left;">Item</th><th>MRP</th><th>Price</th></tr></thead>
                             <tbody>${rowsHtml}</tbody>
                         </table>
-                        <div style="display:flex; justify-content:space-space-between; font-size:12px; font-weight:900; margin-top:4px; padding:3px 2px; border-top:1.5px solid #000;">
+                        <div style="display:flex; justify-content:space-between; font-size:12px; font-weight:900; margin-top:4px; padding:3px 2px; border-top:1.5px solid #000;">
                             <span>TOTAL:</span>
                             <span>₹${grandTotal.toFixed(2)}</span>
                         </div>`;
@@ -3410,6 +3538,24 @@
         }
 
         function triggerMobilePrint(type) {
+            if (type === 'price') {
+                const itemName = document.getElementById('price-item-name').value.trim();
+                const mrp = parseFloat(document.getElementById('price-item-value').value);
+                if (!itemName || !mrp || mrp <= 0) {
+                    alert('Please enter an Item Name and MRP before printing the price tag.');
+                    if (!itemName) document.getElementById('price-item-name').focus();
+                    else document.getElementById('price-item-value').focus();
+                    return;
+                }
+            }
+            if (type === 'estimate') {
+                if (quickEstimateItems.length === 0) {
+                    alert('Please add at least one item before printing the estimate.');
+                    document.getElementById('quickName').focus();
+                    return;
+                }
+            }
+
             document.body.className = '';
             if (type === 'whatsapp') document.body.classList.add('print-whatsapp');
             else if (type === 'exchange') document.body.classList.add('print-exchange');
