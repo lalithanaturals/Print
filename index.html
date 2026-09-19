@@ -93,6 +93,11 @@
         @media (max-width: 1050px) {
             .app-layout {
                 flex-direction: column;
+                align-items: stretch;
+            }
+            .app-main {
+                width: 100%;
+                flex-basis: auto;
                 align-items: center;
             }
             .preview-sidebar {
@@ -104,94 +109,148 @@
             }
         }
 
-        .app-header {
-            text-align: center;
-            margin-bottom: 24px;
-            width: 100%;
-            max-width: 900px;
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .app-header h1 {
-            font-size: 22px;
-            font-weight: 900;
-            color: #0f172a;
-            letter-spacing: -0.3px;
-        }
-
-        .app-header p {
-            font-size: 13px;
-            color: #64748b;
-            margin-top: 4px;
-            font-weight: 700;
-        }
-
-        /* Top Share App Button */
-        .share-app-btn {
-            position: absolute;
-            top: 0;
-            right: 0;
-            background: #ffffff;
-            border: 1.5px solid #cbd5e1;
-            color: #0ea5e9;
-            padding: 6px 12px;
-            border-radius: 10px;
-            font-size: 11px;
-            font-weight: 900;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            transition: all 0.15s ease;
-        }
-
-        .share-app-btn:hover {
-            background: #f0f9ff;
-            border-color: #0ea5e9;
-            transform: translateY(-1px);
-        }
-
-        @media (max-width: 768px) {
-            .share-app-btn {
-                position: relative;
-                margin-top: 10px;
-                right: auto;
+        /* Extra safety net: an auto-fill grid inside a shrink-to-fit flex
+           column can blow out its own container's width on narrow screens.
+           Pin the tool grid to a fixed column count there instead. */
+        @media (max-width: 640px) {
+            .big-buttons-bar {
+                grid-template-columns: repeat(4, 1fr);
             }
         }
 
-        /* Dashboard: grouped sections, each its own labeled button grid */
+        @media (max-width: 420px) {
+            .big-buttons-bar {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        /* POS-style dark dashboard shell — a self-contained dark "screen"
+           sitting on the page, with a top bar, a category tile grid, and a
+           every category shown at once, no tab-switching required. */
+        .pos-shell {
+            width: 100%;
+            max-width: 900px;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 22px;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 24px;
+        }
+
+        .pos-topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            border-bottom: 1px solid #eef1f6;
+        }
+
+        .pos-topbar .pos-brand {
+            color: #475569;
+            font-weight: 900;
+            font-size: 13px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .pos-icon-btn {
+            width: 34px;
+            height: 34px;
+            border-radius: 10px;
+            border: none;
+            background: #f1f5f9;
+            color: #64748b;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background-color 0.15s ease, color 0.15s ease;
+        }
+
+        .pos-icon-btn:hover {
+            background: #e2e8f0;
+            color: #0f172a;
+        }
+
+        .pos-icon-btn svg {
+            width: 17px;
+            height: 17px;
+        }
+
+        /* Collapses to nothing until the search icon is tapped */
+        .pos-search-row {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.2s ease, padding 0.2s ease;
+            padding: 0 20px;
+        }
+
+        .pos-search-row.open {
+            max-height: 60px;
+            padding: 12px 20px;
+        }
+
+        .pos-search-row .pos-search-inner {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: #f1f5f9;
+            border-radius: 12px;
+            padding: 9px 14px;
+        }
+
+        .pos-search-row svg {
+            width: 16px;
+            height: 16px;
+            color: #94a3b8;
+            flex-shrink: 0;
+        }
+
+        .pos-search-row input {
+            border: none;
+            outline: none;
+            background: transparent;
+            color: #0f172a;
+            font-size: 13px;
+            flex: 1;
+            font-family: inherit;
+        }
+
+        .pos-search-row input::placeholder {
+            color: #94a3b8;
+        }
+
+        /* Dashboard: every category shown at once, one under the other */
         .dashboard-sections {
             width: 100%;
-            max-width: 980px;
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-            margin-bottom: 20px;
         }
 
         .dashboard-section {
             width: 100%;
+            padding: 18px 20px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .dashboard-section:last-child {
+            border-bottom: none;
         }
 
         .section-label {
             display: flex;
             align-items: center;
             gap: 8px;
-            font-size: 11.5px;
+            font-size: 11px;
             font-weight: 900;
             text-transform: uppercase;
             letter-spacing: 0.6px;
             color: #64748b;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
         }
 
         .section-label .section-dot {
-            width: 8px;
-            height: 8px;
+            width: 7px;
+            height: 7px;
             border-radius: 50%;
             flex-shrink: 0;
         }
@@ -204,117 +263,129 @@
             color: #94a3b8;
         }
 
-        /* External Tools gets a visually distinct tray so it doesn't read as
-           "just another print button" — tapping these leaves the app. */
-        .external-tools-panel {
-            background: #f8fafc;
-            border: 1.5px dashed #cbd5e1;
-            border-radius: 16px;
-            padding: 14px;
-        }
-
-        /* Dashboard Buttons Grid Layout — compact so the whole dashboard fits with
-           less scrolling, especially on a phone. */
+        /* Dashboard Buttons — one calm accent color for every tile, so the
+           whole grid reads as one consistent set rather than a rainbow. */
         .big-buttons-bar {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(108px, 1fr));
-            gap: 10px;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 12px;
             width: 100%;
-            max-width: 980px;
         }
 
-        /* Each category is a full gradient card (not just a top stripe) — bold,
-           colorful, with white icon/label on top. */
         .icon-btn {
-            background: #64748b;
-            border: none;
-            border-radius: 14px;
-            padding: 10px 8px;
+            --tile-color: #ea580c;
+            background: #fff7ed;
+            border: 1.5px solid #fed7aa;
+            border-radius: 12px;
+            padding: 16px 8px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 5px;
+            gap: 8px;
             cursor: pointer;
-            color: #ffffff;
-            box-shadow: 0 6px 14px -6px rgba(0, 0, 0, 0.35);
-            transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.15s ease;
+            text-align: center;
+            text-decoration: none;
+            color: var(--tile-color);
+            transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
             position: relative;
             overflow: hidden;
-            text-decoration: none;
+            width: 100%;
+            min-height: 88px;
             -webkit-tap-highlight-color: transparent;
         }
 
-        .icon-btn.whatsapp    { background: linear-gradient(135deg, #34d399, #0e9e57); }
-        .icon-btn.exchange    { background: linear-gradient(135deg, #fbbf24, #d97706); }
-        .icon-btn.calculator  { background: linear-gradient(135deg, #22d3ee, #0891b2); }
-        .icon-btn.transfer    { background: linear-gradient(135deg, #60a5fa, #1d4ed8); }
-        .icon-btn.offercalc   { background: linear-gradient(135deg, #2dd4bf, #0f766e); }
-        .icon-btn.custom      { background: linear-gradient(135deg, #c084fc, #7e22ce); }
-        .icon-btn.coupon      { background: linear-gradient(135deg, #f472b6, #be185d); }
-        .icon-btn.location    { background: linear-gradient(135deg, #34d399, #047857); }
-        .icon-btn.price       { background: linear-gradient(135deg, #38bdf8, #0284c7); }
-        .icon-btn.estimate    { background: linear-gradient(135deg, #a78bfa, #6d28d9); }
-        .icon-btn.visiting    { background: linear-gradient(135deg, #818cf8, #4338ca); }
-        .icon-btn.multibutton { background: linear-gradient(135deg, #fb923c, #c2410c); }
-
-        /* This old top-stripe pseudo-element is superseded by the full-card
-           gradients above; keep it inert rather than delete, in case a category
-           is ever added without a background rule of its own. */
-        .icon-btn::before {
-            content: '';
-            display: none;
-        }
-
         .icon-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 20px -6px rgba(0, 0, 0, 0.4);
+            transform: translateY(-2px);
+            background: #ffedd5;
+            box-shadow: 0 10px 18px -10px rgba(234, 88, 12, 0.35);
         }
 
         .icon-btn:active {
-            transform: scale(0.96);
-            box-shadow: 0 3px 8px -3px rgba(0, 0, 0, 0.35);
+            transform: scale(0.97);
         }
 
         .icon-btn.active-toggle {
-            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.85), 0 10px 20px -6px rgba(0, 0, 0, 0.4);
-            transform: translateY(-2px);
-        }
-
-        .btn-badge {
-            position: absolute;
-            top: 7px;
-            right: 9px;
-            font-size: 8.5px;
-            font-weight: 900;
-            padding: 1.5px 5px;
-            border-radius: 20px;
+            background: var(--tile-color);
+            border-color: var(--tile-color);
             color: #ffffff;
-            letter-spacing: 0.5px;
-            background: rgba(255, 255, 255, 0.28);
+            box-shadow: 0 8px 18px -8px rgba(234, 88, 12, 0.45);
         }
 
-        .icon-btn svg, .icon-btn img.btn-img-icon {
-            width: 27px;
-            height: 27px;
-            margin-top: 1px;
-            transition: transform 0.2s ease;
+        .tile-icon {
+            width: 22px;
+            height: 22px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .tile-icon svg {
+            width: 22px;
+            height: 22px;
+            color: currentColor;
+        }
+
+        .tile-icon img.btn-img-icon {
+            width: 22px;
+            height: 22px;
             object-fit: contain;
-            border-radius: 50%;
-            color: #ffffff;
         }
 
-        .icon-btn:hover svg, .icon-btn:hover img.btn-img-icon {
-            transform: scale(1.1);
-        }
-
-        .icon-btn span {
-            font-size: 10px;
-            font-weight: 900;
-            text-transform: uppercase;
+        .icon-btn .t1 {
+            font-weight: 800;
+            font-size: 10.5px;
             letter-spacing: 0.3px;
+            text-transform: uppercase;
+            line-height: 1.3;
+            color: inherit;
+        }
+
+        /* Top Share App Button — used inline as a round icon in .pos-topbar */
+        .share-app-btn {
+            background: #f1f5f9;
+            border: none;
+            color: #64748b;
+            width: 34px;
+            height: 34px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background-color 0.15s ease, color 0.15s ease;
+        }
+
+        .share-app-btn:hover {
+            background: #e2e8f0;
+            color: #0f172a;
+        }
+
+        .share-app-btn svg {
+            width: 17px;
+            height: 17px;
+        }
+
+        .page-title {
+            width: 100%;
+            max-width: 900px;
             text-align: center;
-            color: #ffffff;
+            margin-bottom: 16px;
+        }
+
+        .page-title h1 {
+            font-size: 19px;
+            margin: 0;
+            font-weight: 900;
+            color: #0f172a;
+        }
+
+        .page-title p {
+            font-size: 12px;
+            margin: 3px 0 0;
+            color: #64748b;
+            font-weight: 700;
         }
 
         /* Panels Shared */
@@ -1282,10 +1353,6 @@
         }
 
         @media (max-width: 600px) {
-            .big-buttons-bar {
-                grid-template-columns: 1fr 1fr;
-            }
-
             .receipts-wrapper {
                 flex-direction: column;
                 align-items: center;
@@ -1445,189 +1512,244 @@
     <div class="app-layout">
     <div class="app-main">
 
-    <div class="app-header">
-        <!-- Share App Button at the top right -->
-        <button class="share-app-btn" onclick="shareAppUrl()">
-            📤 Share App
-        </button>
+    <div class="page-title">
         <h1>Lalitha Naturals Thermal Print Center</h1>
-        <p>Tap a print option below or manage store locations, estimates & custom text</p>
+        <p>Tap a print option below or manage store locations, estimates &amp; custom text</p>
     </div>
 
-    <!-- Dashboard: grouped into Quick Print / Create & Print / Combined / External Tools -->
-    <div class="dashboard-sections">
+    <div class="pos-shell">
+        <div class="pos-topbar">
+            <button class="pos-icon-btn" title="Search" onclick="togglePosSearch()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+            </button>
+            <span class="pos-brand">LALITHA NATURALS</span>
+            <button class="share-app-btn" title="Share App" onclick="shareAppUrl()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 10.5 6.8-3.9M8.6 13.5l6.8 3.9"/></svg>
+            </button>
+        </div>
 
-        <!-- QUICK PRINT: one tap, nothing to fill in -->
-        <div class="dashboard-section">
-            <div class="section-label"><span class="section-dot" style="background:#25D366;"></span> Quick Print <span class="section-hint">— tap once, prints instantly</span></div>
+        <!-- Search filters the tool tiles below by name as you type -->
+        <div class="pos-search-row" id="posSearchRow">
+            <div class="pos-search-inner">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+                <input type="text" id="toolSearchInput" placeholder="Search a print tool…" oninput="filterTools()">
+            </div>
+        </div>
+
+        <!-- Dashboard: grouped into Quick Print / Create & Print / Combined / External Tools —
+             one category shown at a time, switched by the tab bar below. -->
+        <div class="dashboard-sections">
+
+            <!-- QUICK PRINT: one tap, nothing to fill in -->
+            <div class="dashboard-section" id="section-quick">
+            <div class="section-label"><span class="section-dot" style="background:#ea580c;"></span> Quick Print <span class="section-hint">— tap once, prints instantly</span></div>
             <div class="big-buttons-bar">
 
                 <!-- 1. Print WhatsApp -->
-                <button class="icon-btn whatsapp" onclick="triggerMobilePrint('whatsapp')">
-                    <span class="btn-badge">01</span>
-                    <svg viewBox="0 0 24 24" fill="none">
-                        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414-.074-.124-.272-.198-.57-.347z" fill="currentColor"/>
-                        <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.477 2 12c0 1.891.524 3.66 1.436 5.178L2 22l4.956-1.399C8.403 21.493 10.138 22 12 22c5.523 0 10-4.477 10-10S17.523 2 12 2zm0 18c-1.63 0-3.161-.433-4.488-1.19l-.322-.186-2.955.834.821-2.885-.205-.333A7.954 7.954 0 0 1 4 12c0-4.411 3.589-8 8-8s8 3.589 8 8-3.589 8-8 8z" fill="currentColor"/>
-                    </svg>
-                    <span>Print WhatsApp</span>
+                <button class="icon-btn whatsapp" id="btn-toggle-whatsapp" onclick="toggleWhatsappPanel()">
+                    <span class="tile-icon">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M17.5 14.4c-.3-.1-1.8-.9-2-1s-.5-.1-.7.1-.8 1-.9 1.2-.3.2-.6.1a8 8 0 0 1-2.4-1.5 9 9 0 0 1-1.6-2c-.2-.3 0-.5.1-.6l.4-.5c.2-.2.2-.3.3-.5s0-.4 0-.5L9 7.6c-.2-.6-.5-.5-.7-.5h-.5c-.2 0-.5.1-.8.4s-1 1-1 2.5 1 2.9 1.2 3.1a10 10 0 0 0 5 4.5 6 6 0 0 0 1.7.6 3 3 0 0 0 1.9-.1c.6-.1 1.8-.7 2-1.4s.2-1.3.2-1.4-.1-.2-.4-.4Z"/>
+                            <path d="M12 2C6.5 2 2 6.5 2 12c0 1.9.5 3.7 1.4 5.2L2 22l5-1.4a10 10 0 0 0 5 1.3c5.5 0 10-4.5 10-10S17.5 2 12 2Z"/>
+                        </svg>
+                    </span>
+                    <span class="t1">Print WhatsApp</span>
                 </button>
 
                 <!-- 2. Print Exchange -->
-                <button class="icon-btn exchange" onclick="triggerMobilePrint('exchange')">
-                    <span class="btn-badge">02</span>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M7 19H4.817a1 1 0 0 1-.914-1.406l1.383-3.112A1 1 0 0 1 6.2 13.8L7 14.2"></path>
-                        <path d="M11 19h8.183a1 1 0 0 0 .914-1.406l-1.383-3.112a1 1 0 0 0-.914-.682L17 13.8"></path>
-                        <path d="M12 5V2.8a.8.8 0 0 0-1.28-.64L7.52 4.56a.8.8 0 0 0 0 1.28l3.2 2.4A.8.8 0 0 0 12 7.6V5.4a7 7 0 0 1 7 7c0 1.22-.31 2.37-.86 3.37"></path>
-                        <path d="M5.86 8.23A7 7 0 0 0 5 12.4c0 1.22.31 2.37.86 3.37"></path>
-                    </svg>
-                    <span>Print Exchange</span>
+                <button class="icon-btn exchange" id="btn-toggle-exchange" onclick="toggleExchangePanel()">
+                    <span class="tile-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="m17 2 4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="m7 22-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/>
+                        </svg>
+                    </span>
+                    <span class="t1">Print Exchange</span>
                 </button>
 
                 <!-- 3. Store Location -->
                 <button class="icon-btn location" id="btn-toggle-location" onclick="toggleLocationPanel()">
-                    <span class="btn-badge">03</span>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                        <circle cx="12" cy="10" r="3"></circle>
-                    </svg>
-                    <span>Store Location</span>
+                    <span class="tile-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 21s7-6.6 7-11.5a7 7 0 1 0-14 0C5 14.4 12 21 12 21Z"/><circle cx="12" cy="9.5" r="2.5"/>
+                        </svg>
+                    </span>
+                    <span class="t1">Store Location</span>
                 </button>
 
                 <!-- 4. Visiting Card -->
                 <button class="icon-btn visiting" id="btn-toggle-visiting" onclick="toggleVisitingPanel()">
-                    <span class="btn-badge">04</span>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <rect x="2" y="5" width="20" height="14" rx="2"></rect>
-                        <line x1="6" y1="9" x2="10" y2="9"></line>
-                        <line x1="6" y1="13" x2="14" y2="13"></line>
-                    </svg>
-                    <span>Visiting Card</span>
+                    <span class="tile-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="8" cy="12" r="2"/><path d="M14 10h6M14 14h4"/>
+                        </svg>
+                    </span>
+                    <span class="t1">Visiting Card</span>
                 </button>
 
             </div>
         </div>
 
         <!-- CREATE & PRINT: needs input filled in first -->
-        <div class="dashboard-section">
-            <div class="section-label"><span class="section-dot" style="background:#a855f7;"></span> Create &amp; Print <span class="section-hint">— fill in details, then print</span></div>
+        <div class="dashboard-section" id="section-create">
+            <div class="section-label"><span class="section-dot" style="background:#ea580c;"></span> Create &amp; Print <span class="section-hint">— fill in details, then print</span></div>
             <div class="big-buttons-bar">
 
                 <!-- 5. Custom Text -->
                 <button class="icon-btn custom" id="btn-toggle-custom" onclick="toggleCustomTextPanel()">
-                    <span class="btn-badge">05</span>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path>
-                        <polyline points="14 2 14 8 20 8"></polyline>
-                        <line x1="8" y1="13" x2="16" y2="13"></line>
-                        <line x1="8" y1="17" x2="14" y2="17"></line>
-                    </svg>
-                    <span>Custom Text</span>
+                    <span class="tile-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/>
+                        </svg>
+                    </span>
+                    <span class="t1">Custom Text</span>
                 </button>
 
                 <!-- 6. Coupon -->
                 <button class="icon-btn coupon" id="btn-toggle-coupon" onclick="toggleCouponPanel()">
-                    <span class="btn-badge">06</span>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v2z"></path>
-                        <path d="M12 6v12" stroke-dasharray="2 2"></path>
-                    </svg>
-                    <span>Coupon</span>
+                    <span class="tile-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M13 5v14"/>
+                        </svg>
+                    </span>
+                    <span class="t1">Coupon</span>
                 </button>
 
                 <!-- 7. Price Print -->
                 <button class="icon-btn price" id="btn-toggle-price" onclick="togglePricePanel()">
-                    <span class="btn-badge">07</span>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
-                        <line x1="7" y1="7" x2="7.01" y2="7"></line>
-                    </svg>
-                    <span>Price Print</span>
+                    <span class="tile-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20.6 12.6 12 21.2 2.8 12 12.8 2h5.8a2 2 0 0 1 2 2Z"/><circle cx="16.5" cy="7.5" r="1.5"/>
+                        </svg>
+                    </span>
+                    <span class="t1">Price Print</span>
                 </button>
 
                 <!-- 8. Estimate / Bill Calculator -->
                 <button class="icon-btn estimate" id="btn-toggle-estimate" onclick="toggleEstimatePanel()">
-                    <span class="btn-badge">08</span>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect>
-                        <line x1="8" y1="6" x2="16" y2="6"></line>
-                        <line x1="16" y1="14" x2="16" y2="18"></line>
-                        <path d="M8 10h.01"></path>
-                        <path d="M12 10h.01"></path>
-                        <path d="M16 10h.01"></path>
-                        <path d="M8 14h.01"></path>
-                        <path d="M12 14h.01"></path>
-                        <path d="M8 18h.01"></path>
-                        <path d="M12 18h.01"></path>
-                    </svg>
-                    <span>Estimate Bill</span>
+                    <span class="tile-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="4" y="2" width="16" height="20" rx="2"/><path d="M8 7h8M8 11h8M8 15h4"/>
+                        </svg>
+                    </span>
+                    <span class="t1">Estimate Bill</span>
                 </button>
 
             </div>
         </div>
 
         <!-- COMBINED PRINT: its own thing, pulls from the sections above -->
-        <div class="dashboard-section">
-            <div class="section-label"><span class="section-dot" style="background:#f97316;"></span> Combined Print <span class="section-hint">— mix several items onto one receipt</span></div>
+        <div class="dashboard-section" id="section-combined">
+            <div class="section-label"><span class="section-dot" style="background:#ea580c;"></span> Combined Print <span class="section-hint">— mix several items onto one receipt</span></div>
             <div class="big-buttons-bar">
 
                 <!-- Custom Multi-Select Combined Print Button -->
                 <button class="icon-btn multibutton" id="btn-toggle-multi" onclick="toggleMultiPanel()">
-                    <span class="btn-badge">★</span>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <rect x="3" y="3" width="7" height="7"></rect>
-                        <rect x="14" y="3" width="7" height="7"></rect>
-                        <rect x="14" y="14" width="7" height="7"></rect>
-                        <rect x="3" y="14" width="7" height="7"></rect>
-                    </svg>
-                    <span>Custom Combined Print</span>
+                    <span class="tile-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/>
+                        </svg>
+                    </span>
+                    <span class="t1">Custom Combined Print</span>
                 </button>
 
             </div>
         </div>
 
-        <!-- EXTERNAL TOOLS: leaves this app and opens another site in a new tab —
-             kept visually separate (dashed tray) so it doesn't get mistaken for a print button. -->
-        <div class="dashboard-section">
-            <div class="section-label"><span class="section-dot" style="background:#14b8a6;"></span> External Tools <span class="section-hint">— opens a different site in a new tab</span></div>
-            <div class="big-buttons-bar external-tools-panel">
+        <!-- EXTERNAL TOOLS: leaves this app and opens another site in a new tab -->
+        <div class="dashboard-section" id="section-external">
+            <div class="section-label"><span class="section-dot" style="background:#ea580c;"></span> External Tools <span class="section-hint">— opens a different site in a new tab</span></div>
+            <div class="big-buttons-bar">
 
                 <!-- Scrap Calculator Link Button -->
                 <a class="icon-btn calculator" href="https://lalithanaturals.github.io/scrap-calc/" target="_blank" rel="noopener noreferrer">
-                    <span class="btn-badge">09</span>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect>
-                        <line x1="8" y1="6" x2="16" y2="6"></line>
-                        <line x1="8" y1="10" x2="10" y2="10"></line>
-                        <line x1="14" y1="10" x2="16" y2="10"></line>
-                        <line x1="8" y1="14" x2="10" y2="14"></line>
-                        <line x1="14" y1="14" x2="16" y2="14"></line>
-                        <line x1="8" y1="18" x2="10" y2="18"></line>
-                        <line x1="14" y1="18" x2="16" y2="18"></line>
-                    </svg>
-                    <span>Scrap Calculator ↗</span>
+                    <span class="tile-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 7h8M8 11h5M8 15h8"/>
+                        </svg>
+                    </span>
+                    <span class="t1">Scrap Calc ↗</span>
                 </a>
 
                 <!-- Stock Transfer Link Button -->
                 <a class="icon-btn transfer" href="https://lalithanaturals.github.io/Stock-transfer/" target="_blank" rel="noopener noreferrer">
-                    <span class="btn-badge">10</span>
-                    <img src="van logo.png" class="btn-img-icon" alt="Stock Transfer">
-                    <span>Stock Transfer ↗</span>
+                    <span class="tile-icon"><img src="van logo.png" class="btn-img-icon" alt="Stock Transfer"></span>
+                    <span class="t1">Transfer ↗</span>
                 </a>
 
                 <!-- Offer Calc Link Button -->
                 <a class="icon-btn offercalc" href="https://lalithanaturals.github.io/offer-calc/" target="_blank" rel="noopener noreferrer">
-                    <span class="btn-badge">11</span>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
-                        <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
-                    </svg>
-                    <span>Offer Calc ↗</span>
+                    <span class="tile-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M9 17H7A5 5 0 0 1 7 7h2M15 7h2a5 5 0 0 1 0 10h-2M8 12h8"/>
+                        </svg>
+                    </span>
+                    <span class="t1">Offer Calc ↗</span>
                 </a>
 
             </div>
         </div>
 
+        </div>
+        <!-- /dashboard-sections -->
+    </div>
+    <!-- /pos-shell -->
+
+    <!-- WhatsApp Group Panel -->
+    <div class="text-input-panel" id="whatsappInputPanel">
+        <div class="panel-header-row">
+            <span class="panel-title">💬 WhatsApp Group Receipt</span>
+            <div class="panel-header-actions">
+                <button class="print-now-btn" onclick="triggerMobilePrint('whatsapp')">🖨️ Print WhatsApp</button>
+            </div>
+        </div>
+        <div class="coupon-grid">
+            <div class="form-group full-width">
+                <label>Group Invite Link (used to generate the QR code)</label>
+                <input type="text" class="form-control" id="wa-group-link" value="https://chat.whatsapp.com/E8udXvgNXAOKSXWGvud4ct" oninput="updateWhatsappCardPreview()">
+            </div>
+            <div class="form-group">
+                <label>Call / WhatsApp Number</label>
+                <input type="text" class="form-control" id="wa-phone" value="9676287766" oninput="updateWhatsappCardPreview()">
+            </div>
+            <div class="form-group">
+                <label>Website</label>
+                <input type="text" class="form-control" id="wa-website" value="www.lalithanaturals.com" oninput="updateWhatsappCardPreview()">
+            </div>
+            <div class="form-group">
+                <label>Branch-1 Address</label>
+                <input type="text" class="form-control" id="wa-address1" value="MIG-20, Vuda Colony, Gajuwaka" oninput="updateWhatsappCardPreview()">
+            </div>
+            <div class="form-group">
+                <label>Branch-2 Address</label>
+                <input type="text" class="form-control" id="wa-address2" value="Vuda phase 7, Gajuwaka" oninput="updateWhatsappCardPreview()">
+            </div>
+            <div class="form-group full-width">
+                <label>Official Updates List (one line each)</label>
+                <textarea class="form-control" id="wa-updates" rows="4" oninput="updateWhatsappCardPreview()" style="resize:vertical;">New arrivals
+Special offers
+Store news
+Real-time stock</textarea>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scrap Exchange Panel -->
+    <div class="text-input-panel" id="exchangeInputPanel">
+        <div class="panel-header-row">
+            <span class="panel-title">♻️ Scrap Exchange Receipt</span>
+            <div class="panel-header-actions">
+                <button class="clear-btn" type="button" onclick="addExchangeItem()">➕ Add Item</button>
+                <button class="print-now-btn" onclick="triggerMobilePrint('exchange')">🖨️ Print Exchange</button>
+            </div>
+        </div>
+        <div class="form-group full-width">
+            <label>Items &amp; Rates</label>
+            <div id="exchange-items-container"></div>
+        </div>
+        <div class="form-group full-width" style="margin-top:6px;">
+            <label>Note</label>
+            <input type="text" class="form-control" id="exchange-note-input" value="100 GM deducted for handles." oninput="updateExchangeCardPreview()">
+        </div>
     </div>
 
     <!-- Custom Multi-Select Panel -->
@@ -2117,7 +2239,7 @@
                     <div class="side-by-side-whatsapp">
                         <div class="notice-box">
                             <div class="notice-title">Official updates on:</div>
-                            <ul class="notice-list">
+                            <ul class="notice-list" id="wa-updates-list">
                                 <li>New arrivals</li>
                                 <li>Special offers</li>
                                 <li>Store news</li>
@@ -2125,7 +2247,7 @@
                             </ul>
                         </div>
                         <div class="qr-container">
-                            <img class="qr-code" src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https%3A%2F%2Fchat.whatsapp.com%2FE8udXvgNXAOKSXWGvud4ct" alt="QR">
+                            <img class="qr-code" id="wa-qr-img" src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https%3A%2F%2Fchat.whatsapp.com%2FE8udXvgNXAOKSXWGvud4ct" alt="QR">
                         </div>
                     </div>
                     <div class="footer-text" style="text-align: left;">Scan QR code to join group.</div>
@@ -2133,18 +2255,18 @@
                     <div class="address-section" style="text-align: left;">
                         <div class="address-title" style="font-size:12px; font-weight:900; margin-bottom:3px;">OUR LOCATIONS</div>
                         <div class="store-address-box" style="font-size:10.5px; font-weight:900; line-height:1.3;">
-                            <div class="address-line"><strong>Branch-1:</strong> MIG-20, Vuda Colony, Gajuwaka</div>
-                            <div class="address-line"><strong>Branch-2:</strong> Vuda phase 7, Gajuwaka</div>
+                            <div class="address-line"><strong>Branch-1:</strong> <span id="wa-addr1-display">MIG-20, Vuda Colony, Gajuwaka</span></div>
+                            <div class="address-line"><strong>Branch-2:</strong> <span id="wa-addr2-display">Vuda phase 7, Gajuwaka</span></div>
                         </div>
                     </div>
-                    
+
                     <div class="vc-huge-phone-box">
                         <div class="vc-phone-label">📞 Call / WhatsApp</div>
-                        <div class="vc-phone-number">9676287766</div>
+                        <div class="vc-phone-number" id="wa-phone-display">9676287766</div>
                     </div>
 
                     <div style="font-size: 10px; font-weight: 900; text-transform: uppercase; margin-top: 5px;">
-                        🌐 www.lalithanaturals.com
+                        🌐 <span id="wa-website-display">www.lalithanaturals.com</span>
                     </div>
                 </div>
             </div>
@@ -2161,12 +2283,12 @@
                     <div class="offer-header">EXCHANGE YOUR OLD ITEMS</div>
                     <table class="rate-table">
                         <thead><tr><th>ITEM</th><th>RATE</th></tr></thead>
-                        <tbody>
+                        <tbody id="exchange-rate-tbody">
                             <tr><td>ALUMINIUM</td><td>₹150 / 1 KG</td></tr>
                             <tr><td>STEEL</td><td>₹50 / 1 KG</td></tr>
                         </tbody>
                     </table>
-                    <div class="note-box"><strong>NOTE:</strong> 100 GM deducted for handles.</div>
+                    <div class="note-box"><strong>NOTE:</strong> <span id="exchange-note-display">100 GM deducted for handles.</span></div>
                     <div class="divider"></div>
                     <div class="footer-text">VISIT OUR EXPO TODAY!</div>
                 </div>
@@ -2451,6 +2573,9 @@
             updateLocationCardPreview();
             updateCouponCardPreview();
             updatePriceCardPreview();
+            updateWhatsappCardPreview();
+            renderExchangeItemsPanel();
+            updateExchangeCardPreview();
             renderQuickItemsTable();
             initSentenceCaseListeners();
             updateCustomHeaderToggles();
@@ -2472,6 +2597,32 @@
                     try { el.select(); } catch (err) {}
                 });
             });
+        }
+
+        // Search bar — filters the tool tiles by name as the person types,
+        // and hides a whole category when nothing in it matches. Every
+        // category is shown together, so this is the only way tiles hide.
+        function filterTools() {
+            const q = document.getElementById('toolSearchInput').value.trim().toLowerCase();
+            document.querySelectorAll('.dashboard-section').forEach(section => {
+                let anyVisible = false;
+                section.querySelectorAll('.big-buttons-bar > .icon-btn').forEach(btn => {
+                    const label = (btn.querySelector('.t1')?.textContent || '').toLowerCase();
+                    const match = !q || label.includes(q);
+                    btn.style.display = match ? '' : 'none';
+                    if (match) anyVisible = true;
+                });
+                section.style.display = anyVisible ? '' : 'none';
+            });
+        }
+
+        // Toggles the collapsible search row in the top bar.
+        function togglePosSearch() {
+            const row = document.getElementById('posSearchRow');
+            row.classList.toggle('open');
+            if (row.classList.contains('open')) {
+                focusFieldSoon('toolSearchInput');
+            }
         }
 
         // Share App function using native Web Share API with clipboard fallback
@@ -3080,7 +3231,7 @@
         }
 
         function hideAllPanelsKeepData() {
-            ['customInputPanel', 'couponInputPanel', 'locationInputPanel', 'priceInputPanel', 'estimateInputPanel', 'visitingInputPanel', 'multiInputPanel'].forEach(id => {
+            ['customInputPanel', 'couponInputPanel', 'locationInputPanel', 'priceInputPanel', 'estimateInputPanel', 'visitingInputPanel', 'multiInputPanel', 'whatsappInputPanel', 'exchangeInputPanel'].forEach(id => {
                 const el = document.getElementById(id);
                 if(el) el.style.display = 'none';
             });
@@ -3091,7 +3242,7 @@
             document.getElementById('waReceiptCol').style.display = 'flex';
             document.getElementById('exReceiptCol').style.display = 'flex';
 
-            ['btn-toggle-custom', 'btn-toggle-coupon', 'btn-toggle-location', 'btn-toggle-price', 'btn-toggle-estimate', 'btn-toggle-visiting', 'btn-toggle-multi'].forEach(id => {
+            ['btn-toggle-custom', 'btn-toggle-coupon', 'btn-toggle-location', 'btn-toggle-price', 'btn-toggle-estimate', 'btn-toggle-visiting', 'btn-toggle-multi', 'btn-toggle-whatsapp', 'btn-toggle-exchange'].forEach(id => {
                 const btn = document.getElementById(id);
                 if(btn) btn.classList.remove('active-toggle');
             });
@@ -3196,6 +3347,35 @@
                 document.getElementById('waReceiptCol').style.display = 'none';
                 document.getElementById('exReceiptCol').style.display = 'none';
                 document.getElementById('btn-toggle-visiting').classList.add('active-toggle');
+            }
+        }
+
+        function toggleWhatsappPanel() {
+            const panel = document.getElementById('whatsappInputPanel');
+            if (panel.style.display === 'block') { hideAllPanelsKeepData(); }
+            else {
+                hideAllPanelsKeepData();
+                panel.style.display = 'block';
+                document.getElementById('waReceiptCol').style.display = 'flex';
+                document.getElementById('exReceiptCol').style.display = 'none';
+                document.getElementById('btn-toggle-whatsapp').classList.add('active-toggle');
+                updateWhatsappCardPreview();
+                focusFieldSoon('wa-group-link');
+            }
+        }
+
+        function toggleExchangePanel() {
+            const panel = document.getElementById('exchangeInputPanel');
+            if (panel.style.display === 'block') { hideAllPanelsKeepData(); }
+            else {
+                hideAllPanelsKeepData();
+                panel.style.display = 'block';
+                document.getElementById('exReceiptCol').style.display = 'flex';
+                document.getElementById('waReceiptCol').style.display = 'none';
+                document.getElementById('btn-toggle-exchange').classList.add('active-toggle');
+                renderExchangeItemsPanel();
+                updateExchangeCardPreview();
+                focusFieldSoon('exchange-note-input');
             }
         }
 
@@ -3386,6 +3566,116 @@
         function updateLocationCardPreview() {
             document.getElementById('loc-gajuwaka-wrapper').style.display = locationBranch === 'gajuwaka' ? 'block' : 'none';
             document.getElementById('loc-kurmannapalem-wrapper').style.display = locationBranch === 'kurmannapalem' ? 'block' : 'none';
+        }
+
+        function updateWhatsappCardPreview() {
+            const link = document.getElementById('wa-group-link').value.trim();
+            const phone = document.getElementById('wa-phone').value.trim();
+            const website = document.getElementById('wa-website').value.trim();
+            const addr1 = document.getElementById('wa-address1').value.trim();
+            const addr2 = document.getElementById('wa-address2').value.trim();
+            const updatesRaw = document.getElementById('wa-updates').value;
+
+            const qrImg = document.getElementById('wa-qr-img');
+            if (link) {
+                qrImg.src = 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=' + encodeURIComponent(link);
+            }
+            document.getElementById('wa-phone-display').textContent = phone;
+            document.getElementById('wa-website-display').textContent = website;
+            document.getElementById('wa-addr1-display').textContent = addr1;
+            document.getElementById('wa-addr2-display').textContent = addr2;
+
+            const listEl = document.getElementById('wa-updates-list');
+            listEl.innerHTML = '';
+            updatesRaw.split('\n').map(l => l.trim()).filter(l => l).forEach(line => {
+                const li = document.createElement('li');
+                li.textContent = line;
+                listEl.appendChild(li);
+            });
+        }
+
+        let exchangeItems = [
+            { name: 'ALUMINIUM', rate: '₹150 / 1 KG' },
+            { name: 'STEEL', rate: '₹50 / 1 KG' }
+        ];
+
+        function renderExchangeItemsPanel() {
+            const container = document.getElementById('exchange-items-container');
+            container.innerHTML = '';
+            exchangeItems.forEach((item, i) => {
+                const row = document.createElement('div');
+                row.style.display = 'flex';
+                row.style.gap = '8px';
+                row.style.marginBottom = '8px';
+                row.style.alignItems = 'center';
+
+                const nameInput = document.createElement('input');
+                nameInput.type = 'text';
+                nameInput.className = 'form-control';
+                nameInput.placeholder = 'Item name';
+                nameInput.value = item.name;
+                nameInput.style.flex = '1';
+                nameInput.style.minWidth = '0';
+                nameInput.oninput = () => { exchangeItems[i].name = nameInput.value; updateExchangeCardPreview(); };
+
+                const rateInput = document.createElement('input');
+                rateInput.type = 'text';
+                rateInput.className = 'form-control';
+                rateInput.placeholder = 'Rate (e.g. ₹150 / 1 KG)';
+                rateInput.value = item.rate;
+                rateInput.style.flex = '1';
+                rateInput.style.minWidth = '0';
+                rateInput.oninput = () => { exchangeItems[i].rate = rateInput.value; updateExchangeCardPreview(); };
+
+                const removeBtn = document.createElement('button');
+                removeBtn.type = 'button';
+                removeBtn.className = 'clear-btn';
+                removeBtn.textContent = '✕';
+                removeBtn.title = 'Remove item';
+                removeBtn.onclick = () => removeExchangeItem(i);
+
+                row.appendChild(nameInput);
+                row.appendChild(rateInput);
+                row.appendChild(removeBtn);
+                container.appendChild(row);
+            });
+        }
+
+        function addExchangeItem() {
+            exchangeItems.push({ name: '', rate: '' });
+            renderExchangeItemsPanel();
+            updateExchangeCardPreview();
+            const rows = document.getElementById('exchange-items-container').children;
+            const lastRow = rows[rows.length - 1];
+            if (lastRow) {
+                const firstInput = lastRow.querySelector('input');
+                if (firstInput) firstInput.focus();
+            }
+        }
+
+        function removeExchangeItem(i) {
+            if (exchangeItems.length <= 1) return;
+            exchangeItems.splice(i, 1);
+            renderExchangeItemsPanel();
+            updateExchangeCardPreview();
+        }
+
+        function updateExchangeCardPreview() {
+            const tbody = document.getElementById('exchange-rate-tbody');
+            tbody.innerHTML = '';
+            exchangeItems.forEach(item => {
+                if (!item.name && !item.rate) return;
+                const tr = document.createElement('tr');
+                const tdName = document.createElement('td');
+                tdName.textContent = item.name;
+                const tdRate = document.createElement('td');
+                tdRate.textContent = item.rate;
+                tr.appendChild(tdName);
+                tr.appendChild(tdRate);
+                tbody.appendChild(tr);
+            });
+            const note = document.getElementById('exchange-note-input').value.trim();
+            document.getElementById('exchange-note-display').textContent = note;
         }
 
         function adjustPct(delta) {
