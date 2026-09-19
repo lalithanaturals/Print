@@ -44,6 +44,66 @@
             padding: 24px 16px;
         }
 
+        /* Two-column layout: controls on the left, receipt preview sticky on the
+           right — this is purely an on-screen arrangement; the print media query
+           below still prints only the 80mm receipt, independent of this layout. */
+        .app-layout {
+            width: 100%;
+            max-width: 1360px;
+            display: flex;
+            align-items: flex-start;
+            gap: 24px;
+        }
+
+        .app-main {
+            flex: 1 1 640px;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .preview-sidebar {
+            flex: 0 0 340px;
+            width: 340px;
+            position: sticky;
+            top: 16px;
+            max-height: calc(100vh - 32px);
+            overflow-y: auto;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 16px;
+            box-shadow: var(--card-shadow);
+        }
+
+        .preview-sidebar-title {
+            font-size: 13px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #334155;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+
+        /* Below ~1050px there isn't room for two columns side by side (especially
+           on mobile) — stack the preview back under the controls instead of
+           squeezing both into too little width. */
+        @media (max-width: 1050px) {
+            .app-layout {
+                flex-direction: column;
+                align-items: center;
+            }
+            .preview-sidebar {
+                position: static;
+                width: 100%;
+                max-width: 900px;
+                max-height: none;
+                overflow-y: visible;
+            }
+        }
+
         .app-header {
             text-align: center;
             margin-bottom: 24px;
@@ -814,7 +874,7 @@
         .card {
             width: 80mm;
             background-color: #ffffff;
-            padding: 10px 12px;
+            padding: 7px 10px;
             text-align: center;
             border-radius: 4px;
             box-shadow: var(--card-shadow);
@@ -825,14 +885,14 @@
 
         .header {
             font-family: Arial, Helvetica, sans-serif;
-            font-size: 17px;
+            font-size: 16px;
             font-weight: 900;
             color: #000000;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 4px;
-            margin-bottom: 5px;
+            margin-bottom: 3px;
             text-transform: uppercase;
         }
 
@@ -848,17 +908,17 @@
         }
 
         .tagline {
-            font-size: 12px;
+            font-size: 11px;
             font-style: italic;
             font-weight: 900;
-            margin-bottom: 5px;
+            margin-bottom: 3px;
             margin-top: 0px !important;
             color: #000000;
         }
 
         .divider {
             border-bottom: 2px dashed #000000;
-            margin: 7px 0;
+            margin: 5px 0;
         }
 
         .side-by-side-whatsapp {
@@ -866,7 +926,7 @@
             align-items: center;
             justify-content: space-between;
             gap: 6px;
-            margin: 5px 0;
+            margin: 4px 0;
             text-align: left;
         }
 
@@ -879,8 +939,8 @@
             font-size: 12px;
             font-weight: 900;
             color: #000000;
-            margin-bottom: 3px;
-            line-height: 1.2;
+            margin-bottom: 2px;
+            line-height: 1.15;
             text-transform: uppercase;
         }
 
@@ -890,8 +950,8 @@
             font-size: 11px;
             font-weight: 900;
             color: #000000;
-            line-height: 1.35;
-            margin-bottom: 3px;
+            line-height: 1.2;
+            margin-bottom: 2px;
         }
 
         .notice-list li::before {
@@ -922,13 +982,13 @@
             font-size: 12px;
             font-weight: 900;
             color: #000000;
-            margin-top: 4px;
+            margin-top: 3px;
             text-transform: uppercase;
         }
 
         .offer-header {
             font-family: Arial, Helvetica, sans-serif;
-            font-size: 16px;
+            font-size: 15px;
             font-weight: 900;
             text-transform: uppercase;
             margin-bottom: 2px;
@@ -938,14 +998,14 @@
         .rate-table {
             width: 100%;
             border-collapse: collapse;
-            margin: 6px 0;
+            margin: 4px 0;
             border: 2.5px solid #000000;
             font-size: 12px;
         }
 
         .rate-table th, .rate-table td {
             border: 1.5px solid #000000;
-            padding: 6px 4px;
+            padding: 4px 3px;
             color: #000000;
         }
 
@@ -963,11 +1023,11 @@
 
         .note-box {
             border: 2px solid #000000;
-            padding: 6px;
-            margin: 6px 0;
+            padding: 4px 5px;
+            margin: 4px 0;
             font-size: 11px;
             font-weight: 900;
-            line-height: 1.3;
+            line-height: 1.25;
             text-align: left;
             color: #000000;
         }
@@ -979,7 +1039,7 @@
             line-height: 1.3;
             white-space: pre-wrap;
             word-wrap: break-word;
-            margin: 8px 0;
+            margin: 6px 0;
             text-align: center;
         }
 
@@ -988,10 +1048,10 @@
             list-style-type: disc;
         }
 
-        /* Price Tag Styles - Optimized with 0 top padding and exactly 5mm margin below MRP */
+        /* Price Tag Styles - Optimized with 0 top padding and a compact margin below MRP */
         .price-card {
             padding-top: 0px !important;
-            padding-bottom: 5mm !important;
+            padding-bottom: 3mm !important;
         }
 
         .price-tag-brand {
@@ -1060,7 +1120,7 @@
         /* Bold Highlight Black Box UI */
         .visiting-card {
             border: 3px solid #000 !important;
-            padding: 12px 10px !important;
+            padding: 9px 8px !important;
             text-align: center !important;
             background: #fff !important;
         }
@@ -1069,8 +1129,8 @@
             border: 2.5px solid #000000;
             background: #000000;
             color: #ffffff !important;
-            padding: 6px 4px;
-            margin-bottom: 8px;
+            padding: 5px 4px;
+            margin-bottom: 5px;
             text-transform: uppercase;
         }
 
@@ -1090,8 +1150,8 @@
 
         .vc-section-block {
             border: 1.5px solid #000000;
-            padding: 6px;
-            margin-bottom: 6px;
+            padding: 4px 5px;
+            margin-bottom: 4px;
             text-align: left;
             background: #ffffff;
         }
@@ -1100,7 +1160,7 @@
             font-size: 11px;
             font-weight: 900;
             text-transform: uppercase;
-            margin-bottom: 3px;
+            margin-bottom: 2px;
             border-bottom: 1px dashed #000000;
             padding-bottom: 2px;
         }
@@ -1110,7 +1170,7 @@
             padding-left: 0;
             font-size: 10.5px;
             font-weight: 900;
-            line-height: 1.35;
+            line-height: 1.25;
             text-transform: uppercase;
             margin: 0;
         }
@@ -1131,8 +1191,8 @@
             border: 3px solid #000000;
             background: #000000;
             color: #ffffff !important;
-            padding: 8px 4px;
-            margin-top: 6px;
+            padding: 6px 4px;
+            margin-top: 4px;
             text-align: center;
         }
 
@@ -1157,15 +1217,15 @@
             font-size: 15px;
             font-weight: 900;
             text-transform: uppercase;
-            margin: 4px 0 2px;
+            margin: 3px 0 2px;
             text-decoration: underline;
         }
 
         .location-card-address {
             font-size: 11.5px;
             font-weight: 900;
-            line-height: 1.3;
-            margin-bottom: 6px;
+            line-height: 1.25;
+            margin-bottom: 4px;
             text-transform: uppercase;
         }
 
@@ -1174,8 +1234,8 @@
             font-weight: 900;
             text-transform: uppercase;
             border: 2.5px dashed #000000;
-            padding: 6px 4px;
-            margin: 6px 0;
+            padding: 4px 4px;
+            margin: 4px 0;
             background: #fff;
             letter-spacing: 0.5px;
         }
@@ -1185,8 +1245,8 @@
             font-weight: 900;
             border: 2px solid #000000;
             display: inline-block;
-            padding: 3px 10px;
-            margin-bottom: 4px;
+            padding: 2px 10px;
+            margin-bottom: 3px;
             text-transform: uppercase;
         }
 
@@ -1195,7 +1255,7 @@
             text-align: left;
             font-size: 11px;
             font-weight: 900;
-            margin: 4px 0;
+            margin: 3px 0;
             border-collapse: collapse;
         }
 
@@ -1230,10 +1290,14 @@
                 -webkit-font-smoothing: none !important;
             }
 
-            .app-header, .big-buttons-bar, .text-input-panel, .coupon-panel, .location-panel, .price-panel, .estimate-panel, .visiting-panel, .multi-print-panel, .card-label {
+            /* .app-main holds everything on-screen that isn't the receipt itself
+               (header, dashboard sections + their labels, every input panel) — hide
+               it wholesale so nothing new added inside it can leak into a printout
+               without a matching rule here. */
+            .app-main, .card-label {
                 display: none !important;
             }
-            
+
             html, body {
                 background: #ffffff !important;
                 padding: 0 !important;
@@ -1241,6 +1305,31 @@
                 width: 80mm !important;
                 max-width: 80mm !important;
                 overflow: visible !important;
+            }
+
+            .app-layout {
+                display: block !important;
+                width: 80mm !important;
+                max-width: 80mm !important;
+                margin: 0 !important;
+                gap: 0 !important;
+            }
+
+            .preview-sidebar {
+                position: static !important;
+                width: 80mm !important;
+                max-width: 80mm !important;
+                max-height: none !important;
+                overflow: visible !important;
+                background: transparent !important;
+                border: none !important;
+                box-shadow: none !important;
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+
+            .preview-sidebar-title {
+                display: none !important;
             }
 
             .receipts-wrapper {
@@ -1335,6 +1424,9 @@
     </style>
 </head>
 <body>
+
+    <div class="app-layout">
+    <div class="app-main">
 
     <div class="app-header">
         <!-- Share App Button at the top right -->
@@ -1988,6 +2080,11 @@
         </div>
     </div>
 
+    </div><!-- /app-main -->
+
+    <div class="preview-sidebar" id="previewSidebar">
+        <div class="preview-sidebar-title">🖨️ Print Preview</div>
+
     <!-- Receipts Wrapper Container -->
     <div class="receipts-wrapper">
         
@@ -2260,7 +2357,7 @@
                         <div class="location-card-branch">GAJUWAKA BRANCH</div>
                         <div class="location-card-address">MIG-20, Near Timpany School Vuda Colony, Gonthinavanipalem, Gajuwaka, Andhra Pradesh 530044</div>
                         <div style="font-size:11px; font-weight:900; margin-bottom:6px;">📞 9676287766</div>
-                        <div style="display: flex; justify-content: center; margin: 10px 0;">
+                        <div style="display: flex; justify-content: center; margin: 6px 0;">
                             <div class="qr-container" style="width: 130px; height: 130px;">
                                 <img class="qr-code" src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=https%3A%2F%2Fmaps.app.goo.gl%2FGzxq2iuM7fijRAQr6" alt="QR">
                             </div>
@@ -2276,7 +2373,7 @@
                         <div class="location-card-branch">KURMANNAPALEM BRANCH</div>
                         <div class="location-card-address">Vuda phase 7, Hig 7, opposite Gloria Vidya Kendram, Vuda Colony, Gajuwaka, Andhra Pradesh 530049</div>
                         <div style="font-size:11px; font-weight:900; margin-bottom:6px;">📞 9676287766</div>
-                        <div style="display: flex; justify-content: center; margin: 10px 0;">
+                        <div style="display: flex; justify-content: center; margin: 6px 0;">
                             <div class="qr-container" style="width: 130px; height: 130px;">
                                 <img class="qr-code" src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=https%3A%2F%2Fmaps.app.goo.gl%2Fdpn7MfYHNzjBDrch6" alt="QR">
                             </div>
@@ -2296,7 +2393,10 @@
             </div>
         </div>
 
-    </div>
+    </div><!-- /receipts-wrapper -->
+    </div><!-- /preview-sidebar -->
+
+    </div><!-- /app-layout -->
 
     <script>
         let currentPct = 5;
