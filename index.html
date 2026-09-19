@@ -169,8 +169,8 @@
             max-width: 980px;
             display: flex;
             flex-direction: column;
-            gap: 22px;
-            margin-bottom: 24px;
+            gap: 16px;
+            margin-bottom: 20px;
         }
 
         .dashboard-section {
@@ -213,112 +213,108 @@
             padding: 14px;
         }
 
-        /* Dashboard Buttons Grid Layout */
+        /* Dashboard Buttons Grid Layout — compact so the whole dashboard fits with
+           less scrolling, especially on a phone. */
         .big-buttons-bar {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-            gap: 12px;
+            grid-template-columns: repeat(auto-fit, minmax(108px, 1fr));
+            gap: 10px;
             width: 100%;
             max-width: 980px;
         }
 
+        /* Each category is a full gradient card (not just a top stripe) — bold,
+           colorful, with white icon/label on top. */
         .icon-btn {
-            background: #ffffff;
-            border: 1px solid #e2e8f0;
-            border-radius: 16px;
-            padding: 14px 10px;
+            background: #64748b;
+            border: none;
+            border-radius: 14px;
+            padding: 10px 8px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 8px;
+            gap: 5px;
             cursor: pointer;
-            box-shadow: var(--card-shadow);
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            color: #ffffff;
+            box-shadow: 0 6px 14px -6px rgba(0, 0, 0, 0.35);
+            transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.15s ease;
             position: relative;
             overflow: hidden;
             text-decoration: none;
             -webkit-tap-highlight-color: transparent;
         }
 
+        .icon-btn.whatsapp    { background: linear-gradient(135deg, #34d399, #0e9e57); }
+        .icon-btn.exchange    { background: linear-gradient(135deg, #fbbf24, #d97706); }
+        .icon-btn.calculator  { background: linear-gradient(135deg, #22d3ee, #0891b2); }
+        .icon-btn.transfer    { background: linear-gradient(135deg, #60a5fa, #1d4ed8); }
+        .icon-btn.offercalc   { background: linear-gradient(135deg, #2dd4bf, #0f766e); }
+        .icon-btn.custom      { background: linear-gradient(135deg, #c084fc, #7e22ce); }
+        .icon-btn.coupon      { background: linear-gradient(135deg, #f472b6, #be185d); }
+        .icon-btn.location    { background: linear-gradient(135deg, #34d399, #047857); }
+        .icon-btn.price       { background: linear-gradient(135deg, #38bdf8, #0284c7); }
+        .icon-btn.estimate    { background: linear-gradient(135deg, #a78bfa, #6d28d9); }
+        .icon-btn.visiting    { background: linear-gradient(135deg, #818cf8, #4338ca); }
+        .icon-btn.multibutton { background: linear-gradient(135deg, #fb923c, #c2410c); }
+
+        /* This old top-stripe pseudo-element is superseded by the full-card
+           gradients above; keep it inert rather than delete, in case a category
+           is ever added without a background rule of its own. */
         .icon-btn::before {
             content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
+            display: none;
         }
 
-        .icon-btn.whatsapp::before     { background: linear-gradient(90deg, #25D366, #128C7E); }
-        .icon-btn.exchange::before     { background: linear-gradient(90deg, #f59e0b, #d97706); }
-        .icon-btn.calculator::before   { background: linear-gradient(90deg, #06b6d4, #0891b2); }
-        .icon-btn.transfer::before     { background: linear-gradient(90deg, #3b82f6, #1d4ed8); }
-        .icon-btn.offercalc::before    { background: linear-gradient(90deg, #14b8a6, #0f766e); }
-        .icon-btn.custom::before       { background: linear-gradient(90deg, #a855f7, #7e22ce); }
-        .icon-btn.coupon::before       { background: linear-gradient(90deg, #ec4899, #be185d); }
-        .icon-btn.location::before     { background: linear-gradient(90deg, #10b981, #047857); }
-        .icon-btn.price::before        { background: linear-gradient(90deg, #0ea5e9, #0284c7); }
-        .icon-btn.estimate::before     { background: linear-gradient(90deg, #8b5cf6, #6d28d9); }
-        .icon-btn.visiting::before     { background: linear-gradient(90deg, #6366f1, #4338ca); }
-        .icon-btn.multibutton::before  { background: linear-gradient(90deg, #f97316, #c2410c); }
-
         .icon-btn:hover {
-            transform: translateY(-4px);
-            box-shadow: var(--card-shadow-hover);
-            border-color: #cbd5e1;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px -6px rgba(0, 0, 0, 0.4);
+        }
+
+        .icon-btn:active {
+            transform: scale(0.96);
+            box-shadow: 0 3px 8px -3px rgba(0, 0, 0, 0.35);
         }
 
         .icon-btn.active-toggle {
-            border-color: #0ea5e9;
-            background-color: #f0f9ff;
-            box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.2);
+            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.85), 0 10px 20px -6px rgba(0, 0, 0, 0.4);
+            transform: translateY(-2px);
         }
 
         .btn-badge {
             position: absolute;
-            top: 8px;
-            right: 10px;
-            font-size: 9px;
+            top: 7px;
+            right: 9px;
+            font-size: 8.5px;
             font-weight: 900;
-            padding: 2px 6px;
+            padding: 1.5px 5px;
             border-radius: 20px;
             color: #ffffff;
             letter-spacing: 0.5px;
+            background: rgba(255, 255, 255, 0.28);
         }
 
-        .whatsapp .btn-badge   { background: #25D366; }
-        .exchange .btn-badge   { background: #f59e0b; }
-        .calculator .btn-badge { background: #06b6d4; }
-        .transfer .btn-badge   { background: #3b82f6; }
-        .offercalc .btn-badge  { background: #14b8a6; }
-        .custom .btn-badge     { background: #a855f7; }
-        .coupon .btn-badge     { background: #ec4899; }
-        .location .btn-badge   { background: #10b981; }
-        .price .btn-badge      { background: #0ea5e9; }
-        .estimate .btn-badge   { background: #8b5cf6; }
-        .visiting .btn-badge   { background: #6366f1; }
-
         .icon-btn svg, .icon-btn img.btn-img-icon {
-            width: 38px;
-            height: 38px;
-            margin-top: 2px;
+            width: 27px;
+            height: 27px;
+            margin-top: 1px;
             transition: transform 0.2s ease;
             object-fit: contain;
             border-radius: 50%;
+            color: #ffffff;
         }
 
         .icon-btn:hover svg, .icon-btn:hover img.btn-img-icon {
-            transform: scale(1.08);
+            transform: scale(1.1);
         }
 
         .icon-btn span {
-            font-size: 11px;
+            font-size: 10px;
             font-weight: 900;
             text-transform: uppercase;
             letter-spacing: 0.3px;
             text-align: center;
-            color: #1e293b;
+            color: #ffffff;
         }
 
         /* Panels Shared */
@@ -396,10 +392,17 @@
             border: 1.5px solid #cbd5e1;
             border-radius: 8px;
             outline: none;
+            background: #ffffff;
+            transition: border-color 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
         }
 
+        /* The field that's currently "live" for entry gets an obvious glow — this
+           pairs with select-on-focus, so it's visually clear which cell just got
+           selected and is ready to be typed over. */
         .form-control:focus {
             border-color: #0ea5e9;
+            background: #f0f9ff;
+            box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.15);
         }
 
         .type-selector-btns {
@@ -546,6 +549,13 @@
             border: 2px solid #cbd5e1;
             border-radius: 12px;
             padding: 0 8px;
+            transition: border-color 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+        }
+
+        .manual-input-box:focus-within {
+            border-color: #0ea5e9;
+            background: #f0f9ff;
+            box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.15);
         }
 
         .manual-input-box input {
@@ -655,6 +665,13 @@
             background: #ffffff;
             margin-bottom: 12px;
             text-align: center;
+            transition: border-color 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+        }
+
+        .editor-canvas:focus {
+            border-color: #0ea5e9;
+            background: #f8fdff;
+            box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.15);
         }
 
         .editor-canvas[placeholder]:empty:before {
@@ -1449,8 +1466,8 @@
                 <button class="icon-btn whatsapp" onclick="triggerMobilePrint('whatsapp')">
                     <span class="btn-badge">01</span>
                     <svg viewBox="0 0 24 24" fill="none">
-                        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414-.074-.124-.272-.198-.57-.347z" fill="#25D366"/>
-                        <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.477 2 12c0 1.891.524 3.66 1.436 5.178L2 22l4.956-1.399C8.403 21.493 10.138 22 12 22c5.523 0 10-4.477 10-10S17.523 2 12 2zm0 18c-1.63 0-3.161-.433-4.488-1.19l-.322-.186-2.955.834.821-2.885-.205-.333A7.954 7.954 0 0 1 4 12c0-4.411 3.589-8 8-8s8 3.589 8 8-3.589 8-8 8z" fill="#25D366"/>
+                        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414-.074-.124-.272-.198-.57-.347z" fill="currentColor"/>
+                        <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.477 2 12c0 1.891.524 3.66 1.436 5.178L2 22l4.956-1.399C8.403 21.493 10.138 22 12 22c5.523 0 10-4.477 10-10S17.523 2 12 2zm0 18c-1.63 0-3.161-.433-4.488-1.19l-.322-.186-2.955.834.821-2.885-.205-.333A7.954 7.954 0 0 1 4 12c0-4.411 3.589-8 8-8s8 3.589 8 8-3.589 8-8 8z" fill="currentColor"/>
                     </svg>
                     <span>Print WhatsApp</span>
                 </button>
@@ -1458,7 +1475,7 @@
                 <!-- 2. Print Exchange -->
                 <button class="icon-btn exchange" onclick="triggerMobilePrint('exchange')">
                     <span class="btn-badge">02</span>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M7 19H4.817a1 1 0 0 1-.914-1.406l1.383-3.112A1 1 0 0 1 6.2 13.8L7 14.2"></path>
                         <path d="M11 19h8.183a1 1 0 0 0 .914-1.406l-1.383-3.112a1 1 0 0 0-.914-.682L17 13.8"></path>
                         <path d="M12 5V2.8a.8.8 0 0 0-1.28-.64L7.52 4.56a.8.8 0 0 0 0 1.28l3.2 2.4A.8.8 0 0 0 12 7.6V5.4a7 7 0 0 1 7 7c0 1.22-.31 2.37-.86 3.37"></path>
@@ -1470,7 +1487,7 @@
                 <!-- 3. Store Location -->
                 <button class="icon-btn location" id="btn-toggle-location" onclick="toggleLocationPanel()">
                     <span class="btn-badge">03</span>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
                         <circle cx="12" cy="10" r="3"></circle>
                     </svg>
@@ -1480,7 +1497,7 @@
                 <!-- 4. Visiting Card -->
                 <button class="icon-btn visiting" id="btn-toggle-visiting" onclick="toggleVisitingPanel()">
                     <span class="btn-badge">04</span>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <rect x="2" y="5" width="20" height="14" rx="2"></rect>
                         <line x1="6" y1="9" x2="10" y2="9"></line>
                         <line x1="6" y1="13" x2="14" y2="13"></line>
@@ -1499,7 +1516,7 @@
                 <!-- 5. Custom Text -->
                 <button class="icon-btn custom" id="btn-toggle-custom" onclick="toggleCustomTextPanel()">
                     <span class="btn-badge">05</span>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="#a855f7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path>
                         <polyline points="14 2 14 8 20 8"></polyline>
                         <line x1="8" y1="13" x2="16" y2="13"></line>
@@ -1511,7 +1528,7 @@
                 <!-- 6. Coupon -->
                 <button class="icon-btn coupon" id="btn-toggle-coupon" onclick="toggleCouponPanel()">
                     <span class="btn-badge">06</span>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="#ec4899" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v2z"></path>
                         <path d="M12 6v12" stroke-dasharray="2 2"></path>
                     </svg>
@@ -1521,7 +1538,7 @@
                 <!-- 7. Price Print -->
                 <button class="icon-btn price" id="btn-toggle-price" onclick="togglePricePanel()">
                     <span class="btn-badge">07</span>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="#0ea5e9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
                         <line x1="7" y1="7" x2="7.01" y2="7"></line>
                     </svg>
@@ -1531,7 +1548,7 @@
                 <!-- 8. Estimate / Bill Calculator -->
                 <button class="icon-btn estimate" id="btn-toggle-estimate" onclick="toggleEstimatePanel()">
                     <span class="btn-badge">08</span>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect>
                         <line x1="8" y1="6" x2="16" y2="6"></line>
                         <line x1="16" y1="14" x2="16" y2="18"></line>
@@ -1556,8 +1573,8 @@
 
                 <!-- Custom Multi-Select Combined Print Button -->
                 <button class="icon-btn multibutton" id="btn-toggle-multi" onclick="toggleMultiPanel()">
-                    <span class="btn-badge" style="background:#f97316;">★</span>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="#f97316" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <span class="btn-badge">★</span>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <rect x="3" y="3" width="7" height="7"></rect>
                         <rect x="14" y="3" width="7" height="7"></rect>
                         <rect x="14" y="14" width="7" height="7"></rect>
@@ -1578,7 +1595,7 @@
                 <!-- Scrap Calculator Link Button -->
                 <a class="icon-btn calculator" href="https://lalithanaturals.github.io/scrap-calc/" target="_blank" rel="noopener noreferrer">
                     <span class="btn-badge">09</span>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="#06b6d4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect>
                         <line x1="8" y1="6" x2="16" y2="6"></line>
                         <line x1="8" y1="10" x2="10" y2="10"></line>
@@ -1601,7 +1618,7 @@
                 <!-- Offer Calc Link Button -->
                 <a class="icon-btn offercalc" href="https://lalithanaturals.github.io/offer-calc/" target="_blank" rel="noopener noreferrer">
                     <span class="btn-badge">11</span>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="#14b8a6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
                         <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
                     </svg>
@@ -2439,7 +2456,23 @@
             updateCustomHeaderToggles();
             togglePriceLogoControls();
             buildMultiPreview();
+            initSelectOnFocus();
         });
+
+        // "Spreadsheet cell" behavior: tapping/clicking into any text-like field
+        // that already has a value selects the whole value, so typing immediately
+        // replaces it instead of the cursor landing in the middle of old text.
+        function initSelectOnFocus() {
+            document.addEventListener('focusin', (e) => {
+                const el = e.target;
+                if (el.tagName !== 'INPUT') return;
+                if (['checkbox', 'file', 'hidden', 'radio'].includes(el.type)) return;
+                // Deferred a frame so it wins even on the same tap that opened a panel.
+                requestAnimationFrame(() => {
+                    try { el.select(); } catch (err) {}
+                });
+            });
+        }
 
         // Share App function using native Web Share API with clipboard fallback
         function shareAppUrl() {
@@ -3064,9 +3097,22 @@
             });
         }
 
+        // Focuses (and, for a text field, selects) an element on the next paint —
+        // waited a frame because the panel that contains it may have just gone
+        // from display:none to visible in this same click handler, and an
+        // element can't take focus while it's still hidden.
+        function focusFieldSoon(id) {
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    const el = document.getElementById(id);
+                    if (el) el.focus();
+                });
+            });
+        }
+
         function toggleCustomTextPanel() {
             const panel = document.getElementById('customInputPanel');
-            if (panel.style.display === 'block') { hideAllPanelsKeepData(); } 
+            if (panel.style.display === 'block') { hideAllPanelsKeepData(); }
             else {
                 hideAllPanelsKeepData();
                 panel.style.display = 'block';
@@ -3074,12 +3120,13 @@
                 document.getElementById('waReceiptCol').style.display = 'none';
                 document.getElementById('exReceiptCol').style.display = 'none';
                 document.getElementById('btn-toggle-custom').classList.add('active-toggle');
+                focusFieldSoon('editorCanvas');
             }
         }
 
         function toggleCouponPanel() {
             const panel = document.getElementById('couponInputPanel');
-            if (panel.style.display === 'block') { hideAllPanelsKeepData(); } 
+            if (panel.style.display === 'block') { hideAllPanelsKeepData(); }
             else {
                 hideAllPanelsKeepData();
                 panel.style.display = 'block';
@@ -3088,12 +3135,13 @@
                 document.getElementById('exReceiptCol').style.display = 'none';
                 document.getElementById('btn-toggle-coupon').classList.add('active-toggle');
                 updateCouponCardPreview();
+                focusFieldSoon('coupon-cust-name');
             }
         }
 
         function toggleLocationPanel() {
             const panel = document.getElementById('locationInputPanel');
-            if (panel.style.display === 'block') { hideAllPanelsKeepData(); } 
+            if (panel.style.display === 'block') { hideAllPanelsKeepData(); }
             else {
                 hideAllPanelsKeepData();
                 panel.style.display = 'block';
@@ -3107,7 +3155,7 @@
 
         function togglePricePanel() {
             const panel = document.getElementById('priceInputPanel');
-            if (panel.style.display === 'block') { hideAllPanelsKeepData(); } 
+            if (panel.style.display === 'block') { hideAllPanelsKeepData(); }
             else {
                 hideAllPanelsKeepData();
                 panel.style.display = 'block';
@@ -3116,12 +3164,13 @@
                 document.getElementById('exReceiptCol').style.display = 'none';
                 document.getElementById('btn-toggle-price').classList.add('active-toggle');
                 updatePriceCardPreview();
+                focusFieldSoon('price-item-name');
             }
         }
 
         function toggleEstimatePanel() {
             const panel = document.getElementById('estimateInputPanel');
-            if (panel.style.display === 'block') { hideAllPanelsKeepData(); } 
+            if (panel.style.display === 'block') { hideAllPanelsKeepData(); }
             else {
                 hideAllPanelsKeepData();
                 panel.style.display = 'block';
@@ -3133,13 +3182,13 @@
                 if(!document.getElementById('quickDiscValue').value) {
                     selectAndAddPct('10%');
                 }
-                document.getElementById('quickName').focus();
+                focusFieldSoon('quickName');
             }
         }
 
         function toggleVisitingPanel() {
             const panel = document.getElementById('visitingInputPanel');
-            if (panel.style.display === 'block') { hideAllPanelsKeepData(); } 
+            if (panel.style.display === 'block') { hideAllPanelsKeepData(); }
             else {
                 hideAllPanelsKeepData();
                 panel.style.display = 'block';
