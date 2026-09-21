@@ -312,6 +312,43 @@
             box-shadow: 0 8px 18px -8px rgba(234, 88, 12, 0.45);
         }
 
+        /* Wraps a link-tile alongside a small overlaid share button, so the
+           whole tile stays clickable while the share icon has its own
+           independent tap target (not nested inside the <a>). */
+        .icon-btn-wrap {
+            position: relative;
+            display: flex;
+        }
+        .icon-btn-wrap .icon-btn {
+            flex: 1;
+        }
+        .tile-share-btn {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            width: 24px;
+            height: 24px;
+            border-radius: 7px;
+            border: none;
+            background: rgba(255, 255, 255, 0.9);
+            color: #64748b;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 2;
+            box-shadow: 0 1px 4px rgba(15, 23, 42, 0.18);
+            -webkit-tap-highlight-color: transparent;
+        }
+        .tile-share-btn svg {
+            width: 13px;
+            height: 13px;
+        }
+        .tile-share-btn:hover {
+            background: #ffffff;
+            color: #0f172a;
+        }
+
         .tile-icon {
             width: 22px;
             height: 22px;
@@ -1677,14 +1714,21 @@
                 </a>
 
                 <!-- Offer Calc Link Button -->
-                <a class="icon-btn offercalc" href="https://lalithanaturals.github.io/offer-calc/" target="_blank" rel="noopener noreferrer">
-                    <span class="tile-icon">
+                <div class="icon-btn-wrap">
+                    <a class="icon-btn offercalc" href="https://lalithanaturals.github.io/Offer-Calc/" target="_blank" rel="noopener noreferrer">
+                        <span class="tile-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M9 17H7A5 5 0 0 1 7 7h2M15 7h2a5 5 0 0 1 0 10h-2M8 12h8"/>
+                            </svg>
+                        </span>
+                        <span class="t1">Offer Calc ↗</span>
+                    </a>
+                    <button type="button" class="tile-share-btn" title="Share Offer Calc link" onclick="shareExternalTool(event, 'Offer Calc', 'https://lalithanaturals.github.io/Offer-Calc/')">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M9 17H7A5 5 0 0 1 7 7h2M15 7h2a5 5 0 0 1 0 10h-2M8 12h8"/>
+                            <circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10Z"/>
                         </svg>
-                    </span>
-                    <span class="t1">Offer Calc ↗</span>
-                </a>
+                    </button>
+                </div>
 
             </div>
         </div>
@@ -2642,6 +2686,29 @@ Real-time stock</textarea>
                     alert('App link copied to clipboard: https://lalithanaturals.github.io/Print/');
                 }).catch(() => {
                     prompt('Copy app link:', 'https://lalithanaturals.github.io/Print/');
+                });
+            }
+        }
+
+        // Share button for an external-tool tile (e.g. Offer Calc) — shares
+        // that tool's own link, independent of the tile's click-through.
+        function shareExternalTool(e, title, url) {
+            if (e) e.stopPropagation();
+            const shareData = {
+                title: title,
+                text: 'Check out ' + title + ':',
+                url: url
+            };
+
+            if (navigator.share) {
+                navigator.share(shareData).catch((err) => {
+                    console.log('Share error:', err);
+                });
+            } else {
+                navigator.clipboard.writeText(url).then(() => {
+                    alert(title + ' link copied to clipboard: ' + url);
+                }).catch(() => {
+                    prompt('Copy ' + title + ' link:', url);
                 });
             }
         }
