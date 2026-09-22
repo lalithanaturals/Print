@@ -154,6 +154,12 @@
             text-transform: uppercase;
         }
 
+        .pos-topbar-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
         .pos-icon-btn {
             width: 34px;
             height: 34px;
@@ -1560,9 +1566,14 @@
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
             </button>
             <span class="pos-brand">LALITHA NATURALS</span>
-            <button class="share-app-btn" title="Share App" onclick="shareAppUrl()">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 10.5 6.8-3.9M8.6 13.5l6.8 3.9"/></svg>
-            </button>
+            <div class="pos-topbar-actions">
+                <button class="pos-icon-btn" title="Reload Page" onclick="location.reload()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>
+                </button>
+                <button class="share-app-btn" title="Share App" onclick="shareAppUrl()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 10.5 6.8-3.9M8.6 13.5l6.8 3.9"/></svg>
+                </button>
+            </div>
         </div>
 
         <!-- Search filters the tool tiles below by name as you type -->
@@ -1698,20 +1709,34 @@
             <div class="big-buttons-bar">
 
                 <!-- Scrap Calculator Link Button -->
-                <a class="icon-btn calculator" href="https://lalithanaturals.github.io/scrap-calc/" target="_blank" rel="noopener noreferrer">
-                    <span class="tile-icon">
+                <div class="icon-btn-wrap">
+                    <a class="icon-btn calculator" href="https://lalithanaturals.github.io/scrap-calc/" target="_blank" rel="noopener noreferrer">
+                        <span class="tile-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 7h8M8 11h5M8 15h8"/>
+                            </svg>
+                        </span>
+                        <span class="t1">Scrap Calc ↗</span>
+                    </a>
+                    <button type="button" class="tile-share-btn" title="Share Scrap Calc link" onclick="shareExternalTool(event, 'Scrap Calc', 'https://lalithanaturals.github.io/scrap-calc/')">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 7h8M8 11h5M8 15h8"/>
+                            <circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10Z"/>
                         </svg>
-                    </span>
-                    <span class="t1">Scrap Calc ↗</span>
-                </a>
+                    </button>
+                </div>
 
                 <!-- Stock Transfer Link Button -->
-                <a class="icon-btn transfer" href="https://lalithanaturals.github.io/Stock-transfer/" target="_blank" rel="noopener noreferrer">
-                    <span class="tile-icon"><img src="van logo.png" class="btn-img-icon" alt="Stock Transfer"></span>
-                    <span class="t1">Transfer ↗</span>
-                </a>
+                <div class="icon-btn-wrap">
+                    <a class="icon-btn transfer" href="https://lalithanaturals.github.io/Stock-transfer/" target="_blank" rel="noopener noreferrer">
+                        <span class="tile-icon"><img src="van logo.png" class="btn-img-icon" alt="Stock Transfer"></span>
+                        <span class="t1">Transfer ↗</span>
+                    </a>
+                    <button type="button" class="tile-share-btn" title="Share Stock Transfer link" onclick="shareExternalTool(event, 'Stock Transfer', 'https://lalithanaturals.github.io/Stock-transfer/')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10Z"/>
+                        </svg>
+                    </button>
+                </div>
 
                 <!-- Offer Calc Link Button -->
                 <div class="icon-btn-wrap">
