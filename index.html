@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lalitha Naturals Thermal Print Manager</title>
+    <title>Lalitha Print Studio</title>
     
     <!-- Mobile Home Screen & Favicon Links -->
     <link rel="icon" type="image/png" href="icon.png">
@@ -1515,7 +1515,7 @@
     <div class="app-main">
 
     <div class="page-title">
-        <h1>Lalitha Naturals Thermal Print Center</h1>
+        <h1>Lalitha Print Studio</h1>
     </div>
 
     <div class="pos-shell">
@@ -2103,7 +2103,7 @@ Real-time stock</textarea>
                     <div class="form-group">
                         <label>Brand Name</label>
                         <select class="form-control" id="quickBrandSelect" onchange="handleBrandSelectChange(this)">
-                            <option value="Lalitha Naturals">Lalitha Naturals</option>
+                            <option value="Lalitha Print Studio">Lalitha Print Studio</option>
                             <option value="The Indus Valley">The Indus Valley</option>
                             <option value="Solara">Solara</option>
                             <option value="Organic Tattva">Organic Tattva</option>
@@ -2148,6 +2148,7 @@ Real-time stock</textarea>
 
             <div class="form-group full-width">
                 <label>Added Items List:</label>
+                <div style="width:100%; overflow-x:auto;">
                 <table class="est-items-table">
                     <thead>
                         <tr>
@@ -2162,6 +2163,7 @@ Real-time stock</textarea>
                     <tbody id="quickItemsTableBody">
                     </tbody>
                 </table>
+                </div>
             </div>
         </div>
     </div>
@@ -2402,7 +2404,7 @@ Real-time stock</textarea>
             <div class="preview-box">
                 <div class="card visiting-card" id="visiting-card-el">
                     <div class="vc-highlight-box">
-                        <div class="vc-brand-title">Lalitha Naturals</div>
+                        <div class="vc-brand-title">Lalitha Print Studio</div>
                         <div class="vc-tagline">Feel the earth</div>
                     </div>
 
@@ -2657,8 +2659,8 @@ Real-time stock</textarea>
 
         function shareAppUrl() {
             const shareData = {
-                title: 'Lalitha Naturals Thermal Print Center',
-                text: 'Check out the Lalitha Naturals Thermal Print Center app:',
+                title: 'Lalitha Print Studio',
+                text: 'Check out the Lalitha Print Studio app:',
                 url: 'https://lalithanaturals.github.io/Print/'
             };
 
@@ -2923,7 +2925,7 @@ Real-time stock</textarea>
             const brandSelect = document.getElementById('quickBrandSelect');
             let brand = brandSelect.value;
             if (brand === 'Manual') {
-                brand = document.getElementById('quickBrandManual').value.trim() || 'Lalitha Naturals';
+                brand = document.getElementById('quickBrandManual').value.trim() || 'Lalitha Print Studio';
             }
 
             let nameVal = document.getElementById('quickName').value.trim();
@@ -3033,6 +3035,21 @@ Real-time stock</textarea>
             renderQuickItemsTable();
         }
 
+        // Escapes text before it's interpolated into an innerHTML template
+        // string, so a name/brand/note containing "<", ">", "&" or quotes
+        // (e.g. an item name like "Rice <5kg>" or "R&B Traders") renders as
+        // the literal text the person typed instead of being parsed as HTML
+        // — which could silently eat characters, apply stray formatting, or
+        // even insert a whole new element into the page.
+        function escapeHtml(str) {
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
         function renderQuickItemsTable() {
             const tbody = document.getElementById('quickItemsTableBody');
             tbody.innerHTML = '';
@@ -3054,9 +3071,9 @@ Real-time stock</textarea>
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
                     <td style="text-align:center;">${idx + 1}</td>
-                    <td><strong>${item.brand}</strong> - ${item.name}</td>
+                    <td><strong>${escapeHtml(item.brand)}</strong> - ${escapeHtml(item.name)}</td>
                     <td>₹${mrp.toFixed(2)}</td>
-                    <td>${item.disc}</td>
+                    <td>${escapeHtml(item.disc)}</td>
                     <td style="color:#8b5cf6;">₹${finalPrice.toFixed(2)}</td>
                     <td>
                         <div class="table-action-btns">
@@ -3078,7 +3095,7 @@ Real-time stock</textarea>
 
             if(custName || custPhone) {
                 custInfoEl.style.display = 'block';
-                custInfoEl.innerHTML = `Customer: <strong>${custName || 'N/A'}</strong> | Ph: <strong>${custPhone || 'N/A'}</strong>`;
+                custInfoEl.innerHTML = `Customer: <strong>${escapeHtml(custName) || 'N/A'}</strong> | Ph: <strong>${escapeHtml(custPhone) || 'N/A'}</strong>`;
             } else {
                 custInfoEl.style.display = 'none';
             }
@@ -3105,7 +3122,7 @@ Real-time stock</textarea>
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
                     <td style="text-align:center;">${idx + 1}</td>
-                    <td style="text-align:left;">${item.name}</td>
+                    <td style="text-align:left;">${escapeHtml(item.name)}</td>
                     <td>₹${mrp.toFixed(2)}</td>
                     <td style="font-weight:900;">₹${finalPrice.toFixed(2)}</td>
                 `;
@@ -3503,8 +3520,8 @@ Real-time stock</textarea>
 
             const contentWrapper = document.getElementById('p-card-content-wrapper');
             
-            let qtyHtml = itemQty ? `<div style="font-size:${fQty}; font-weight:900; text-transform:uppercase; margin:3px 0;">${itemQty}</div>` : '';
-            let nameHtml = `<div style="font-size:${fName}; font-weight:900; text-transform:uppercase; border:2px solid #000; padding:5px 4px; margin:4px 0; background:#fff;">${itemName}</div>`;
+            let qtyHtml = itemQty ? `<div style="font-size:${fQty}; font-weight:900; text-transform:uppercase; margin:3px 0;">${escapeHtml(itemQty)}</div>` : '';
+            let nameHtml = `<div style="font-size:${fName}; font-weight:900; text-transform:uppercase; border:2px solid #000; padding:5px 4px; margin:4px 0; background:#fff;">${escapeHtml(itemName)}</div>`;
             
             let priceHtml = '';
             if (itemVal > 0) {
@@ -3814,7 +3831,40 @@ Real-time stock</textarea>
             const text = node.nodeValue;
             const firstChar = text.charAt(0);
             if (firstChar && firstChar !== firstChar.toUpperCase() && firstChar === firstChar.toLowerCase()) {
+                // Reassigning a Text node's data resets any live Range's boundary
+                // offset that falls inside the replaced span back to the start of
+                // that replacement (per the DOM "replace data" algorithm) — and a
+                // Range stays "live" even after cloneRange(), so simply cloning
+                // and re-adding the selection does NOT survive this mutation; it
+                // just re-adds a range that has already collapsed to offset 0.
+                // Left unguarded, that meant every keystroke after the first
+                // landed at position 0 instead of where the person was actually
+                // typing, so "haloo" came out as "oolah". The fix: capture the
+                // caret's offset as a plain NUMBER before mutating, then build a
+                // brand-new Range at that same (node, offset) afterwards — the
+                // node object itself is unchanged and still has the same length
+                // (a case swap never changes character count), so the offset is
+                // still valid.
+                const sel = window.getSelection();
+                let savedOffset = null;
+                let savedNode = null;
+                if (sel && sel.rangeCount > 0) {
+                    const r = sel.getRangeAt(0);
+                    if (r.collapsed && r.startContainer === node) {
+                        savedOffset = r.startOffset;
+                        savedNode = r.startContainer;
+                    }
+                }
                 node.nodeValue = firstChar.toUpperCase() + text.slice(1);
+                if (savedNode) {
+                    try {
+                        const newRange = document.createRange();
+                        newRange.setStart(savedNode, Math.min(savedOffset, savedNode.length));
+                        newRange.collapse(true);
+                        sel.removeAllRanges();
+                        sel.addRange(newRange);
+                    } catch (err) {}
+                }
             }
         }
 
@@ -3842,7 +3892,7 @@ Real-time stock</textarea>
         function loadPresetTemplate(type) {
             const editor = document.getElementById('editorCanvas');
             let text = "";
-            if (type === 'thankyou') text = "Welcome to Lalitha Naturals. Thank you for shopping with us.";
+            if (type === 'thankyou') text = "Welcome to Lalitha Print Studio. Thank you for shopping with us.";
             else if (type === 'notice') text = "Store notice. Open from 9 AM to 9 PM.";
             else if (type === 'offer') text = "Special offer. Discounts on organic staples today.";
             
@@ -3892,34 +3942,55 @@ Real-time stock</textarea>
                 let contentHTML = '';
 
                 if(val === 'whatsapp') {
+                    // Mirrors the live WhatsApp panel's own values (group link,
+                    // phone, website, addresses, updates list) instead of the
+                    // old hardcoded defaults, so an edit made in that panel is
+                    // reflected here too when it's added to a combined print.
+                    const waLink = document.getElementById('wa-group-link').value.trim() || 'https://chat.whatsapp.com/E8udXvgNXAOKSXWGvud4ct';
+                    const waPhone = document.getElementById('wa-phone').value.trim();
+                    const waWebsite = document.getElementById('wa-website').value.trim();
+                    const waAddr1 = document.getElementById('wa-address1').value.trim();
+                    const waAddr2 = document.getElementById('wa-address2').value.trim();
+                    const waUpdatesLines = document.getElementById('wa-updates').value.split('\n').map(l => l.trim()).filter(l => l);
+                    const waUpdatesHtml = waUpdatesLines.map(l => `<li>${escapeHtml(l)}</li>`).join('');
+
                     contentHTML += `
-                        <div class="header">Join WhatsApp Group</div>
+                        <div class="header">Join Our WhatsApp Group</div>
                         <div class="side-by-side-whatsapp">
                             <div class="notice-box">
                                 <div class="notice-title">Official updates on:</div>
-                                <ul class="notice-list">
-                                    <li>New arrivals</li>
-                                    <li>Special offers</li>
-                                    <li>Store news</li>
-                                    <li>Real-time stock</li>
-                                </ul>
+                                <ul class="notice-list">${waUpdatesHtml}</ul>
                             </div>
                             <div class="qr-container" style="width:75px;height:75px;">
-                                <img class="qr-code" src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Fchat.whatsapp.com%2FE8udXvgNXAOKSXWGvud4ct" alt="QR">
+                                <img class="qr-code" src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(waLink)}" alt="QR">
                             </div>
                         </div>
-                        <div class="footer-text" style="text-align:left; margin-top:4px;">Scan QR code to join group.</div>`;
+                        <div class="footer-text" style="text-align:left; margin-top:4px;">Scan QR code to join group.</div>
+                        <div class="divider"></div>
+                        <div class="address-section" style="text-align:left;">
+                            <div class="address-title" style="font-size:11px; font-weight:900; margin-bottom:2px;">OUR LOCATIONS</div>
+                            <div class="store-address-box" style="font-size:9.5px; font-weight:900; line-height:1.3;">
+                                <div class="address-line"><strong>Branch-1:</strong> ${escapeHtml(waAddr1)}</div>
+                                <div class="address-line"><strong>Branch-2:</strong> ${escapeHtml(waAddr2)}</div>
+                            </div>
+                        </div>
+                        <div style="font-size:10px; font-weight:900; margin-top:3px;">📞 ${escapeHtml(waPhone)}${waWebsite ? ' &nbsp;|&nbsp; 🌐 ' + escapeHtml(waWebsite) : ''}</div>`;
                 } else if(val === 'exchange') {
+                    // Mirrors the live Exchange panel's editable items/rates and
+                    // note instead of the old hardcoded Aluminium/Steel rows.
+                    const exRowsHtml = exchangeItems
+                        .filter(item => item.name || item.rate)
+                        .map(item => `<tr><td>${escapeHtml(item.name)}</td><td>${escapeHtml(item.rate)}</td></tr>`)
+                        .join('');
+                    const exNote = document.getElementById('exchange-note-input').value.trim();
+
                     contentHTML += `
                         <div class="offer-header">Exchange Your Old Items</div>
                         <table class="rate-table">
                             <thead><tr><th>Item</th><th>Rate</th></tr></thead>
-                            <tbody>
-                                <tr><td>Aluminium</td><td>₹150 / 1 KG</td></tr>
-                                <tr><td>Steel</td><td>₹50 / 1 KG</td></tr>
-                            </tbody>
+                            <tbody>${exRowsHtml}</tbody>
                         </table>
-                        <div class="note-box" style="margin:4px 0; font-size:10px;"><strong>NOTE:</strong> 100 GM deducted for handles.</div>`;
+                        ${exNote ? `<div class="note-box" style="margin:4px 0; font-size:10px;"><strong>NOTE:</strong> ${escapeHtml(exNote)}</div>` : ''}`;
                 } else if(val === 'custom') {
                     const customHtmlContent = document.getElementById('editorCanvas').innerHTML;
                     const showLogo = document.getElementById('custom-show-logo').checked;
@@ -3944,14 +4015,14 @@ Real-time stock</textarea>
                     const custPhone = document.getElementById('coupon-cust-phone').value.trim();
                     const notesText = document.getElementById('coupon-notes').value.trim();
 
-                    let custHtml = (custName || custPhone) ? `<div style="font-size:11px; font-weight:900; margin:2px 0;">Customer: ${custName || 'N/A'} | Ph: ${custPhone || 'N/A'}</div>` : '';
-                    let notesHtml = notesText ? `<div style="font-size:10.5px; font-weight:900; margin:2px 0; text-align:left;">NOTE: ${notesText}</div>` : '';
+                    let custHtml = (custName || custPhone) ? `<div style="font-size:11px; font-weight:900; margin:2px 0;">Customer: ${escapeHtml(custName) || 'N/A'} | Ph: ${escapeHtml(custPhone) || 'N/A'}</div>` : '';
+                    let notesHtml = notesText ? `<div style="font-size:10.5px; font-weight:900; margin:2px 0; text-align:left;">NOTE: ${escapeHtml(notesText)}</div>` : '';
 
                     contentHTML += `
                         <div class="coupon-stamp">⚡ DISCOUNT COUPON ⚡</div>
-                        <div class="coupon-title-badge">${badgeText}</div>
+                        <div class="coupon-title-badge">${escapeHtml(badgeText)}</div>
                         ${custHtml}
-                        <div style="font-size:11.5px; font-weight:900; margin:4px 0;">By: ${staffDisp}</div>
+                        <div style="font-size:11.5px; font-weight:900; margin:4px 0;">By: ${escapeHtml(staffDisp)}</div>
                         ${notesHtml}
                         <div class="divider"></div>
                         <div style="font-size:11px; font-weight:900; margin-bottom:4px;">Scan for directions</div>
@@ -4008,9 +4079,9 @@ Real-time stock</textarea>
                     const fQty = document.getElementById('p-font-qty').value;
                     const fNotes = document.getElementById('p-font-notes').value;
 
-                    let brandHtml = (brandGroup.style.display !== 'none' && brandName) ? `<div style="font-size:${fBrand}; font-weight:900; text-transform:uppercase;">${brandName}</div><div class="divider"></div>` : '';
-                    let qtyHtml = itemQty ? `<div style="font-size:${fQty}; font-weight:900; text-transform:uppercase; margin:3px 0;">${itemQty}</div>` : '';
-                    let nameHtml = `<div style="font-size:${fName}; font-weight:900; text-transform:uppercase; border:2px solid #000; padding:5px 4px; margin:4px 0;">${itemName}</div>`;
+                    let brandHtml = (brandGroup.style.display !== 'none' && brandName) ? `<div style="font-size:${fBrand}; font-weight:900; text-transform:uppercase;">${escapeHtml(brandName)}</div><div class="divider"></div>` : '';
+                    let qtyHtml = itemQty ? `<div style="font-size:${fQty}; font-weight:900; text-transform:uppercase; margin:3px 0;">${escapeHtml(itemQty)}</div>` : '';
+                    let nameHtml = `<div style="font-size:${fName}; font-weight:900; text-transform:uppercase; border:2px solid #000; padding:5px 4px; margin:4px 0;">${escapeHtml(itemName)}</div>`;
                     
                     let priceHtml = '';
                     if (itemVal > 0) {
@@ -4026,7 +4097,7 @@ Real-time stock</textarea>
                     } else {
                         priceHtml = `<div style="font-size:${fPrice}; font-weight:900; border:3px solid #000; padding:6px 4px; margin:6px 0;">MRP: ₹0</div>`;
                     }
-                    let notesHtml = notesVal ? `<div style="font-size:${fNotes}; font-weight:900; margin-top:2px;">NOTE: ${notesVal}</div>` : '';
+                    let notesHtml = notesVal ? `<div style="font-size:${fNotes}; font-weight:900; margin-top:2px;">NOTE: ${escapeHtml(notesVal)}</div>` : '';
 
                     let innerPriceContent = (priceLayoutOption === 1) ? `${nameHtml}${qtyHtml}${priceHtml}` : `${priceHtml}${nameHtml}${qtyHtml}`;
 
@@ -4038,7 +4109,7 @@ Real-time stock</textarea>
                 } else if(val === 'estimate') {
                     const custName = document.getElementById('est-cust-name').value.trim();
                     const custPhone = document.getElementById('est-cust-phone').value.trim();
-                    let custHtml = (custName || custPhone) ? `<div style="font-size:11px; font-weight:900; text-align:left; margin-bottom:4px;">Customer: <strong>${custName || 'N/A'}</strong> | Ph: <strong>${custPhone || 'N/A'}</strong></div>` : '';
+                    let custHtml = (custName || custPhone) ? `<div style="font-size:11px; font-weight:900; text-align:left; margin-bottom:4px;">Customer: <strong>${escapeHtml(custName) || 'N/A'}</strong> | Ph: <strong>${escapeHtml(custPhone) || 'N/A'}</strong></div>` : '';
                     
                     let rowsHtml = '';
                     let grandTotal = 0;
@@ -4056,7 +4127,7 @@ Real-time stock</textarea>
                         if (finalPrice < 0) finalPrice = 0;
                         grandTotal += finalPrice;
 
-                        rowsHtml += `<tr><td style="text-align:center;">${i + 1}</td><td style="text-align:left;">${item.name}</td><td>₹${mrp.toFixed(2)}</td><td style="font-weight:900;">₹${finalPrice.toFixed(2)}</td></tr>`;
+                        rowsHtml += `<tr><td style="text-align:center;">${i + 1}</td><td style="text-align:left;">${escapeHtml(item.name)}</td><td>₹${mrp.toFixed(2)}</td><td style="font-weight:900;">₹${finalPrice.toFixed(2)}</td></tr>`;
                     });
 
                     contentHTML += `
@@ -4073,7 +4144,7 @@ Real-time stock</textarea>
                 } else if(val === 'visiting') {
                     contentHTML += `
                         <div style="border:2.5px solid #000; background:#000; color:#fff; padding:6px; margin-bottom:6px; text-transform:uppercase;">
-                            <div style="font-size:15px; font-weight:900;">Lalitha Naturals</div>
+                            <div style="font-size:15px; font-weight:900;">Lalitha Print Studio</div>
                             <div style="font-size:10px; font-style:italic; font-weight:900;">Feel the earth</div>
                         </div>
                         <div style="border:1.5px solid #000; padding:5px; margin-bottom:5px; text-align:left;">
