@@ -799,8 +799,9 @@
             background: #ffffff;
             border: 1.5px solid #cbd5e1;
             border-radius: 8px;
-            padding: 5px 10px;
-            font-size: 11px;
+            padding: 8px 13px;
+            min-height: 34px;
+            font-size: 12.5px;
             font-weight: 900;
             color: #334155;
             cursor: pointer;
@@ -812,15 +813,25 @@
             border-color: #94a3b8;
         }
 
+        .tool-btn:active {
+            transform: scale(0.96);
+        }
+
         .tool-btn.active {
             background: #0f172a;
             color: #ffffff;
             border-color: #0f172a;
         }
 
+        .tool-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
         .tool-select {
-            padding: 5px 8px;
-            font-size: 11px;
+            padding: 8px 10px;
+            min-height: 34px;
+            font-size: 12.5px;
             font-weight: 900;
             border: 1.5px solid #cbd5e1;
             border-radius: 8px;
@@ -828,6 +839,13 @@
             color: #334155;
             cursor: pointer;
             outline: none;
+        }
+
+        .toolbar-divider {
+            width: 1.5px;
+            align-self: stretch;
+            background: #cbd5e1;
+            margin: 0 2px;
         }
 
         .custom-options-bar {
@@ -1150,9 +1168,32 @@
             text-align: center;
         }
 
+        .custom-text-content ul, .editor-canvas ul,
+        .custom-text-content ol, .editor-canvas ol {
+            display: inline-block;
+            text-align: left;
+            margin: 4px auto;
+            padding-left: 22px;
+        }
         .custom-text-content ul, .editor-canvas ul {
-            padding-left: 20px;
             list-style-type: disc;
+        }
+        .custom-text-content ol, .editor-canvas ol {
+            list-style-type: decimal;
+        }
+        .custom-text-content li, .editor-canvas li {
+            text-align: left;
+            margin-bottom: 2px;
+        }
+
+        /* Receipt text is already font-weight:900 (as heavy as a font file
+           gets), so the browser's native Bold command has nothing left to
+           add — worse, it reads the existing weight as "already bold" and
+           REMOVES weight instead. This stroke-based marker adds real,
+           visible extra emphasis on top of the existing boldness instead. */
+        .custom-text-content b.mk-bold, .editor-canvas b.mk-bold {
+            font-weight: 900;
+            -webkit-text-stroke: 0.7px #000;
         }
 
         .price-card {
@@ -1879,16 +1920,30 @@ Real-time stock</textarea>
 
         <div class="custom-toolbar">
             <div class="toolbar-group">
+                <button class="tool-btn" onclick="undoEditorAction()" title="Undo last change">↩ Undo</button>
+                <button class="tool-btn" onclick="redoEditorAction()" title="Redo last undone change">↪ Redo</button>
+            </div>
+            <div class="toolbar-divider"></div>
+            <div class="toolbar-group">
                 <span>Align:</span>
                 <button class="tool-btn active" id="align-center-btn" onclick="setTextAlignment('center')">Center</button>
                 <button class="tool-btn" id="align-left-btn" onclick="setTextAlignment('left')">Left</button>
                 <button class="tool-btn" id="align-right-btn" onclick="setTextAlignment('right')">Right</button>
             </div>
+            <div class="toolbar-divider"></div>
             <div class="toolbar-group">
-                <button class="tool-btn" id="format-b-btn" onclick="formatEditorText('bold')">B</button>
-                <button class="tool-btn" id="format-u-btn" onclick="formatEditorText('underline')">U</button>
-                <button class="tool-btn" id="format-ul-btn" onclick="toggleBulletList()">• Bullets</button>
+                <button class="tool-btn" id="format-b-btn" onclick="toggleExtraBold()" title="Extra Bold (receipt text is already heavy, so this adds a thicker outline on top)"><strong>B</strong></button>
+                <button class="tool-btn" id="format-i-btn" onclick="formatEditorText('italic')" title="Italic"><em>I</em></button>
+                <button class="tool-btn" id="format-u-btn" onclick="formatEditorText('underline')" title="Underline"><u>U</u></button>
             </div>
+            <div class="toolbar-group">
+                <button class="tool-btn" id="format-ul-btn" onclick="toggleBulletList()" title="Bullet list">• Bullets</button>
+                <button class="tool-btn" id="format-ol-btn" onclick="toggleNumberedList()" title="Numbered list">1. Numbered</button>
+            </div>
+            <div class="toolbar-group">
+                <button class="tool-btn" onclick="clearEditorFormatting()" title="Remove all formatting, keep the text">🧹 Clear Format</button>
+            </div>
+            <div class="toolbar-divider"></div>
             <div class="toolbar-group">
                 <span>Font Family:</span>
                 <select class="tool-select" id="editor-fontfamily-select" onchange="changeEditorFontFamily(this.value)">
@@ -1940,8 +1995,9 @@ Real-time stock</textarea>
                     <option value="1.5">1.5x</option>
                 </select>
             </div>
+            <div class="toolbar-divider"></div>
             <div class="toolbar-group">
-                <button class="tool-btn" onclick="toggleEditorCase()">Aa Case</button>
+                <button class="tool-btn" onclick="toggleEditorCase()" title="Toggle UPPERCASE / lowercase (selection, or whole text if nothing selected)">Aa Case</button>
             </div>
         </div>
     </div>
@@ -2103,7 +2159,7 @@ Real-time stock</textarea>
                     <div class="form-group">
                         <label>Brand Name</label>
                         <select class="form-control" id="quickBrandSelect" onchange="handleBrandSelectChange(this)">
-                            <option value="Lalitha Print Studio">Lalitha Print Studio</option>
+                            <option value="Lalitha Naturals">Lalitha Naturals</option>
                             <option value="The Indus Valley">The Indus Valley</option>
                             <option value="Solara">Solara</option>
                             <option value="Organic Tattva">Organic Tattva</option>
@@ -2403,29 +2459,35 @@ Real-time stock</textarea>
             <div class="card-label">Visiting Card (80mm)</div>
             <div class="preview-box">
                 <div class="card visiting-card" id="visiting-card-el">
-                    <div class="vc-highlight-box">
-                        <div class="vc-brand-title">Lalitha Print Studio</div>
-                        <div class="vc-tagline">Feel the earth</div>
-                    </div>
+                    <img src="Black Logo .png" class="thermal-logo" alt="Logo">
+                    <div style="text-align:center; font-size:18px; font-weight:900; text-transform:uppercase; letter-spacing:0.5px; margin-top:2px;">Lalitha Naturals</div>
+                    <div class="tagline" style="text-align:center;">Feel the earth</div>
+                    <div class="divider"></div>
 
-                    <div class="vc-section-block">
-                        <div class="vc-section-title">Core Offerings:</div>
-                        <ul class="vc-bullet-list">
-                            <li>Organic Food Products & Spices</li>
-                            <li>Cold-Pressed Oils & Ghee</li>
-                            <li>Millet Groceries & Snacks</li>
-                        </ul>
+                    <div class="side-by-side-whatsapp">
+                        <div class="notice-box">
+                            <div class="notice-title">Core Offerings:</div>
+                            <ul class="notice-list">
+                                <li>Organic Food & Spices</li>
+                                <li>Cold-Pressed Oils & Ghee</li>
+                                <li>Millet Groceries & Snacks</li>
+                            </ul>
+                        </div>
+                        <div class="qr-container">
+                            <img class="qr-code" src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https%3A%2F%2Fchat.whatsapp.com%2FE8udXvgNXAOKSXWGvud4ct" alt="QR">
+                        </div>
                     </div>
+                    <div class="footer-text" style="text-align:left; font-size:10px;">👆 Scan QR to join our WhatsApp group</div>
+                    <div class="divider"></div>
 
-                    <div class="vc-section-block">
-                        <div class="vc-section-title">Branch 1 (Gajuwaka):</div>
-                        <div class="vc-address-text">MIG-20, Near Timpany School, Vuda Colony, Gonthinavanipalem, Visakhapatnam - 530044</div>
+                    <div class="address-section" style="text-align: left;">
+                        <div class="address-title" style="font-size:12px; font-weight:900; margin-bottom:3px;">OUR LOCATIONS</div>
+                        <div class="store-address-box" style="font-size:10.5px; font-weight:900; line-height:1.3;">
+                            <div class="address-line"><strong>Branch-1 (Gajuwaka):</strong> MIG-20, Near Timpany School, Vuda Colony, Gonthinavanipalem, Visakhapatnam - 530044</div>
+                            <div class="address-line" style="margin-top:3px;"><strong>Branch-2 (Kurmannapalem):</strong> Vuda Phase 7, HIG-7, Opposite Gloria Vidya Kendram, Visakhapatnam - 530049</div>
+                        </div>
                     </div>
-
-                    <div class="vc-section-block">
-                        <div class="vc-section-title">Branch 2 (Kurmannapalem):</div>
-                        <div class="vc-address-text">Vuda Phase 7, HIG-7, Opposite Gloria Vidya Kendram, Visakhapatnam - 530049</div>
-                    </div>
+                    <div class="divider"></div>
 
                     <div class="vc-huge-phone-box">
                         <div class="vc-phone-label">📞 Call / WhatsApp</div>
@@ -2621,6 +2683,7 @@ Real-time stock</textarea>
             togglePriceLogoControls();
             buildMultiPreview();
             initSelectOnFocus();
+            initEditorSelectionSync();
         });
 
         function initSelectOnFocus() {
@@ -2925,7 +2988,7 @@ Real-time stock</textarea>
             const brandSelect = document.getElementById('quickBrandSelect');
             let brand = brandSelect.value;
             if (brand === 'Manual') {
-                brand = document.getElementById('quickBrandManual').value.trim() || 'Lalitha Print Studio';
+                brand = document.getElementById('quickBrandManual').value.trim() || 'Lalitha Naturals';
             }
 
             let nameVal = document.getElementById('quickName').value.trim();
@@ -3153,29 +3216,208 @@ Real-time stock</textarea>
         }
 
         function checkToolbarActiveStates() {
-            const isBold = document.queryCommandState('bold');
+            const editor = document.getElementById('editorCanvas');
+            const selection = window.getSelection();
+            const anchorNode = selection.rangeCount > 0 ? selection.anchorNode : null;
+            let anchorEl = anchorNode && anchorNode.nodeType === Node.TEXT_NODE ? anchorNode.parentElement : anchorNode;
+
+            // Bold is checked by looking for our own explicit <b class="mk-bold">
+            // marker, NOT document.queryCommandState('bold') — every bit of
+            // receipt text already computes as font-weight:900, so the native
+            // check would read as "always bold" and light the button up on
+            // plain, never-touched text.
+            const isBold = !!(anchorEl && editor.contains(anchorEl) && anchorEl.closest('b.mk-bold'));
+            const isItalic = document.queryCommandState('italic');
             const isUnderline = document.queryCommandState('underline');
 
             document.getElementById('format-b-btn').classList.toggle('active', isBold);
+            document.getElementById('format-i-btn').classList.toggle('active', isItalic);
             document.getElementById('format-u-btn').classList.toggle('active', isUnderline);
+            updateListButtonStates();
+        }
+
+        // Custom Bold toggle. document.execCommand('bold') is unusable here:
+        // it decides on/off from the element's COMPUTED font-weight, and every
+        // bit of receipt text is already 900 (max) by design, so it reads as
+        // "already bold" and the first click makes text thinner instead of
+        // heavier. This instead wraps/unwraps an explicit marker element and
+        // adds a visible outline on top of the existing weight, so it always
+        // adds emphasis and always toggles the same direction it looks like it will.
+        function toggleExtraBold() {
+            const editor = document.getElementById('editorCanvas');
+            editor.focus();
+            const selection = window.getSelection();
+            if (!selection.rangeCount) return;
+
+            let anchorEl = selection.anchorNode && selection.anchorNode.nodeType === Node.TEXT_NODE
+                ? selection.anchorNode.parentElement : selection.anchorNode;
+            const existing = anchorEl && editor.contains(anchorEl) ? anchorEl.closest('b.mk-bold') : null;
+
+            if (existing) {
+                const parent = existing.parentNode;
+                let lastUnwrapped = null;
+                while (existing.firstChild) {
+                    lastUnwrapped = existing.firstChild;
+                    parent.insertBefore(existing.firstChild, existing);
+                }
+                parent.removeChild(existing);
+                // Keep the caret sitting in the text that was just unwrapped,
+                // so the active-state check right below sees the real result
+                // instead of an empty selection.
+                if (lastUnwrapped) {
+                    const r = document.createRange();
+                    r.setStartAfter(lastUnwrapped);
+                    r.collapse(true);
+                    selection.removeAllRanges();
+                    selection.addRange(r);
+                }
+            } else if (!selection.isCollapsed) {
+                const range = selection.getRangeAt(0);
+                if (editor.contains(range.commonAncestorContainer)) {
+                    const b = document.createElement('b');
+                    b.className = 'mk-bold';
+                    b.appendChild(range.extractContents());
+                    range.insertNode(b);
+                    // Same reason: leave the caret inside the new wrap.
+                    const r = document.createRange();
+                    r.selectNodeContents(b);
+                    r.collapse(false);
+                    selection.removeAllRanges();
+                    selection.addRange(r);
+                }
+            }
+            checkToolbarActiveStates();
+            handleEditorInput();
+        }
+
+        // Which list (if any) the caret currently sits inside, so the
+        // Bullets/Numbered buttons reflect real state even when the person
+        // just clicks around without typing (not only right after a click).
+        function updateListButtonStates() {
+            const editor = document.getElementById('editorCanvas');
+            const ulBtn = document.getElementById('format-ul-btn');
+            const olBtn = document.getElementById('format-ol-btn');
+            if (!editor || !ulBtn || !olBtn) return;
+
+            const selection = window.getSelection();
+            let closestList = null;
+            if (selection.rangeCount > 0) {
+                let node = selection.anchorNode;
+                let el = node && node.nodeType === Node.TEXT_NODE ? node.parentElement : node;
+                if (el && editor.contains(el)) closestList = el.closest('ul, ol');
+            }
+            ulBtn.classList.toggle('active', !!closestList && closestList.tagName === 'UL');
+            olBtn.classList.toggle('active', !!closestList && closestList.tagName === 'OL');
+        }
+
+        // Turns the current list (if the caret/selection is inside one) or
+        // the current line(s) into a bullet/numbered list, or removes it if
+        // it's already that type. Unlike the browser's native toggle (which
+        // only affects the single line the caret is on, leaving the rest of
+        // a multi-line list bulleted), this always selects the WHOLE list
+        // first so one click reliably turns the entire list on or off — the
+        // behavior a person printing a simple notice actually expects.
+        function toggleListType(listTag) {
+            const editor = document.getElementById('editorCanvas');
+            editor.focus();
+            const selection = window.getSelection();
+            if (!selection.rangeCount) return;
+
+            const otherTag = listTag === 'ul' ? 'ol' : 'ul';
+            const insertCmd = listTag === 'ul' ? 'insertUnorderedList' : 'insertOrderedList';
+            const otherInsertCmd = otherTag === 'ul' ? 'insertUnorderedList' : 'insertOrderedList';
+
+            let anchorNode = selection.anchorNode;
+            let el = anchorNode && anchorNode.nodeType === Node.TEXT_NODE ? anchorNode.parentElement : anchorNode;
+            const closestList = el && editor.contains(el) ? el.closest('ul, ol') : null;
+
+            if (closestList) {
+                const range = document.createRange();
+                range.selectNodeContents(closestList);
+                selection.removeAllRanges();
+                selection.addRange(range);
+
+                if (closestList.tagName.toLowerCase() === listTag) {
+                    // Same type already applied to the whole list -> remove it entirely.
+                    document.execCommand(insertCmd, false, null);
+                } else {
+                    // Opposite type -> unwrap it first, then re-apply as the requested type
+                    // on whatever selection remains (the browser keeps the unwrapped lines selected).
+                    document.execCommand(otherInsertCmd, false, null);
+                    if (selection.rangeCount) {
+                        document.execCommand(insertCmd, false, null);
+                    }
+                }
+            } else {
+                document.execCommand(insertCmd, false, null);
+            }
+
+            checkToolbarActiveStates();
+            handleEditorInput();
         }
 
         function toggleBulletList() {
+            toggleListType('ul');
+        }
+
+        function toggleNumberedList() {
+            toggleListType('ol');
+        }
+
+        function clearEditorFormatting() {
+            const editor = document.getElementById('editorCanvas');
+            const display = document.getElementById('customTextDisplay');
+            editor.focus();
+
+            // Keep the words the person typed, strip every bit of bold/italic/
+            // underline/font/size/list styling back to plain lines.
+            const text = editor.innerText;
+            editor.innerHTML = '';
+            editor.innerText = text;
+
+            editor.style.fontFamily = '';
+            editor.style.fontSize = '28px';
+            editor.style.lineHeight = '1.3';
+            display.style.fontFamily = '';
+            display.style.fontSize = '28px';
+            display.style.lineHeight = '1.3';
+
+            const famSel = document.getElementById('editor-fontfamily-select');
+            const sizeSel = document.getElementById('editor-fontsize-select');
+            const spacingSel = document.getElementById('editor-spacing-select');
+            if (famSel) famSel.value = "Arial, sans-serif";
+            if (sizeSel) sizeSel.value = "28px";
+            if (spacingSel) spacingSel.value = "1.3";
+
+            checkToolbarActiveStates();
+            handleEditorInput();
+        }
+
+        function undoEditorAction() {
             const editor = document.getElementById('editorCanvas');
             editor.focus();
-            
-            const selection = window.getSelection();
-            if (!selection.rangeCount) return;
-            const parentElement = selection.anchorNode.parentElement;
-
-            if (parentElement.tagName === 'LI' || parentElement.closest('ul')) {
-                document.execCommand('outdent', false, null);
-                document.getElementById('format-ul-btn').classList.remove('active');
-            } else {
-                document.execCommand('insertUnorderedList', false, null);
-                document.getElementById('format-ul-btn').classList.add('active');
-            }
+            document.execCommand('undo', false, null);
             handleEditorInput();
+        }
+
+        function redoEditorAction() {
+            const editor = document.getElementById('editorCanvas');
+            editor.focus();
+            document.execCommand('redo', false, null);
+            handleEditorInput();
+        }
+
+        // Keeps the Bold/Italic/Underline/Bullets/Numbered buttons in sync
+        // with wherever the caret actually is, not just right after a click —
+        // so clicking around (no typing) still shows correct button state.
+        function initEditorSelectionSync() {
+            document.addEventListener('selectionchange', () => {
+                const editor = document.getElementById('editorCanvas');
+                const selection = window.getSelection();
+                if (editor && selection.rangeCount > 0 && editor.contains(selection.anchorNode)) {
+                    checkToolbarActiveStates();
+                }
+            });
         }
 
         function changeEditorFontFamily(fontFamily) {
@@ -3892,7 +4134,7 @@ Real-time stock</textarea>
         function loadPresetTemplate(type) {
             const editor = document.getElementById('editorCanvas');
             let text = "";
-            if (type === 'thankyou') text = "Welcome to Lalitha Print Studio. Thank you for shopping with us.";
+            if (type === 'thankyou') text = "Welcome to Lalitha Naturals. Thank you for shopping with us.";
             else if (type === 'notice') text = "Store notice. Open from 9 AM to 9 PM.";
             else if (type === 'offer') text = "Special offer. Discounts on organic staples today.";
             
@@ -4144,7 +4386,7 @@ Real-time stock</textarea>
                 } else if(val === 'visiting') {
                     contentHTML += `
                         <div style="border:2.5px solid #000; background:#000; color:#fff; padding:6px; margin-bottom:6px; text-transform:uppercase;">
-                            <div style="font-size:15px; font-weight:900;">Lalitha Print Studio</div>
+                            <div style="font-size:15px; font-weight:900;">Lalitha Naturals</div>
                             <div style="font-size:10px; font-style:italic; font-weight:900;">Feel the earth</div>
                         </div>
                         <div style="border:1.5px solid #000; padding:5px; margin-bottom:5px; text-align:left;">
