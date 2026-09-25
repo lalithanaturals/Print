@@ -44,9 +44,6 @@
             padding: 24px 16px;
         }
 
-        /* Two-column layout: controls on the left, receipt preview sticky on the
-           right — this is purely an on-screen arrangement; the print media query
-           below still prints only the 80mm receipt, independent of this layout. */
         .app-layout {
             width: 100%;
             max-width: 1360px;
@@ -87,9 +84,6 @@
             text-align: center;
         }
 
-        /* Below ~1050px there isn't room for two columns side by side (especially
-           on mobile) — stack the preview back under the controls instead of
-           squeezing both into too little width. */
         @media (max-width: 1050px) {
             .app-layout {
                 flex-direction: column;
@@ -109,12 +103,13 @@
             }
         }
 
-        /* Extra safety net: an auto-fill grid inside a shrink-to-fit flex
-           column can blow out its own container's width on narrow screens.
-           Pin the tool grid to a fixed column count there instead. */
         @media (max-width: 640px) {
             .big-buttons-bar {
                 grid-template-columns: repeat(4, 1fr);
+            }
+            .pos-topbar-actions {
+                flex-wrap: wrap;
+                justify-content: flex-end;
             }
         }
 
@@ -124,9 +119,6 @@
             }
         }
 
-        /* POS-style dark dashboard shell — a self-contained dark "screen"
-           sitting on the page, with a top bar, a category tile grid, and a
-           every category shown at once, no tab-switching required. */
         .pos-shell {
             width: 100%;
             max-width: 900px;
@@ -144,6 +136,7 @@
             justify-content: space-between;
             padding: 16px 20px;
             border-bottom: 1px solid #eef1f6;
+            gap: 12px;
         }
 
         .pos-topbar .pos-brand {
@@ -184,7 +177,6 @@
             height: 17px;
         }
 
-        /* Collapses to nothing until the search icon is tapped */
         .pos-search-row {
             max-height: 0;
             overflow: hidden;
@@ -227,7 +219,6 @@
             color: #94a3b8;
         }
 
-        /* Dashboard: every category shown at once, one under the other */
         .dashboard-sections {
             width: 100%;
         }
@@ -269,8 +260,6 @@
             color: #94a3b8;
         }
 
-        /* Dashboard Buttons — one calm accent color for every tile, so the
-           whole grid reads as one consistent set rather than a rainbow. */
         .big-buttons-bar {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
@@ -318,9 +307,6 @@
             box-shadow: 0 8px 18px -8px rgba(234, 88, 12, 0.45);
         }
 
-        /* Wraps a link-tile alongside a small overlaid share button, so the
-           whole tile stays clickable while the share icon has its own
-           independent tap target (not nested inside the <a>). */
         .icon-btn-wrap {
             position: relative;
             display: flex;
@@ -385,7 +371,6 @@
             color: inherit;
         }
 
-        /* Top Share App Button — used inline as a round icon in .pos-topbar */
         .share-app-btn {
             background: #f1f5f9;
             border: none;
@@ -418,17 +403,22 @@
         }
 
         .page-title h1 {
-            font-size: 19px;
+            font-size: 20px;
             margin: 0;
             font-weight: 900;
             color: #0f172a;
         }
 
-        .page-title p {
-            font-size: 12px;
-            margin: 3px 0 0;
-            color: #64748b;
-            font-weight: 700;
+        .last-updated-tag {
+            font-size: 11px;
+            font-weight: 800;
+            color: #0ea5e9;
+            background: #f0f9ff;
+            border: 1px solid #bae6fd;
+            padding: 4px 10px;
+            border-radius: 8px;
+            display: inline-block;
+            white-space: nowrap;
         }
 
         /* Panels Shared */
@@ -474,7 +464,6 @@
             flex-wrap: wrap;
         }
 
-        /* Form Elements */
         .coupon-grid, .location-grid, .price-grid, .estimate-grid, .visiting-grid, .multi-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -510,9 +499,6 @@
             transition: border-color 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
         }
 
-        /* The field that's currently "live" for entry gets an obvious glow — this
-           pairs with select-on-focus, so it's visually clear which cell just got
-           selected and is ready to be typed over. */
         .form-control:focus {
             border-color: #0ea5e9;
             background: #f0f9ff;
@@ -546,7 +532,6 @@
             border-color: #8b5cf6;
         }
 
-        /* Collapsible Font Customization Drawer for Price Tag */
         .collapsible-section {
             background: #f8fafc;
             border: 1.5px solid #e2e8f0;
@@ -576,7 +561,6 @@
             gap: 10px;
         }
 
-        /* Estimate Item Fast Entry Row */
         .estimate-quick-bar {
             background: #f1f5f9;
             border: 1.5px solid #cbd5e1;
@@ -615,7 +599,6 @@
             filter: brightness(1.1);
         }
 
-        /* BIG TOUCH BUTTONS FOR QUICK PERCENTAGES & RUPEES */
         .big-pct-container {
             display: grid;
             grid-template-columns: repeat(5, 1fr) 1.5fr;
@@ -682,7 +665,6 @@
             text-align: center;
         }
 
-        /* Estimate Item List Table */
         .est-items-table {
             width: 100%;
             border-collapse: collapse;
@@ -729,7 +711,6 @@
             font-size: 12px;
         }
 
-        /* Uniform Big & Equal Action Buttons */
         .print-now-btn, .print-coupon-btn, .print-location-btn, .print-price-btn, .print-estimate-btn, .print-visiting-btn, .print-multi-btn {
             flex: 1;
             min-width: 170px;
@@ -794,7 +775,6 @@
             font-weight: 700;
         }
 
-        /* Custom Text Formatting Toolbar */
         .custom-toolbar {
             display: flex;
             align-items: center;
@@ -850,7 +830,6 @@
             outline: none;
         }
 
-        /* Custom Header Controls inside Custom Panel */
         .custom-options-bar {
             display: flex;
             gap: 15px;
@@ -911,7 +890,6 @@
             background: #fecaca;
         }
 
-        /* Checkbox grid for Custom Combined Print */
         .checkbox-cards-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -965,7 +943,6 @@
             margin-bottom: 10px;
         }
 
-        /* 80mm Thermal Receipt Preview Area */
         .receipts-wrapper {
             display: flex;
             gap: 20px;
@@ -1027,7 +1004,6 @@
             text-transform: uppercase;
         }
 
-        /* Pure Black & White Thermal Printer Logo Size with Dynamic CSS Variable */
         .thermal-logo {
             width: var(--logo-width, 200px);
             max-height: 120px;
@@ -1179,7 +1155,6 @@
             list-style-type: disc;
         }
 
-        /* Price Tag Styles - Optimized with 0 top padding and a compact margin below MRP */
         .price-card {
             padding-top: 0px !important;
             padding-bottom: 3mm !important;
@@ -1248,7 +1223,6 @@
             margin-top: 4px;
         }
 
-        /* Bold Highlight Black Box UI */
         .visiting-card {
             border: 3px solid #000 !important;
             padding: 9px 8px !important;
@@ -1343,7 +1317,6 @@
             letter-spacing: 1.5px;
         }
 
-        /* Location & Coupon Styles */
         .location-card-branch {
             font-size: 15px;
             font-weight: 900;
@@ -1402,12 +1375,6 @@
             }
         }
 
-        /* CRITICAL THERMAL PRINTER FIX: Force EXACT 80mm width & strip all browser margins/padding */
-        @page {
-            size: 80mm auto;
-            margin: 0mm;
-        }
-
         @media print {
             * {
                 -webkit-print-color-adjust: exact !important;
@@ -1417,10 +1384,6 @@
                 -webkit-font-smoothing: none !important;
             }
 
-            /* .app-main holds everything on-screen that isn't the receipt itself
-               (header, dashboard sections + their labels, every input panel) — hide
-               it wholesale so nothing new added inside it can leak into a printout
-               without a matching rule here. */
             .app-main, .card-label {
                 display: none !important;
             }
@@ -1484,7 +1447,6 @@
                 overflow: visible !important;
             }
 
-            /* Keep a visible gap (with a cut line) between two branch cards printed together */
             .coupon-branch-wrapper, .loc-card-wrapper {
                 margin-bottom: 8mm !important;
                 padding-bottom: 6mm !important;
@@ -1512,7 +1474,6 @@
                 padding-bottom: 5mm !important;
             }
 
-            /* Single Print Selectors */
             body.print-whatsapp .whatsapp-column { display: block !important; }
             body.print-exchange .exchange-column { display: block !important; }
             body.print-custom .custom-text-column { display: block !important; }
@@ -1522,7 +1483,6 @@
             body.print-estimate .estimate-receipt-column { display: block !important; }
             body.print-visiting .visiting-receipt-column { display: block !important; }
 
-            /* Print Both Locations */
             body.print-both-locations .location-receipt-column { 
                 display: block !important; 
             }
@@ -1531,7 +1491,6 @@
                 display: block !important;
             }
 
-            /* Custom Multi-Select Combined Print */
             body.print-multi .multi-receipt-column {
                 display: block !important;
             }
@@ -1557,7 +1516,6 @@
 
     <div class="page-title">
         <h1>Lalitha Naturals Thermal Print Center</h1>
-        <p>Tap a print option below or manage store locations, estimates &amp; custom text</p>
     </div>
 
     <div class="pos-shell">
@@ -1567,6 +1525,7 @@
             </button>
             <span class="pos-brand">LALITHA NATURALS</span>
             <div class="pos-topbar-actions">
+                <span class="last-updated-tag" id="lastUpdatedTag">Updated: 2026-09-25 14:44:55</span>
                 <button class="pos-icon-btn" title="Reload Page" onclick="location.reload()">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>
                 </button>
@@ -1576,7 +1535,6 @@
             </div>
         </div>
 
-        <!-- Search filters the tool tiles below by name as you type -->
         <div class="pos-search-row" id="posSearchRow">
             <div class="pos-search-inner">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
@@ -1584,11 +1542,9 @@
             </div>
         </div>
 
-        <!-- Dashboard: grouped into Quick Print / Create & Print / Combined / External Tools —
-             one category shown at a time, switched by the tab bar below. -->
         <div class="dashboard-sections">
 
-            <!-- QUICK PRINT: one tap, nothing to fill in -->
+            <!-- QUICK PRINT -->
             <div class="dashboard-section" id="section-quick">
             <div class="section-label"><span class="section-dot" style="background:#ea580c;"></span> Quick Print <span class="section-hint">— tap once, prints instantly</span></div>
             <div class="big-buttons-bar">
@@ -1637,7 +1593,7 @@
             </div>
         </div>
 
-        <!-- CREATE & PRINT: needs input filled in first -->
+        <!-- CREATE & PRINT -->
         <div class="dashboard-section" id="section-create">
             <div class="section-label"><span class="section-dot" style="background:#ea580c;"></span> Create &amp; Print <span class="section-hint">— fill in details, then print</span></div>
             <div class="big-buttons-bar">
@@ -1685,7 +1641,7 @@
             </div>
         </div>
 
-        <!-- COMBINED PRINT: its own thing, pulls from the sections above -->
+        <!-- COMBINED PRINT -->
         <div class="dashboard-section" id="section-combined">
             <div class="section-label"><span class="section-dot" style="background:#ea580c;"></span> Combined Print <span class="section-hint">— mix several items onto one receipt</span></div>
             <div class="big-buttons-bar">
@@ -1703,10 +1659,29 @@
             </div>
         </div>
 
-        <!-- EXTERNAL TOOLS: leaves this app and opens another site in a new tab -->
+        <!-- EXTERNAL TOOLS -->
         <div class="dashboard-section" id="section-external">
             <div class="section-label"><span class="section-dot" style="background:#ea580c;"></span> External Tools <span class="section-hint">— opens a different site in a new tab</span></div>
             <div class="big-buttons-bar">
+
+                <!-- Label Printer Link Button -->
+                <div class="icon-btn-wrap">
+                    <a class="icon-btn labelprinter" href="https://lalithanaturals.github.io/lable-Printer/" target="_blank" rel="noopener noreferrer">
+                        <span class="tile-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
+                                <path d="M6 9V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v5"/>
+                                <rect x="6" y="14" width="12" height="8" rx="1"/>
+                            </svg>
+                        </span>
+                        <span class="t1">Label Printer ↗</span>
+                    </a>
+                    <button type="button" class="tile-share-btn" title="Share Label Printer link" onclick="shareExternalTool(event, 'Label Printer', 'https://lalithanaturals.github.io/lable-Printer/')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10Z"/>
+                        </svg>
+                    </button>
+                </div>
 
                 <!-- Scrap Calculator Link Button -->
                 <div class="icon-btn-wrap">
@@ -1776,9 +1751,7 @@
         </div>
 
         </div>
-        <!-- /dashboard-sections -->
     </div>
-    <!-- /pos-shell -->
 
     <!-- WhatsApp Group Panel -->
     <div class="text-input-panel" id="whatsappInputPanel">
@@ -1890,7 +1863,6 @@ Real-time stock</textarea>
             </div>
         </div>
 
-        <!-- Custom Header Option Toggles & Independent Custom Logo Upload -->
         <div class="custom-options-bar">
             <label class="custom-checkbox-label">
                 <input type="checkbox" id="custom-show-logo" checked onchange="updateCustomHeaderToggles()"> Include Logo
@@ -1974,7 +1946,7 @@ Real-time stock</textarea>
         </div>
     </div>
 
-    <!-- Price Print Input Panel (Simplified & Space Efficient) -->
+    <!-- Price Print Input Panel -->
     <div class="price-panel" id="priceInputPanel">
         <div class="panel-header-row">
             <span class="panel-title">🏷️ Item Price Tag Creator</span>
@@ -1983,7 +1955,6 @@ Real-time stock</textarea>
             </div>
         </div>
 
-        <!-- Price Tag Header Option Toggles & Logo Controls (Clean UI: hidden until Include Logo is checked) -->
         <div class="custom-options-bar">
             <label class="custom-checkbox-label">
                 <input type="checkbox" id="price-show-logo" onchange="togglePriceLogoControls()"> Include Logo
@@ -2051,7 +2022,6 @@ Real-time stock</textarea>
                 <input type="text" class="form-control sentence-case-input" id="price-notes" placeholder="" value="" oninput="updatePriceCardPreview()">
             </div>
 
-            <!-- Clean Collapsible Drawer for Optional Font Size Customization -->
             <div class="form-group full-width collapsible-section">
                 <div class="collapsible-toggle-header" onclick="toggleFontDrawer()">
                     <span>⚙️ Detailed Font Sizes (Optional)</span>
@@ -2126,12 +2096,10 @@ Real-time stock</textarea>
                 <input type="text" class="form-control" id="est-cust-phone" placeholder="e.g. 9876543210" oninput="updateEstimateCardPreview()">
             </div>
 
-            <!-- Fast Entry Bar with dropdown and manual option for Brand and Discount -->
             <div class="form-group full-width estimate-quick-bar">
                 <label id="quick-entry-form-title">Quick Add Item (Press Enter in Item Name to go to MRP, press Enter in MRP to add item):</label>
                 <div class="estimate-quick-grid" style="margin-top: 6px;">
                     
-                    <!-- Brand Dropdown + Manual Option -->
                     <div class="form-group">
                         <label>Brand Name</label>
                         <select class="form-control" id="quickBrandSelect" onchange="handleBrandSelectChange(this)">
@@ -2144,7 +2112,6 @@ Real-time stock</textarea>
                         <input type="text" class="form-control sentence-case-input" id="quickBrandManual" placeholder="Type Brand..." style="display:none; margin-top:4px;" onkeydown="handleQuickKey(event, 'brand')">
                     </div>
 
-                    <!-- Item Name & MRP Grid -->
                     <div class="form-group">
                         <label>Item Name (Optional)</label>
                         <input type="text" class="form-control sentence-case-input" id="quickName" placeholder="Item Name (optional)" onkeydown="handleQuickKey(event, 'name')">
@@ -2155,7 +2122,6 @@ Real-time stock</textarea>
                         <input type="number" class="form-control" id="quickMrp" placeholder="MRP" onkeydown="handleQuickKey(event, 'mrp')">
                     </div>
 
-                    <!-- Hidden field holding the active discount value -->
                     <input type="hidden" id="quickDiscValue" value="">
 
                     <div class="form-group">
@@ -2164,7 +2130,6 @@ Real-time stock</textarea>
                     </div>
                 </div>
 
-                <!-- Big Touch Percentage & Rupees Buttons ordered: 40% 25% 10% 5% 0% custom -->
                 <div style="margin-top: 14px;">
                     <label style="margin-bottom: 6px; display: block;">Select Discount & Tap to Add Instantly (Required):</label>
                     <div class="big-pct-container">
@@ -2174,7 +2139,6 @@ Real-time stock</textarea>
                         <button type="button" class="big-pct-btn" onclick="selectAndAddPct('5%')">5%</button>
                         <button type="button" class="big-pct-btn" onclick="selectAndAddPct('0%')">0%</button>
                         
-                        <!-- Manual custom input box for % or ₹ -->
                         <div class="manual-input-box" title="Type custom value like 15% or 50₹">
                             <input type="text" id="manualDiscInput" placeholder="custom..." oninput="handleManualDiscType(this)" onkeydown="handleQuickKey(event, 'mrp')">
                         </div>
@@ -2182,7 +2146,6 @@ Real-time stock</textarea>
                 </div>
             </div>
 
-            <!-- Added Items Table Preview -->
             <div class="form-group full-width">
                 <label>Added Items List:</label>
                 <table class="est-items-table">
@@ -2197,7 +2160,6 @@ Real-time stock</textarea>
                         </tr>
                     </thead>
                     <tbody id="quickItemsTableBody">
-                        <!-- Injected rows -->
                     </tbody>
                 </table>
             </div>
@@ -2219,7 +2181,7 @@ Real-time stock</textarea>
         </div>
     </div>
 
-    <!-- Coupon Panel with Uniform Big Action Buttons -->
+    <!-- Coupon Panel -->
     <div class="coupon-panel" id="couponInputPanel">
         <div class="panel-header-row">
             <span class="panel-title">🎟️ Issue Store Discount Coupon</span>
@@ -2285,7 +2247,7 @@ Real-time stock</textarea>
         </div>
     </div>
 
-    <!-- Store Location Panel with Uniform Big Action Buttons -->
+    <!-- Store Location Panel -->
     <div class="location-panel" id="locationInputPanel">
         <div class="panel-header-row">
             <span class="panel-title">📍 Store Location QR Printer</span>
@@ -2310,10 +2272,9 @@ Real-time stock</textarea>
     <div class="preview-sidebar" id="previewSidebar">
         <div class="preview-sidebar-title">🖨️ Print Preview</div>
 
-    <!-- Receipts Wrapper Container -->
     <div class="receipts-wrapper">
         
-        <!-- WhatsApp Receipt with Prominent Contact Box -->
+        <!-- WhatsApp Receipt -->
         <div class="receipt-column whatsapp-column" id="waReceiptCol">
             <div class="card-label">WhatsApp QR (80mm)</div>
             <div class="preview-box">
@@ -2386,7 +2347,6 @@ Real-time stock</textarea>
             <div class="card-label">Price Tag Sticker (80mm)</div>
             <div class="preview-box">
                 <div class="card price-card" id="price-card-el" style="text-align: center;">
-                    <!-- Price Tag Header Logo & Tagline Containers (Independent to Price Tag) -->
                     <img src="Black Logo .png" class="thermal-logo" id="price-receipt-logo" alt="Logo" style="display: none;">
                     <div class="tagline" id="price-receipt-tagline" style="display: none;">Feel the earth</div>
                     <div class="divider" id="price-receipt-divider" style="display: none;"></div>
@@ -2394,9 +2354,7 @@ Real-time stock</textarea>
                     <div class="price-tag-brand" id="p-card-brand" style="display: none;"></div>
                     <div class="divider" id="p-card-brand-divider" style="display: none;"></div>
                     
-                    <!-- Dynamic rendering order based on layout option -->
                     <div id="p-card-content-wrapper">
-                        <!-- Injected dynamically via JS -->
                     </div>
 
                     <div id="p-card-notes-wrapper" style="display: none;">
@@ -2426,7 +2384,6 @@ Real-time stock</textarea>
                             </tr>
                         </thead>
                         <tbody id="est-card-tbody">
-                            <!-- Rows injected -->
                         </tbody>
                     </table>
                     <div style="display: flex; justify-content: space-between; font-size: 13px; font-weight: 900; margin-top: 6px; padding: 4px 2px; border-top: 1.5px solid #000;">
@@ -2439,7 +2396,7 @@ Real-time stock</textarea>
             </div>
         </div>
 
-        <!-- Black Highlight Visiting Card with Prominent Contact Number -->
+        <!-- Visiting Card -->
         <div class="receipt-column visiting-receipt-column" id="visitingReceiptCol">
             <div class="card-label">Visiting Card (80mm)</div>
             <div class="preview-box">
@@ -2498,7 +2455,6 @@ Real-time stock</textarea>
             <div class="card-label">Store Coupon (80mm)</div>
             <div class="preview-box" style="flex-direction: column; align-items: center; gap: 15px;">
                 
-                <!-- Gajuwaka Coupon Wrapper -->
                 <div class="coupon-branch-wrapper" id="coupon-gajuwaka-section" style="width: 100%;">
                     <div class="card coupon-card" style="text-align: center;">
                         <img src="Black Logo .png" class="thermal-logo" alt="Logo">
@@ -2533,7 +2489,6 @@ Real-time stock</textarea>
                     </div>
                 </div>
 
-                <!-- Kurmannapalem Coupon Wrapper -->
                 <div class="coupon-branch-wrapper" id="coupon-kurmannapalem-section" style="width: 100%;">
                     <div class="card coupon-card" style="text-align: center;">
                         <img src="Black Logo .png" class="thermal-logo" alt="Logo">
@@ -2613,7 +2568,6 @@ Real-time stock</textarea>
             <div class="card-label">Custom Combined Print Preview (80mm)</div>
             <div class="preview-box">
                 <div class="card" id="multi-preview-card-container" style="width: 80mm; padding: 10px 12px; text-align: center;">
-                    <!-- Dynamically injected selected sections in exact user check order -->
                 </div>
             </div>
         </div>
@@ -2635,9 +2589,6 @@ Real-time stock</textarea>
 
         let quickEstimateItems = [];
 
-        // Coupon codes are generated once and kept stable for the life of the page
-        // (instead of re-randomizing on every keystroke), so the code shown in the
-        // preview is always the code that actually gets printed.
         let couponCode1 = null;
         let couponCode2 = null;
 
@@ -2670,39 +2621,32 @@ Real-time stock</textarea>
             initSelectOnFocus();
         });
 
-        // "Spreadsheet cell" behavior: tapping/clicking into any text-like field
-        // that already has a value selects the whole value, so typing immediately
-        // replaces it instead of the cursor landing in the middle of old text.
         function initSelectOnFocus() {
             document.addEventListener('focusin', (e) => {
                 const el = e.target;
                 if (el.tagName !== 'INPUT') return;
                 if (['checkbox', 'file', 'hidden', 'radio'].includes(el.type)) return;
-                // Deferred a frame so it wins even on the same tap that opened a panel.
                 requestAnimationFrame(() => {
                     try { el.select(); } catch (err) {}
                 });
             });
         }
 
-        // Search bar — filters the tool tiles by name as the person types,
-        // and hides a whole category when nothing in it matches. Every
-        // category is shown together, so this is the only way tiles hide.
         function filterTools() {
             const q = document.getElementById('toolSearchInput').value.trim().toLowerCase();
             document.querySelectorAll('.dashboard-section').forEach(section => {
                 let anyVisible = false;
-                section.querySelectorAll('.big-buttons-bar > .icon-btn').forEach(btn => {
+                section.querySelectorAll('.big-buttons-bar > .icon-btn, .big-buttons-bar > .icon-btn-wrap').forEach(el => {
+                    const btn = el.classList.contains('icon-btn-wrap') ? el.querySelector('.icon-btn') : el;
                     const label = (btn.querySelector('.t1')?.textContent || '').toLowerCase();
                     const match = !q || label.includes(q);
-                    btn.style.display = match ? '' : 'none';
+                    el.style.display = match ? '' : 'none';
                     if (match) anyVisible = true;
                 });
                 section.style.display = anyVisible ? '' : 'none';
             });
         }
 
-        // Toggles the collapsible search row in the top bar.
         function togglePosSearch() {
             const row = document.getElementById('posSearchRow');
             row.classList.toggle('open');
@@ -2711,7 +2655,6 @@ Real-time stock</textarea>
             }
         }
 
-        // Share App function using native Web Share API with clipboard fallback
         function shareAppUrl() {
             const shareData = {
                 title: 'Lalitha Naturals Thermal Print Center',
@@ -2732,8 +2675,6 @@ Real-time stock</textarea>
             }
         }
 
-        // Share button for an external-tool tile (e.g. Offer Calc) — shares
-        // that tool's own link, independent of the tile's click-through.
         function shareExternalTool(e, title, url) {
             if (e) e.stopPropagation();
             const shareData = {
@@ -2849,9 +2790,6 @@ Real-time stock</textarea>
                     const formatted = formatSentenceCase(this.value);
                     if (formatted !== this.value) {
                         this.value = formatted;
-                        // The replacement only ever swaps a lowercase letter for its
-                        // uppercase version (same length), so the caret can be put back
-                        // exactly where it was instead of jumping to the end.
                         try { this.setSelectionRange(start, end); } catch (err) {}
                     }
                 });
@@ -2860,9 +2798,6 @@ Real-time stock</textarea>
 
         function formatSentenceCase(str) {
             if (!str) return '';
-            // Only capitalizes the letter at the start of the string or right after
-            // a ".", "!" or "?" — everything else the user typed (including
-            // intentional uppercase like "ML" or "USA") is left exactly as typed.
             return str.replace(/(^\s*|[.!?]\s+)([a-z])/g, function(match, separator, char) {
                 return separator + char.toUpperCase();
             });
@@ -2920,7 +2855,6 @@ Real-time stock</textarea>
             }
         }
 
-        // Arms a discount value and highlights its button, without adding an item.
         function armDiscount(pctVal) {
             document.getElementById('quickDiscValue').value = pctVal;
             document.getElementById('manualDiscInput').value = '';
@@ -2937,9 +2871,6 @@ Real-time stock</textarea>
         function selectAndAddPct(pctVal) {
             armDiscount(pctVal);
 
-            // "Tap to Add Instantly": if the item is already filled in (MRP present),
-            // tapping a discount button adds the item right away instead of just
-            // arming a value that silently carries over to the next item.
             const mrpVal = document.getElementById('quickMrp').value.trim();
             if (mrpVal) {
                 addQuickItemCustom();
@@ -2953,8 +2884,6 @@ Real-time stock</textarea>
             document.querySelectorAll('.big-pct-btn').forEach(btn => btn.classList.remove('active'));
 
             if (!val) {
-                // Clearing the custom box also clears the armed discount, instead of
-                // silently keeping whatever value was last typed.
                 document.getElementById('quickDiscValue').value = '';
                 return;
             }
@@ -2971,8 +2900,6 @@ Real-time stock</textarea>
             } else if (!isNaN(val)) {
                 formattedDisc = val + '%';
             } else {
-                // Not a recognizable number, "%", or "₹" value — don't store garbage
-                // that would silently apply zero discount while showing text in the table.
                 document.getElementById('quickDiscValue').value = '';
                 return;
             }
@@ -3041,8 +2968,6 @@ Real-time stock</textarea>
             document.getElementById('quickMrp').value = '';
             document.getElementById('manualDiscInput').value = '';
 
-            // Reset the discount back to the visible 10% default rather than leaving
-            // the just-used discount (e.g. 40%) silently armed for the next item.
             armDiscount('10%');
 
             if (brandSelect.value === 'Manual') {
@@ -3285,9 +3210,6 @@ Real-time stock</textarea>
             display.style.lineHeight = spacing;
         }
 
-        // Toggles case for every text node under an element in place, without
-        // touching element structure — so bold/underline spans and bullet lists
-        // survive the case change.
         function toggleCaseTextNodes(el) {
             const combined = el.textContent;
             if (!combined || combined.trim() === '') return;
@@ -3357,10 +3279,6 @@ Real-time stock</textarea>
             });
         }
 
-        // Focuses (and, for a text field, selects) an element on the next paint —
-        // waited a frame because the panel that contains it may have just gone
-        // from display:none to visible in this same click handler, and an
-        // element can't take focus while it's still hidden.
         function focusFieldSoon(id) {
             requestAnimationFrame(() => {
                 requestAnimationFrame(() => {
@@ -3520,8 +3438,6 @@ Real-time stock</textarea>
             updatePriceCardPreview();
         }
 
-        // Shared price-tag math so the single price-tag preview and the combined
-        // multi-print preview compute the final price identically.
         function computePriceTagFinal(itemVal, discVal, discType) {
             if (discType === 'direct') {
                 let finalPrice = discVal;
@@ -3849,17 +3765,12 @@ Real-time stock</textarea>
                     document.getElementById(`c-notes-row-${id}`).style.display = 'none';
                 }
 
-                // Generate the code once and reuse it — re-randomizing on every
-                // preview refresh meant the printed code could differ from whatever
-                // was last shown on screen.
                 if (id === '1' && !couponCode1) couponCode1 = 'GAJ-' + Math.floor(1000 + Math.random() * 9000);
                 if (id === '2' && !couponCode2) couponCode2 = 'KUR-' + Math.floor(1000 + Math.random() * 9000);
                 document.getElementById(`c-code-disp-${id}`).textContent = id === '1' ? couponCode1 : couponCode2;
             });
         }
 
-        // Issues a fresh code for the currently selected branch (e.g. for a new
-        // customer), instead of reusing the one already shown.
         function regenerateCouponCode() {
             if (couponBranch === 'gajuwaka') {
                 couponCode1 = 'GAJ-' + Math.floor(1000 + Math.random() * 9000);
@@ -3893,10 +3804,6 @@ Real-time stock</textarea>
             triggerMobilePrint('coupon-both');
         }
 
-        // Capitalizes the first letter of the editor's text in place (mutating just
-        // that one character of its text node) instead of overwriting innerText,
-        // which used to wipe bold/underline/bullet formatting and required a fragile
-        // caret-restore hack. Mutating in place leaves the caret exactly where it was.
         function autoCapitalizeFirstLetter(editor) {
             const walker = document.createTreeWalker(editor, NodeFilter.SHOW_TEXT, null);
             let node = walker.nextNode();
@@ -3964,10 +3871,6 @@ Real-time stock</textarea>
                 return;
             }
 
-            // Custom Text and Price Tag sections render their own logo/tagline header
-            // (controlled by their own "Include Logo/Tagline" checkboxes), so only show
-            // the generic top header when neither of those is part of this print —
-            // otherwise the logo would print twice.
             const sectionsWithOwnHeader = selectedValues.includes('custom') || selectedValues.includes('price');
             let topHeaderHTML = '';
             if (!sectionsWithOwnHeader) {
