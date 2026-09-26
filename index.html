@@ -10,7 +10,15 @@
     <link rel="apple-touch-icon" href="icon.png">
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#0ea5e9">
-    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <!-- Generates QR codes locally in the browser instead of fetching them
+         from an external image API. This is what makes "Download as JPEG"
+         reliable: an image pulled from another website counts as
+         cross-origin, which blocks a canvas-based export like html2canvas
+         from reading it back out — a locally drawn QR code has no such
+         restriction. -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+
     <style>
         /* CRITICAL THERMAL PRINTER FIX: Force EXACT 80mm width & strip all browser margins/padding */
         @page {
@@ -341,6 +349,33 @@
             color: #0f172a;
         }
 
+        .tile-settings-btn {
+            position: absolute;
+            top: 6px;
+            left: 6px;
+            width: 24px;
+            height: 24px;
+            border-radius: 7px;
+            border: none;
+            background: rgba(255, 255, 255, 0.9);
+            color: #64748b;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 2;
+            box-shadow: 0 1px 4px rgba(15, 23, 42, 0.18);
+            -webkit-tap-highlight-color: transparent;
+        }
+        .tile-settings-btn svg {
+            width: 13px;
+            height: 13px;
+        }
+        .tile-settings-btn:hover {
+            background: #ffffff;
+            color: #0f172a;
+        }
+
         .tile-icon {
             width: 22px;
             height: 22px;
@@ -409,19 +444,9 @@
             color: #0f172a;
         }
 
-        .last-updated-tag {
-            font-size: 11px;
-            font-weight: 800;
-            color: #0ea5e9;
-            background: #f0f9ff;
-            border: 1px solid #bae6fd;
-            padding: 4px 10px;
-            border-radius: 8px;
-            display: inline-block;
-            white-space: nowrap;
-        }
-
-        /* Panels Shared */
+        /* Panels Shared — normal in-page panels. Every settings/editing panel
+           sits inline above the live preview sidebar, so it's always visible
+           while you're typing — none of them cover it with a popup. */
         .text-input-panel, .coupon-panel, .location-panel, .price-panel, .estimate-panel, .visiting-panel, .multi-print-panel {
             display: none;
             width: 100%;
@@ -433,6 +458,105 @@
             margin-bottom: 24px;
             box-shadow: var(--card-shadow);
             animation: fadeIn 0.2s ease-out;
+        }
+
+        /* Modal-panel — only used by the Store Location "which branch"
+           print-choice popup (a quick, momentary decision, not something you
+           watch a live preview while filling in), so it's fine for that one
+           to cover the page briefly. */
+        .modal-panel {
+            position: fixed !important;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: calc(100% - 24px);
+            max-height: calc(100vh - 24px);
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            box-shadow: 0 20px 50px rgba(15, 23, 42, 0.35);
+            z-index: 1000;
+            margin-bottom: 0;
+        }
+
+        /* Store Location's which-branch print choice popup — small, its own
+           base styles since it's not part of the settings-panel shared rule. */
+        .location-choice-panel {
+            display: none;
+            width: calc(100% - 24px);
+            max-width: 360px;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 18px 20px;
+            animation: fadeIn 0.15s ease-out;
+        }
+        .location-choice-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 8px;
+        }
+        .location-choice-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 2px;
+            width: 100%;
+            background: #f8fafc;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 12px 14px;
+            cursor: pointer;
+            text-align: left;
+        }
+        .location-choice-btn:hover {
+            background: #f1f5f9;
+            border-color: #cbd5e1;
+        }
+        .location-choice-title {
+            font-size: 14px;
+            font-weight: 900;
+            color: #0f172a;
+        }
+        .location-choice-sub {
+            font-size: 11px;
+            font-weight: 700;
+            color: #64748b;
+        }
+        .location-choice-both {
+            background: #eef2ff;
+            border-color: #c7d2fe;
+        }
+        .location-choice-both:hover {
+            background: #e0e7ff;
+        }
+        .location-choice-cancel {
+            width: 100%;
+            background: transparent;
+            border: none;
+            color: #64748b;
+            font-size: 12px;
+            font-weight: 800;
+            padding: 8px;
+            cursor: pointer;
+            margin-top: 2px;
+        }
+        .location-choice-cancel:hover {
+            color: #0f172a;
+        }
+
+        .modal-backdrop {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.55);
+            z-index: 999;
+        }
+        .modal-backdrop.active {
+            display: block;
+        }
+        body.modal-open {
+            overflow: hidden;
         }
 
         @keyframes fadeIn {
@@ -908,6 +1032,20 @@
             background: #fecaca;
         }
 
+        .reset-default-btn {
+            background: #f1f5f9;
+            border: 1.5px solid #cbd5e1;
+            color: #475569;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 900;
+            cursor: pointer;
+        }
+        .reset-default-btn:hover {
+            background: #e2e8f0;
+        }
+
         .checkbox-cards-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -988,6 +1126,36 @@
             letter-spacing: 0.5px;
             color: #64748b;
             margin-bottom: 8px;
+        }
+
+        .card-label-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+        .card-label-row .card-label {
+            margin-bottom: 0;
+        }
+
+        .download-jpeg-btn {
+            background: #eef2ff;
+            border: 1.5px solid #c7d2fe;
+            color: #4338ca;
+            padding: 5px 9px;
+            border-radius: 8px;
+            font-size: 10px;
+            font-weight: 900;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+        .download-jpeg-btn:hover {
+            background: #e0e7ff;
+        }
+        .download-jpeg-btn:disabled {
+            opacity: 0.6;
+            cursor: wait;
         }
 
         .preview-box {
@@ -1425,7 +1593,7 @@
                 -webkit-font-smoothing: none !important;
             }
 
-            .app-main, .card-label {
+            .app-main, .card-label-row {
                 display: none !important;
             }
 
@@ -1515,7 +1683,6 @@
                 padding-bottom: 5mm !important;
             }
 
-            body.print-whatsapp .whatsapp-column { display: block !important; }
             body.print-exchange .exchange-column { display: block !important; }
             body.print-custom .custom-text-column { display: block !important; }
             body.print-coupon .coupon-receipt-column { display: block !important; }
@@ -1566,7 +1733,6 @@
             </button>
             <span class="pos-brand">LALITHA NATURALS</span>
             <div class="pos-topbar-actions">
-                <span class="last-updated-tag" id="lastUpdatedTag">Updated: 2026-09-25 14:44:55</span>
                 <button class="pos-icon-btn" title="Reload Page" onclick="location.reload()">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>
                 </button>
@@ -1587,56 +1753,60 @@
 
             <!-- QUICK PRINT -->
             <div class="dashboard-section" id="section-quick">
-            <div class="section-label"><span class="section-dot" style="background:#ea580c;"></span> Quick Print <span class="section-hint">— tap once, prints instantly</span></div>
+            <div class="section-label"><span class="section-dot" style="background:#ea580c;"></span> Quick Print <span class="section-hint">— tap once, prints instantly. Tap ⚙ to change details</span></div>
             <div class="big-buttons-bar">
 
-                <!-- 1. Print WhatsApp -->
-                <button class="icon-btn whatsapp" id="btn-toggle-whatsapp" onclick="toggleWhatsappPanel()">
-                    <span class="tile-icon">
-                        <svg viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M17.5 14.4c-.3-.1-1.8-.9-2-1s-.5-.1-.7.1-.8 1-.9 1.2-.3.2-.6.1a8 8 0 0 1-2.4-1.5 9 9 0 0 1-1.6-2c-.2-.3 0-.5.1-.6l.4-.5c.2-.2.2-.3.3-.5s0-.4 0-.5L9 7.6c-.2-.6-.5-.5-.7-.5h-.5c-.2 0-.5.1-.8.4s-1 1-1 2.5 1 2.9 1.2 3.1a10 10 0 0 0 5 4.5 6 6 0 0 0 1.7.6 3 3 0 0 0 1.9-.1c.6-.1 1.8-.7 2-1.4s.2-1.3.2-1.4-.1-.2-.4-.4Z"/>
-                            <path d="M12 2C6.5 2 2 6.5 2 12c0 1.9.5 3.7 1.4 5.2L2 22l5-1.4a10 10 0 0 0 5 1.3c5.5 0 10-4.5 10-10S17.5 2 12 2Z"/>
-                        </svg>
-                    </span>
-                    <span class="t1">Print WhatsApp</span>
-                </button>
-
                 <!-- 2. Print Exchange -->
-                <button class="icon-btn exchange" id="btn-toggle-exchange" onclick="toggleExchangePanel()">
-                    <span class="tile-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="m17 2 4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="m7 22-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/>
-                        </svg>
-                    </span>
-                    <span class="t1">Print Exchange</span>
-                </button>
+                <div class="icon-btn-wrap">
+                    <button class="icon-btn exchange" id="btn-toggle-exchange" onclick="triggerMobilePrint('exchange')">
+                        <span class="tile-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="m17 2 4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="m7 22-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/>
+                            </svg>
+                        </span>
+                        <span class="t1">Print Exchange</span>
+                    </button>
+                    <button type="button" class="tile-settings-btn" title="Scrap Exchange Settings" onclick="event.stopPropagation(); toggleExchangePanel();">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z"/></svg>
+                    </button>
+                </div>
 
                 <!-- 3. Store Location -->
-                <button class="icon-btn location" id="btn-toggle-location" onclick="toggleLocationPanel()">
-                    <span class="tile-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M12 21s7-6.6 7-11.5a7 7 0 1 0-14 0C5 14.4 12 21 12 21Z"/><circle cx="12" cy="9.5" r="2.5"/>
-                        </svg>
-                    </span>
-                    <span class="t1">Store Location</span>
-                </button>
+                <div class="icon-btn-wrap">
+                    <button class="icon-btn location" id="btn-toggle-location" onclick="openLocationChoiceModal()">
+                        <span class="tile-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M12 21s7-6.6 7-11.5a7 7 0 1 0-14 0C5 14.4 12 21 12 21Z"/><circle cx="12" cy="9.5" r="2.5"/>
+                            </svg>
+                        </span>
+                        <span class="t1">Store Location</span>
+                    </button>
+                    <button type="button" class="tile-settings-btn" title="Store Location Settings" onclick="event.stopPropagation(); toggleLocationPanel();">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z"/></svg>
+                    </button>
+                </div>
 
                 <!-- 4. Visiting Card -->
-                <button class="icon-btn visiting" id="btn-toggle-visiting" onclick="toggleVisitingPanel()">
-                    <span class="tile-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="8" cy="12" r="2"/><path d="M14 10h6M14 14h4"/>
-                        </svg>
-                    </span>
-                    <span class="t1">Visiting Card</span>
-                </button>
+                <div class="icon-btn-wrap">
+                    <button class="icon-btn visiting" id="btn-toggle-visiting" onclick="triggerMobilePrint('visiting')">
+                        <span class="tile-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="8" cy="12" r="2"/><path d="M14 10h6M14 14h4"/>
+                            </svg>
+                        </span>
+                        <span class="t1">Visiting Card</span>
+                    </button>
+                    <button type="button" class="tile-settings-btn" title="Visiting Card Settings" onclick="event.stopPropagation(); toggleWhatsappPanel();">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z"/></svg>
+                    </button>
+                </div>
 
             </div>
         </div>
 
         <!-- CREATE & PRINT -->
         <div class="dashboard-section" id="section-create">
-            <div class="section-label"><span class="section-dot" style="background:#ea580c;"></span> Create &amp; Print <span class="section-hint">— fill in details, then print</span></div>
+            <div class="section-label"><span class="section-dot" style="background:#ea580c;"></span> Create &amp; Print <span class="section-hint">— tap to fill in fresh details, then print</span></div>
             <div class="big-buttons-bar">
 
                 <!-- 5. Custom Text -->
@@ -1794,17 +1964,17 @@
         </div>
     </div>
 
-    <!-- WhatsApp Group Panel -->
+    <!-- Visiting Card Settings Panel -->
     <div class="text-input-panel" id="whatsappInputPanel">
         <div class="panel-header-row">
-            <span class="panel-title">💬 WhatsApp Group Receipt</span>
+            <span class="panel-title">📇 Visiting Card Settings</span>
             <div class="panel-header-actions">
-                <button class="print-now-btn" onclick="triggerMobilePrint('whatsapp')">🖨️ Print WhatsApp</button>
+                <button class="reset-default-btn" onclick="resetWhatsappPanel()">↺ Reset to Default</button>
             </div>
         </div>
         <div class="coupon-grid">
             <div class="form-group full-width">
-                <label>Group Invite Link (used to generate the QR code)</label>
+                <label>WhatsApp Group Invite Link (used to generate the QR code)</label>
                 <input type="text" class="form-control" id="wa-group-link" value="https://chat.whatsapp.com/E8udXvgNXAOKSXWGvud4ct" oninput="updateWhatsappCardPreview()">
             </div>
             <div class="form-group">
@@ -1817,18 +1987,17 @@
             </div>
             <div class="form-group">
                 <label>Branch-1 Address</label>
-                <input type="text" class="form-control" id="wa-address1" value="MIG-20, Vuda Colony, Gajuwaka" oninput="updateWhatsappCardPreview()">
+                <input type="text" class="form-control" id="wa-address1" value="MIG-20, Near Timpany School, Vuda Colony, Gonthinavanipalem, Visakhapatnam - 530044" oninput="updateWhatsappCardPreview()">
             </div>
             <div class="form-group">
                 <label>Branch-2 Address</label>
-                <input type="text" class="form-control" id="wa-address2" value="Vuda phase 7, Gajuwaka" oninput="updateWhatsappCardPreview()">
+                <input type="text" class="form-control" id="wa-address2" value="Vuda Phase 7, HIG-7, Opposite Gloria Vidya Kendram, Visakhapatnam - 530049" oninput="updateWhatsappCardPreview()">
             </div>
             <div class="form-group full-width">
-                <label>Official Updates List (one line each)</label>
-                <textarea class="form-control" id="wa-updates" rows="4" oninput="updateWhatsappCardPreview()" style="resize:vertical;">New arrivals
-Special offers
-Store news
-Real-time stock</textarea>
+                <label>Core Offerings (one line each)</label>
+                <textarea class="form-control" id="vc-offerings" rows="3" oninput="updateVisitingCardPreview()" style="resize:vertical;">Organic Food & Spices
+Cold-Pressed Oils & Ghee
+Millet Groceries & Snacks</textarea>
             </div>
         </div>
     </div>
@@ -1839,7 +2008,7 @@ Real-time stock</textarea>
             <span class="panel-title">♻️ Scrap Exchange Receipt</span>
             <div class="panel-header-actions">
                 <button class="clear-btn" type="button" onclick="addExchangeItem()">➕ Add Item</button>
-                <button class="print-now-btn" onclick="triggerMobilePrint('exchange')">🖨️ Print Exchange</button>
+                <button class="reset-default-btn" onclick="resetExchangePanel()">↺ Reset to Default</button>
             </div>
         </div>
         <div class="form-group full-width">
@@ -1864,7 +2033,6 @@ Real-time stock</textarea>
             <div class="form-group full-width">
                 <label>Check items to include in your exact chosen order:</label>
                 <div class="checkbox-cards-grid" id="multi-checkboxes-container">
-                    <label class="checkbox-card-item"><input type="checkbox" value="whatsapp" checked onchange="buildMultiPreview()"> WhatsApp QR</label>
                     <label class="checkbox-card-item"><input type="checkbox" value="exchange" checked onchange="buildMultiPreview()"> Scrap Exchange</label>
                     <label class="checkbox-card-item"><input type="checkbox" value="custom" onchange="buildMultiPreview()"> Custom Text</label>
                     <label class="checkbox-card-item"><input type="checkbox" value="coupon" onchange="buildMultiPreview()"> Discount Coupon</label>
@@ -1900,6 +2068,7 @@ Real-time stock</textarea>
                     <option value="offer">Special Offer</option>
                 </select>
                 <button class="clear-btn" onclick="clearTextSource()">✖ Clear</button>
+                <button class="reset-default-btn" onclick="resetCustomTextPanel()">↺ Reset to Default</button>
                 <button class="print-now-btn" onclick="triggerMobilePrint('custom')">🖨️ Print Custom Text</button>
             </div>
         </div>
@@ -2007,6 +2176,7 @@ Real-time stock</textarea>
         <div class="panel-header-row">
             <span class="panel-title">🏷️ Item Price Tag Creator</span>
             <div class="panel-header-actions">
+                <button class="reset-default-btn" onclick="resetPricePanel()">↺ Reset to Default</button>
                 <button class="print-price-btn" onclick="triggerMobilePrint('price')">🖨️ Print Price Tag</button>
             </div>
         </div>
@@ -2138,6 +2308,7 @@ Real-time stock</textarea>
         <div class="panel-header-row">
             <span class="panel-title">🧮 Fast Estimate Bill Calculator</span>
             <div class="panel-header-actions">
+                <button class="reset-default-btn" onclick="resetEstimatePanel()">↺ Reset to Default</button>
                 <button class="print-estimate-btn" onclick="triggerMobilePrint('estimate')">🖨️ Print Estimate</button>
             </div>
         </div>
@@ -2225,20 +2396,6 @@ Real-time stock</textarea>
     </div>
 
     <!-- Visiting Card Input Panel -->
-    <div class="visiting-panel" id="visitingInputPanel">
-        <div class="panel-header-row">
-            <span class="panel-title">📇 Thermal Visiting Card Printer</span>
-            <div class="panel-header-actions">
-                <button class="print-visiting-btn" onclick="triggerMobilePrint('visiting')">🖨️ Print Visiting Card</button>
-            </div>
-        </div>
-        <div class="visiting-grid">
-            <div class="form-group full-width">
-                <label>Black highlighted high-contrast layout with prominent contact number.</label>
-            </div>
-        </div>
-    </div>
-
     <!-- Coupon Panel -->
     <div class="coupon-panel" id="couponInputPanel">
         <div class="panel-header-row">
@@ -2247,6 +2404,7 @@ Real-time stock</textarea>
                 <button class="print-coupon-btn" onclick="printCouponAction()">🖨️ Print Coupon</button>
                 <button class="print-coupon-btn" onclick="printBothBranchesCouponAction()">🖨️ Print Both Branches</button>
                 <button class="reset-logo-btn" onclick="regenerateCouponCode()" title="Issue a fresh coupon code for this branch">↺ New Code</button>
+                <button class="reset-default-btn" onclick="resetCouponPanel()">↺ Reset to Default</button>
             </div>
         </div>
         <div class="coupon-grid">
@@ -2308,20 +2466,66 @@ Real-time stock</textarea>
     <!-- Store Location Panel -->
     <div class="location-panel" id="locationInputPanel">
         <div class="panel-header-row">
-            <span class="panel-title">📍 Store Location QR Printer</span>
+            <span class="panel-title">📍 Store Location Settings</span>
             <div class="panel-header-actions">
-                <button class="print-location-btn" onclick="triggerMobilePrint('location')">🖨️ Print Selected</button>
                 <button class="print-location-btn" onclick="triggerMobilePrint('both-locations')">🖨️ Print Both Branches</button>
+                <button class="reset-default-btn" onclick="resetLocationPanel()">↺ Reset to Default</button>
             </div>
         </div>
         <div class="location-grid">
             <div class="form-group full-width">
-                <label>Select Branch Location</label>
+                <label>Default Branch (pre-selected when the print choice popup opens)</label>
                 <div class="type-selector-btns">
                     <button class="type-btn active" id="loc-btn-gajuwaka" onclick="setLocationBranch('gajuwaka')">Branch 1: Gajuwaka</button>
                     <button class="type-btn" id="loc-btn-kurmannapalem" onclick="setLocationBranch('kurmannapalem')">Branch 2: Kurmannapalem</button>
                 </div>
             </div>
+            <div class="form-group">
+                <label>Branch-1 (Gajuwaka) Address</label>
+                <input type="text" class="form-control" id="loc-addr-gajuwaka" value="MIG-20, Near Timpany School Vuda Colony, Gonthinavanipalem, Gajuwaka, Andhra Pradesh 530044" oninput="updateLocationCardPreview()">
+            </div>
+            <div class="form-group">
+                <label>Branch-1 (Gajuwaka) Phone</label>
+                <input type="text" class="form-control" id="loc-phone-gajuwaka" value="9676287766" oninput="updateLocationCardPreview()">
+            </div>
+            <div class="form-group full-width">
+                <label>Branch-1 (Gajuwaka) Google Maps Link (used to generate the QR code)</label>
+                <input type="text" class="form-control" id="loc-maps-gajuwaka" value="https://maps.app.goo.gl/Gzxq2iuM7fijRAQr6" oninput="updateLocationCardPreview()">
+            </div>
+            <div class="form-group">
+                <label>Branch-2 (Kurmannapalem) Address</label>
+                <input type="text" class="form-control" id="loc-addr-kurmannapalem" value="Vuda phase 7, Hig 7, opposite Gloria Vidya Kendram, Vuda Colony, Gajuwaka, Andhra Pradesh 530049" oninput="updateLocationCardPreview()">
+            </div>
+            <div class="form-group">
+                <label>Branch-2 (Kurmannapalem) Phone</label>
+                <input type="text" class="form-control" id="loc-phone-kurmannapalem" value="9676287766" oninput="updateLocationCardPreview()">
+            </div>
+            <div class="form-group full-width">
+                <label>Branch-2 (Kurmannapalem) Google Maps Link (used to generate the QR code)</label>
+                <input type="text" class="form-control" id="loc-maps-kurmannapalem" value="https://maps.app.goo.gl/dpn7MfYHNzjBDrch6" oninput="updateLocationCardPreview()">
+            </div>
+        </div>
+    </div>
+
+    <!-- Store Location: which-branch print choice popup -->
+    <div class="location-choice-panel modal-panel" id="locationChoiceModal">
+        <div class="panel-header-row">
+            <span class="panel-title">📍 Print Store Location</span>
+        </div>
+        <div class="location-choice-grid">
+            <button type="button" class="location-choice-btn" onclick="printLocationChoice('gajuwaka')">
+                <span class="location-choice-title">Branch 1: Gajuwaka</span>
+                <span class="location-choice-sub">Print this branch only</span>
+            </button>
+            <button type="button" class="location-choice-btn" onclick="printLocationChoice('kurmannapalem')">
+                <span class="location-choice-title">Branch 2: Kurmannapalem</span>
+                <span class="location-choice-sub">Print this branch only</span>
+            </button>
+            <button type="button" class="location-choice-btn location-choice-both" onclick="printLocationChoice('both')">
+                <span class="location-choice-title">Both Branches</span>
+                <span class="location-choice-sub">Print both, one after another</span>
+            </button>
+            <button type="button" class="location-choice-cancel" onclick="hideAllPanelsKeepData()">Cancel</button>
         </div>
     </div>
 
@@ -2332,57 +2536,15 @@ Real-time stock</textarea>
 
     <div class="receipts-wrapper">
         
-        <!-- WhatsApp Receipt -->
-        <div class="receipt-column whatsapp-column" id="waReceiptCol">
-            <div class="card-label">WhatsApp QR (80mm)</div>
-            <div class="preview-box">
-                <div class="card whatsapp-card" id="whatsapp-card-el">
-                    <div class="header">Join Our WhatsApp Group</div>
-                    <img src="Black Logo .png" class="thermal-logo" alt="Logo">
-                    <div class="tagline">Feel the earth</div>
-                    <div class="divider"></div>
-                    <div class="side-by-side-whatsapp">
-                        <div class="notice-box">
-                            <div class="notice-title">Official updates on:</div>
-                            <ul class="notice-list" id="wa-updates-list">
-                                <li>New arrivals</li>
-                                <li>Special offers</li>
-                                <li>Store news</li>
-                                <li>Real-time stock</li>
-                            </ul>
-                        </div>
-                        <div class="qr-container">
-                            <img class="qr-code" id="wa-qr-img" src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https%3A%2F%2Fchat.whatsapp.com%2FE8udXvgNXAOKSXWGvud4ct" alt="QR">
-                        </div>
-                    </div>
-                    <div class="footer-text" style="text-align: left;">Scan QR code to join group.</div>
-                    <div class="divider"></div>
-                    <div class="address-section" style="text-align: left;">
-                        <div class="address-title" style="font-size:12px; font-weight:900; margin-bottom:3px;">OUR LOCATIONS</div>
-                        <div class="store-address-box" style="font-size:10.5px; font-weight:900; line-height:1.3;">
-                            <div class="address-line"><strong>Branch-1:</strong> <span id="wa-addr1-display">MIG-20, Vuda Colony, Gajuwaka</span></div>
-                            <div class="address-line"><strong>Branch-2:</strong> <span id="wa-addr2-display">Vuda phase 7, Gajuwaka</span></div>
-                        </div>
-                    </div>
-
-                    <div class="vc-huge-phone-box">
-                        <div class="vc-phone-label">📞 Call / WhatsApp</div>
-                        <div class="vc-phone-number" id="wa-phone-display">9676287766</div>
-                    </div>
-
-                    <div style="font-size: 10px; font-weight: 900; text-transform: uppercase; margin-top: 5px;">
-                        🌐 <span id="wa-website-display">www.lalithanaturals.com</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
         <!-- Exchange Receipt -->
         <div class="receipt-column exchange-column" id="exReceiptCol">
-            <div class="card-label">Scrap Exchange (80mm)</div>
+            <div class="card-label-row">
+                <div class="card-label">Scrap Exchange (80mm)</div>
+                <button type="button" class="download-jpeg-btn" onclick="downloadCardAsJpeg('exReceiptCol','Scrap_Exchange',this)">⬇ JPEG</button>
+            </div>
             <div class="preview-box">
                 <div class="card exchange-card" id="exchange-card-el">
-                    <img src="Black Logo .png" class="thermal-logo" alt="Logo">
+                    <img src="Black Logo .jpg" class="thermal-logo" alt="Logo">
                     <div class="tagline">Feel the earth</div>
                     <div class="divider"></div>
                     <div class="offer-header">EXCHANGE YOUR OLD ITEMS</div>
@@ -2402,10 +2564,13 @@ Real-time stock</textarea>
 
         <!-- Price Print Receipt Column -->
         <div class="receipt-column price-receipt-column" id="priceReceiptCol">
-            <div class="card-label">Price Tag Sticker (80mm)</div>
+            <div class="card-label-row">
+                <div class="card-label">Price Tag Sticker (80mm)</div>
+                <button type="button" class="download-jpeg-btn" onclick="downloadCardAsJpeg('priceReceiptCol','Price_Tag',this)">⬇ JPEG</button>
+            </div>
             <div class="preview-box">
                 <div class="card price-card" id="price-card-el" style="text-align: center;">
-                    <img src="Black Logo .png" class="thermal-logo" id="price-receipt-logo" alt="Logo" style="display: none;">
+                    <img src="Black Logo .jpg" class="thermal-logo" id="price-receipt-logo" alt="Logo" style="display: none;">
                     <div class="tagline" id="price-receipt-tagline" style="display: none;">Feel the earth</div>
                     <div class="divider" id="price-receipt-divider" style="display: none;"></div>
 
@@ -2424,11 +2589,14 @@ Real-time stock</textarea>
 
         <!-- Estimate Bill Receipt Column -->
         <div class="receipt-column estimate-receipt-column" id="estimateReceiptCol">
-            <div class="card-label">Estimate Bill (80mm)</div>
+            <div class="card-label-row">
+                <div class="card-label">Estimate Bill (80mm)</div>
+                <button type="button" class="download-jpeg-btn" onclick="downloadCardAsJpeg('estimateReceiptCol','Estimate_Bill',this)">⬇ JPEG</button>
+            </div>
             <div class="preview-box">
                 <div class="card estimate-card" id="estimate-card-el" style="text-align: center;">
                     <div class="header">ESTIMATE BILL</div>
-                    <img src="Black Logo .png" class="thermal-logo" alt="Logo">
+                    <img src="Black Logo .jpg" class="thermal-logo" alt="Logo">
                     <div class="tagline">Feel the earth</div>
                     <div class="divider"></div>
                     <div id="est-card-cust-info" style="font-size:11px; font-weight:900; text-align:left; margin-bottom:4px; display:none;"></div>
@@ -2456,25 +2624,27 @@ Real-time stock</textarea>
 
         <!-- Visiting Card -->
         <div class="receipt-column visiting-receipt-column" id="visitingReceiptCol">
-            <div class="card-label">Visiting Card (80mm)</div>
+            <div class="card-label-row">
+                <div class="card-label">Visiting Card (80mm)</div>
+                <button type="button" class="download-jpeg-btn" onclick="downloadCardAsJpeg('visitingReceiptCol','Visiting_Card',this)">⬇ JPEG</button>
+            </div>
             <div class="preview-box">
                 <div class="card visiting-card" id="visiting-card-el">
-                    <img src="Black Logo .png" class="thermal-logo" alt="Logo">
-                    <div style="text-align:center; font-size:18px; font-weight:900; text-transform:uppercase; letter-spacing:0.5px; margin-top:2px;">Lalitha Naturals</div>
+                    <img src="Black Logo .jpg" class="thermal-logo" alt="Logo">
                     <div class="tagline" style="text-align:center;">Feel the earth</div>
                     <div class="divider"></div>
 
                     <div class="side-by-side-whatsapp">
                         <div class="notice-box">
                             <div class="notice-title">Core Offerings:</div>
-                            <ul class="notice-list">
+                            <ul class="notice-list" id="vc-offerings-list">
                                 <li>Organic Food & Spices</li>
                                 <li>Cold-Pressed Oils & Ghee</li>
                                 <li>Millet Groceries & Snacks</li>
                             </ul>
                         </div>
                         <div class="qr-container">
-                            <img class="qr-code" src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https%3A%2F%2Fchat.whatsapp.com%2FE8udXvgNXAOKSXWGvud4ct" alt="QR">
+                            <img class="qr-code" id="vc-qr-img" src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https%3A%2F%2Fchat.whatsapp.com%2FE8udXvgNXAOKSXWGvud4ct" alt="QR">
                         </div>
                     </div>
                     <div class="footer-text" style="text-align:left; font-size:10px;">👆 Scan QR to join our WhatsApp group</div>
@@ -2483,19 +2653,19 @@ Real-time stock</textarea>
                     <div class="address-section" style="text-align: left;">
                         <div class="address-title" style="font-size:12px; font-weight:900; margin-bottom:3px;">OUR LOCATIONS</div>
                         <div class="store-address-box" style="font-size:10.5px; font-weight:900; line-height:1.3;">
-                            <div class="address-line"><strong>Branch-1 (Gajuwaka):</strong> MIG-20, Near Timpany School, Vuda Colony, Gonthinavanipalem, Visakhapatnam - 530044</div>
-                            <div class="address-line" style="margin-top:3px;"><strong>Branch-2 (Kurmannapalem):</strong> Vuda Phase 7, HIG-7, Opposite Gloria Vidya Kendram, Visakhapatnam - 530049</div>
+                            <div class="address-line"><strong>Branch-1 (Gajuwaka):</strong> <span id="vc-address1-display">MIG-20, Near Timpany School, Vuda Colony, Gonthinavanipalem, Visakhapatnam - 530044</span></div>
+                            <div class="address-line" style="margin-top:3px;"><strong>Branch-2 (Kurmannapalem):</strong> <span id="vc-address2-display">Vuda Phase 7, HIG-7, Opposite Gloria Vidya Kendram, Visakhapatnam - 530049</span></div>
                         </div>
                     </div>
                     <div class="divider"></div>
 
                     <div class="vc-huge-phone-box">
                         <div class="vc-phone-label">📞 Call / WhatsApp</div>
-                        <div class="vc-phone-number">9676287766</div>
+                        <div class="vc-phone-number" id="vc-phone-display">9676287766</div>
                     </div>
 
                     <div style="text-align: center; font-size: 10px; font-weight: 900; text-transform: uppercase; margin-top: 6px;">
-                        🌐 www.lalithanaturals.com
+                        🌐 <span id="vc-website-display">www.lalithanaturals.com</span>
                     </div>
                 </div>
             </div>
@@ -2503,10 +2673,13 @@ Real-time stock</textarea>
 
         <!-- Custom Text Receipt Column -->
         <div class="receipt-column custom-text-column" id="customReceiptCol">
-            <div class="card-label">Custom Text (80mm)</div>
+            <div class="card-label-row">
+                <div class="card-label">Custom Text (80mm)</div>
+                <button type="button" class="download-jpeg-btn" onclick="downloadCardAsJpeg('customReceiptCol','Custom_Text',this)">⬇ JPEG</button>
+            </div>
             <div class="preview-box">
                 <div class="card custom-card" id="custom-card-el">
-                    <img src="Black Logo .png" class="thermal-logo" id="custom-receipt-logo" alt="Logo">
+                    <img src="Black Logo .jpg" class="thermal-logo" id="custom-receipt-logo" alt="Logo">
                     <div class="tagline" id="custom-receipt-tagline" style="display: none;">Feel the earth</div>
                     <div class="divider" id="custom-receipt-divider"></div>
                     <div class="custom-text-content" id="customTextDisplay" style="text-align: center; font-size: 28px; line-height: 1.3;"></div>
@@ -2516,12 +2689,15 @@ Real-time stock</textarea>
         </div>
 
         <div class="receipt-column coupon-receipt-column" id="couponReceiptCol">
-            <div class="card-label">Store Coupon (80mm)</div>
+            <div class="card-label-row">
+                <div class="card-label">Store Coupon (80mm)</div>
+                <button type="button" class="download-jpeg-btn" onclick="downloadCardAsJpeg('couponReceiptCol','Coupon',this)">⬇ JPEG</button>
+            </div>
             <div class="preview-box" style="flex-direction: column; align-items: center; gap: 15px;">
                 
                 <div class="coupon-branch-wrapper" id="coupon-gajuwaka-section" style="width: 100%;">
                     <div class="card coupon-card" style="text-align: center;">
-                        <img src="Black Logo .png" class="thermal-logo" alt="Logo">
+                        <img src="Black Logo .jpg" class="thermal-logo" alt="Logo">
                         <div class="tagline">Feel the earth</div>
                         
                         <div class="coupon-stamp">⚡ DISCOUNT COUPON ⚡</div>
@@ -2543,7 +2719,7 @@ Real-time stock</textarea>
                         <div style="font-size:12px; font-weight:900; margin-bottom:4px;">SCAN FOR DIRECTIONS</div>
                         <div style="display: flex; justify-content: center; margin: 4px 0;">
                             <div class="qr-container" style="width: 85px; height: 85px;">
-                                <img class="qr-code" src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=https%3A%2F%2Fmaps.app.goo.gl%2FGzxq2iuM7fijRAQr6" alt="QR">
+                                <img class="qr-code" id="coupon-qr-gajuwaka" src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=https%3A%2F%2Fmaps.app.goo.gl%2FGzxq2iuM7fijRAQr6" alt="QR">
                             </div>
                         </div>
 
@@ -2555,7 +2731,7 @@ Real-time stock</textarea>
 
                 <div class="coupon-branch-wrapper" id="coupon-kurmannapalem-section" style="width: 100%;">
                     <div class="card coupon-card" style="text-align: center;">
-                        <img src="Black Logo .png" class="thermal-logo" alt="Logo">
+                        <img src="Black Logo .jpg" class="thermal-logo" alt="Logo">
                         <div class="tagline">Feel the earth</div>
 
                         <div class="coupon-stamp">⚡ DISCOUNT COUPON ⚡</div>
@@ -2577,7 +2753,7 @@ Real-time stock</textarea>
                         <div style="font-size:12px; font-weight:900; margin-bottom:4px;">SCAN FOR DIRECTIONS</div>
                         <div style="display: flex; justify-content: center; margin: 4px 0;">
                             <div class="qr-container" style="width: 85px; height: 85px;">
-                                <img class="qr-code" src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=https%3A%2F%2Fmaps.app.goo.gl%2Fdpn7MfYHNzjBDrch6" alt="QR">
+                                <img class="qr-code" id="coupon-qr-kurmannapalem" src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=https%3A%2F%2Fmaps.app.goo.gl%2Fdpn7MfYHNzjBDrch6" alt="QR">
                             </div>
                         </div>
 
@@ -2591,7 +2767,10 @@ Real-time stock</textarea>
         </div>
 
         <div class="receipt-column location-receipt-column" id="locationReceiptCol">
-            <div class="card-label">Store Location QR (80mm)</div>
+            <div class="card-label-row">
+                <div class="card-label">Store Location QR (80mm)</div>
+                <button type="button" class="download-jpeg-btn" onclick="downloadCardAsJpeg('locationReceiptCol','Store_Location',this)">⬇ JPEG</button>
+            </div>
             <div class="preview-box" style="flex-direction: column; align-items: center; gap: 15px;">
                 <div class="loc-card-wrapper" id="loc-gajuwaka-wrapper" style="width: 100%;">
                     <div class="card location-card" style="text-align: center;">
@@ -2599,11 +2778,11 @@ Real-time stock</textarea>
                         <div class="tagline">Scan for Google Map Directions</div>
                         <div class="divider"></div>
                         <div class="location-card-branch">GAJUWAKA BRANCH</div>
-                        <div class="location-card-address">MIG-20, Near Timpany School Vuda Colony, Gonthinavanipalem, Gajuwaka, Andhra Pradesh 530044</div>
-                        <div style="font-size:11px; font-weight:900; margin-bottom:6px;">📞 9676287766</div>
+                        <div class="location-card-address" id="loc-addr-gajuwaka-display">MIG-20, Near Timpany School Vuda Colony, Gonthinavanipalem, Gajuwaka, Andhra Pradesh 530044</div>
+                        <div style="font-size:11px; font-weight:900; margin-bottom:6px;">📞 <span id="loc-phone-gajuwaka-display">9676287766</span></div>
                         <div style="display: flex; justify-content: center; margin: 6px 0;">
                             <div class="qr-container" style="width: 130px; height: 130px;">
-                                <img class="qr-code" src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=https%3A%2F%2Fmaps.app.goo.gl%2FGzxq2iuM7fijRAQr6" alt="QR">
+                                <img class="qr-code" id="loc-qr-gajuwaka" src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=https%3A%2F%2Fmaps.app.goo.gl%2FGzxq2iuM7fijRAQr6" alt="QR">
                             </div>
                         </div>
                     </div>
@@ -2615,11 +2794,11 @@ Real-time stock</textarea>
                         <div class="tagline">Scan for Google Map Directions</div>
                         <div class="divider"></div>
                         <div class="location-card-branch">KURMANNAPALEM BRANCH</div>
-                        <div class="location-card-address">Vuda phase 7, Hig 7, opposite Gloria Vidya Kendram, Vuda Colony, Gajuwaka, Andhra Pradesh 530049</div>
-                        <div style="font-size:11px; font-weight:900; margin-bottom:6px;">📞 9676287766</div>
+                        <div class="location-card-address" id="loc-addr-kurmannapalem-display">Vuda phase 7, Hig 7, opposite Gloria Vidya Kendram, Vuda Colony, Gajuwaka, Andhra Pradesh 530049</div>
+                        <div style="font-size:11px; font-weight:900; margin-bottom:6px;">📞 <span id="loc-phone-kurmannapalem-display">9676287766</span></div>
                         <div style="display: flex; justify-content: center; margin: 6px 0;">
                             <div class="qr-container" style="width: 130px; height: 130px;">
-                                <img class="qr-code" src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=https%3A%2F%2Fmaps.app.goo.gl%2Fdpn7MfYHNzjBDrch6" alt="QR">
+                                <img class="qr-code" id="loc-qr-kurmannapalem" src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=https%3A%2F%2Fmaps.app.goo.gl%2Fdpn7MfYHNzjBDrch6" alt="QR">
                             </div>
                         </div>
                     </div>
@@ -2629,7 +2808,10 @@ Real-time stock</textarea>
 
         <!-- Custom Multi-Select Dynamic Preview Column -->
         <div class="receipt-column multi-receipt-column" id="multiReceiptCol">
-            <div class="card-label">Custom Combined Print Preview (80mm)</div>
+            <div class="card-label-row">
+                <div class="card-label">Custom Combined Print Preview (80mm)</div>
+                <button type="button" class="download-jpeg-btn" onclick="downloadCardAsJpeg('multiReceiptCol','Combined_Print',this)">⬇ JPEG</button>
+            </div>
             <div class="preview-box">
                 <div class="card" id="multi-preview-card-container" style="width: 80mm; padding: 10px 12px; text-align: center;">
                 </div>
@@ -2640,6 +2822,8 @@ Real-time stock</textarea>
     </div><!-- /preview-sidebar -->
 
     </div><!-- /app-layout -->
+
+    <div class="modal-backdrop" id="modalBackdrop" onclick="hideAllPanelsKeepData()"></div>
 
     <script>
         let currentPct = 5;
@@ -2656,6 +2840,161 @@ Real-time stock</textarea>
         let couponCode1 = null;
         let couponCode2 = null;
 
+        // ---- Reset to Default support ----
+        // Snapshot of every settings-panel field's starting value, captured once
+        // on page load (before the person can touch anything), so "Reset to
+        // Default" can restore it later without needing a page reload.
+        let PANEL_FIELD_DEFAULTS = {};
+        let PANEL_ARRAY_DEFAULTS = {};
+
+        function snapshotPanelDefaults() {
+            document.querySelectorAll('.text-input-panel, .price-panel, .estimate-panel, .coupon-panel, .location-panel').forEach(panel => {
+                const map = {};
+                panel.querySelectorAll('input[id], textarea[id], select[id]').forEach(el => {
+                    if (el.type === 'checkbox' || el.type === 'radio') {
+                        map[el.id] = el.checked;
+                    } else {
+                        map[el.id] = el.value;
+                    }
+                });
+                PANEL_FIELD_DEFAULTS[panel.id] = map;
+            });
+            PANEL_ARRAY_DEFAULTS.exchangeItems = JSON.parse(JSON.stringify(exchangeItems));
+        }
+
+        // Restores every plain input/textarea/select inside a panel to the
+        // value it had when the page first loaded. Buttons, toggle-state
+        // (active classes) and dynamic lists are handled separately by each
+        // panel's own reset wrapper below.
+        function resetPanelFields(panelId) {
+            const panel = document.getElementById(panelId);
+            const defaults = PANEL_FIELD_DEFAULTS[panelId];
+            if (!panel || !defaults) return;
+            panel.querySelectorAll('input[id], textarea[id], select[id]').forEach(el => {
+                if (!(el.id in defaults)) return;
+                if (el.type === 'checkbox' || el.type === 'radio') {
+                    el.checked = defaults[el.id];
+                } else {
+                    el.value = defaults[el.id];
+                }
+            });
+        }
+
+        function resetWhatsappPanel() {
+            resetPanelFields('whatsappInputPanel');
+            updateWhatsappCardPreview();
+        }
+
+        function resetExchangePanel() {
+            exchangeItems = JSON.parse(JSON.stringify(PANEL_ARRAY_DEFAULTS.exchangeItems || []));
+            renderExchangeItemsPanel();
+            updateExchangeCardPreview();
+        }
+
+        function resetCustomTextPanel() {
+            resetPanelFields('customInputPanel');
+            document.getElementById('editorCanvas').innerHTML = '';
+            updateCustomHeaderToggles();
+            changeEditorFontFamily(document.getElementById('editor-fontfamily-select').value);
+            changeEditorFontSize(document.getElementById('editor-fontsize-select').value);
+            changeLogoSize(document.getElementById('logo-size-select').value);
+            changeEditorSpacing(document.getElementById('editor-spacing-select').value);
+            setTextAlignment('center');
+            handleEditorInput();
+        }
+
+        function resetPricePanel() {
+            resetPanelFields('priceInputPanel');
+            document.getElementById('price-brand-group').style.display = 'none';
+            document.getElementById('price-brand-toggle-btn').classList.remove('active');
+            setPriceLayout(1);
+            setPriceDiscType('pct');
+            togglePriceLogoControls();
+            updatePriceCardPreview();
+        }
+
+        function resetEstimatePanel() {
+            resetPanelFields('estimateInputPanel');
+            quickEstimateItems = [];
+            editingIndex = null;
+            document.getElementById('quick-entry-form-title').textContent = 'Quick Add Item (Press Enter in Item Name to go to MRP, press Enter in MRP to add item):';
+            document.getElementById('quick-form-submit-btn').textContent = '+ Add';
+            renderQuickItemsTable();
+        }
+
+        function resetCouponPanel() {
+            resetPanelFields('couponInputPanel');
+            document.getElementById('coupon-from-date').value = getLocalDateStr();
+            setCouponType('pct');
+            setCouponBranch('gajuwaka');
+            setStaffOption('Bhargav');
+            document.getElementById('coupon-staff-name').style.display = 'none';
+            regenerateCouponCode();
+        }
+
+        function resetLocationPanel() {
+            resetPanelFields('locationInputPanel');
+            setLocationBranch('gajuwaka');
+            updateLocationCardPreview();
+        }
+
+        // ---- Modal popup backdrop sync ----
+        // Only the Store Location print-choice popup (.modal-panel) covers
+        // the page with a backdrop. Every settings/editing panel stays
+        // inline next to the live preview so it's never hidden.
+        // A MutationObserver watches each modal panel's style attribute so
+        // the shared backdrop + body scroll-lock track whichever one (if
+        // any) is currently open, without touching every toggleXPanel().
+        function initModalBackdropSync() {
+            const panels = document.querySelectorAll('.modal-panel');
+            const backdrop = document.getElementById('modalBackdrop');
+            if (!backdrop || panels.length === 0) return;
+
+            function sync() {
+                let anyOpen = false;
+                panels.forEach(p => {
+                    if (p.style.display && p.style.display !== 'none') anyOpen = true;
+                });
+                backdrop.classList.toggle('active', anyOpen);
+                document.body.classList.toggle('modal-open', anyOpen);
+            }
+
+            panels.forEach(p => {
+                new MutationObserver(sync).observe(p, { attributes: true, attributeFilter: ['style'] });
+            });
+            sync();
+        }
+
+        // ---- Download as JPEG ----
+        // Renders whatever is currently visible inside a receipt column's
+        // .preview-box (which is exactly what would print — hidden branch
+        // cards etc. are skipped automatically since they're display:none)
+        // to a JPEG file the person can save or share.
+        function downloadCardAsJpeg(receiptColId, filenamePrefix, btn) {
+            const col = document.getElementById(receiptColId);
+            const target = col ? col.querySelector('.preview-box') : null;
+            if (!target || typeof html2canvas === 'undefined') {
+                alert('JPEG download needs an internet connection the first time (to load the image tool). Please check your connection and try again.');
+                return;
+            }
+            const originalLabel = btn ? btn.textContent : '';
+            if (btn) { btn.disabled = true; btn.textContent = '⏳'; }
+            html2canvas(target, { backgroundColor: '#ffffff', scale: 3, useCORS: true }).then(canvas => {
+                const link = document.createElement('a');
+                const stamp = getLocalDateStr() + '_' + String(Date.now()).slice(-5);
+                link.download = `${filenamePrefix}_${stamp}.jpg`;
+                link.href = canvas.toDataURL('image/jpeg', 0.95);
+                document.body.appendChild(link);
+                link.click();
+                link.remove();
+            }).catch(err => {
+                console.error('JPEG export failed', err);
+                alert('Sorry, could not create the JPEG image. Please try again.');
+            }).finally(() => {
+                if (btn) { btn.disabled = false; btn.textContent = originalLabel; }
+            });
+        }
+
         function getLocalDateStr(d) {
             d = d || new Date();
             const y = d.getFullYear();
@@ -2668,15 +3007,21 @@ Real-time stock</textarea>
             const todayStr = getLocalDateStr();
             const dateInput = document.getElementById('coupon-from-date');
             if (dateInput) dateInput.value = todayStr;
+            snapshotPanelDefaults();
 
             loadSavedCustomLogo();
             loadSavedPriceLogo();
+            const couponQrGajuwaka = document.getElementById('coupon-qr-gajuwaka');
+            if (couponQrGajuwaka) couponQrGajuwaka.src = makeQrDataUrl('https://maps.app.goo.gl/Gzxq2iuM7fijRAQr6', couponQrGajuwaka.src);
+            const couponQrKurmannapalem = document.getElementById('coupon-qr-kurmannapalem');
+            if (couponQrKurmannapalem) couponQrKurmannapalem.src = makeQrDataUrl('https://maps.app.goo.gl/dpn7MfYHNzjBDrch6', couponQrKurmannapalem.src);
             updateLocationCardPreview();
             updateCouponCardPreview();
             updatePriceCardPreview();
             updateWhatsappCardPreview();
             renderExchangeItemsPanel();
             updateExchangeCardPreview();
+            updateVisitingCardPreview();
             renderQuickItemsTable();
             initSentenceCaseListeners();
             updateCustomHeaderToggles();
@@ -2684,6 +3029,7 @@ Real-time stock</textarea>
             buildMultiPreview();
             initSelectOnFocus();
             initEditorSelectionSync();
+            initModalBackdropSync();
         });
 
         function initSelectOnFocus() {
@@ -2820,7 +3166,7 @@ Real-time stock</textarea>
         function resetDefaultCustomLogo() {
             localStorage.removeItem('lalitha_custom_text_logo');
             const customLogoEl = document.getElementById('custom-receipt-logo');
-            if(customLogoEl) customLogoEl.src = 'Black Logo .png';
+            if(customLogoEl) customLogoEl.src = 'Black Logo .jpg';
             document.getElementById('custom-show-logo').checked = true;
             updateCustomHeaderToggles();
         }
@@ -2828,7 +3174,7 @@ Real-time stock</textarea>
         function resetPriceLogo() {
             localStorage.removeItem('lalitha_price_tag_logo');
             const priceLogoEl = document.getElementById('price-receipt-logo');
-            if(priceLogoEl) priceLogoEl.src = 'Black Logo .png';
+            if(priceLogoEl) priceLogoEl.src = 'Black Logo .jpg';
             document.getElementById('price-show-logo').checked = true;
             togglePriceLogoControls();
         }
@@ -3111,6 +3457,29 @@ Real-time stock</textarea>
                 .replace(/>/g, '&gt;')
                 .replace(/"/g, '&quot;')
                 .replace(/'/g, '&#39;');
+        }
+
+        // Draws a QR code locally (via the qrcode-generator library loaded in
+        // <head>) and returns it as a data: URL, instead of fetching an image
+        // from an external API. A remote image counts as cross-origin, which
+        // makes html2canvas's Download-as-JPEG throw a "tainted canvas"
+        // security error; a locally drawn one has no such restriction.
+        // Falls back to the old external API (which still works fine for
+        // on-screen viewing and printing, just not for JPEG export) if the
+        // library hasn't loaded — e.g. no internet on first visit.
+        function makeQrDataUrl(text, fallbackUrl) {
+            if (!text) return fallbackUrl || '';
+            try {
+                if (typeof qrcode === 'function') {
+                    const qr = qrcode(0, 'M');
+                    qr.addData(text);
+                    qr.make();
+                    return qr.createDataURL(6, 4);
+                }
+            } catch (e) {
+                console.error('Local QR generation failed, using fallback image API:', e);
+            }
+            return fallbackUrl || ('https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=' + encodeURIComponent(text));
         }
 
         function renderQuickItemsTable() {
@@ -3521,7 +3890,7 @@ Real-time stock</textarea>
         }
 
         function hideAllPanelsKeepData() {
-            ['customInputPanel', 'couponInputPanel', 'locationInputPanel', 'priceInputPanel', 'estimateInputPanel', 'visitingInputPanel', 'multiInputPanel', 'whatsappInputPanel', 'exchangeInputPanel'].forEach(id => {
+            ['customInputPanel', 'couponInputPanel', 'locationInputPanel', 'priceInputPanel', 'estimateInputPanel', 'visitingInputPanel', 'multiInputPanel', 'whatsappInputPanel', 'exchangeInputPanel', 'locationChoiceModal'].forEach(id => {
                 const el = document.getElementById(id);
                 if(el) el.style.display = 'none';
             });
@@ -3529,10 +3898,9 @@ Real-time stock</textarea>
                 const el = document.getElementById(id);
                 if(el) el.style.display = 'none';
             });
-            document.getElementById('waReceiptCol').style.display = 'flex';
             document.getElementById('exReceiptCol').style.display = 'flex';
 
-            ['btn-toggle-custom', 'btn-toggle-coupon', 'btn-toggle-location', 'btn-toggle-price', 'btn-toggle-estimate', 'btn-toggle-visiting', 'btn-toggle-multi', 'btn-toggle-whatsapp', 'btn-toggle-exchange'].forEach(id => {
+            ['btn-toggle-custom', 'btn-toggle-coupon', 'btn-toggle-location', 'btn-toggle-price', 'btn-toggle-estimate', 'btn-toggle-visiting', 'btn-toggle-multi', 'btn-toggle-exchange'].forEach(id => {
                 const btn = document.getElementById(id);
                 if(btn) btn.classList.remove('active-toggle');
             });
@@ -3554,7 +3922,6 @@ Real-time stock</textarea>
                 hideAllPanelsKeepData();
                 panel.style.display = 'block';
                 document.getElementById('customReceiptCol').style.display = 'flex';
-                document.getElementById('waReceiptCol').style.display = 'none';
                 document.getElementById('exReceiptCol').style.display = 'none';
                 document.getElementById('btn-toggle-custom').classList.add('active-toggle');
                 focusFieldSoon('editorCanvas');
@@ -3568,7 +3935,6 @@ Real-time stock</textarea>
                 hideAllPanelsKeepData();
                 panel.style.display = 'block';
                 document.getElementById('couponReceiptCol').style.display = 'flex';
-                document.getElementById('waReceiptCol').style.display = 'none';
                 document.getElementById('exReceiptCol').style.display = 'none';
                 document.getElementById('btn-toggle-coupon').classList.add('active-toggle');
                 updateCouponCardPreview();
@@ -3583,10 +3949,30 @@ Real-time stock</textarea>
                 hideAllPanelsKeepData();
                 panel.style.display = 'block';
                 document.getElementById('locationReceiptCol').style.display = 'flex';
-                document.getElementById('waReceiptCol').style.display = 'none';
                 document.getElementById('exReceiptCol').style.display = 'none';
                 document.getElementById('btn-toggle-location').classList.add('active-toggle');
                 updateLocationCardPreview();
+            }
+        }
+
+        // Tapping the Store Location tile no longer prints instantly — it
+        // always asks which branch (or both) first, since the person wants
+        // that choice every time rather than relying on a pre-set default.
+        function openLocationChoiceModal() {
+            const modal = document.getElementById('locationChoiceModal');
+            if (modal.style.display === 'block') { hideAllPanelsKeepData(); return; }
+            hideAllPanelsKeepData();
+            modal.style.display = 'block';
+            document.getElementById('btn-toggle-location').classList.add('active-toggle');
+        }
+
+        function printLocationChoice(which) {
+            hideAllPanelsKeepData();
+            if (which === 'both') {
+                triggerMobilePrint('both-locations');
+            } else {
+                setLocationBranch(which);
+                triggerMobilePrint('location');
             }
         }
 
@@ -3597,7 +3983,6 @@ Real-time stock</textarea>
                 hideAllPanelsKeepData();
                 panel.style.display = 'block';
                 document.getElementById('priceReceiptCol').style.display = 'flex';
-                document.getElementById('waReceiptCol').style.display = 'none';
                 document.getElementById('exReceiptCol').style.display = 'none';
                 document.getElementById('btn-toggle-price').classList.add('active-toggle');
                 updatePriceCardPreview();
@@ -3612,7 +3997,6 @@ Real-time stock</textarea>
                 hideAllPanelsKeepData();
                 panel.style.display = 'block';
                 document.getElementById('estimateReceiptCol').style.display = 'flex';
-                document.getElementById('waReceiptCol').style.display = 'none';
                 document.getElementById('exReceiptCol').style.display = 'none';
                 document.getElementById('btn-toggle-estimate').classList.add('active-toggle');
                 updateEstimateCardPreview();
@@ -3623,28 +4007,16 @@ Real-time stock</textarea>
             }
         }
 
-        function toggleVisitingPanel() {
-            const panel = document.getElementById('visitingInputPanel');
-            if (panel.style.display === 'block') { hideAllPanelsKeepData(); }
-            else {
-                hideAllPanelsKeepData();
-                panel.style.display = 'block';
-                document.getElementById('visitingReceiptCol').style.display = 'flex';
-                document.getElementById('waReceiptCol').style.display = 'none';
-                document.getElementById('exReceiptCol').style.display = 'none';
-                document.getElementById('btn-toggle-visiting').classList.add('active-toggle');
-            }
-        }
-
+        // Visiting Card Settings — its gear icon opens this panel.
         function toggleWhatsappPanel() {
             const panel = document.getElementById('whatsappInputPanel');
             if (panel.style.display === 'block') { hideAllPanelsKeepData(); }
             else {
                 hideAllPanelsKeepData();
                 panel.style.display = 'block';
-                document.getElementById('waReceiptCol').style.display = 'flex';
+                document.getElementById('visitingReceiptCol').style.display = 'flex';
                 document.getElementById('exReceiptCol').style.display = 'none';
-                document.getElementById('btn-toggle-whatsapp').classList.add('active-toggle');
+                document.getElementById('btn-toggle-visiting').classList.add('active-toggle');
                 updateWhatsappCardPreview();
                 focusFieldSoon('wa-group-link');
             }
@@ -3657,7 +4029,6 @@ Real-time stock</textarea>
                 hideAllPanelsKeepData();
                 panel.style.display = 'block';
                 document.getElementById('exReceiptCol').style.display = 'flex';
-                document.getElementById('waReceiptCol').style.display = 'none';
                 document.getElementById('btn-toggle-exchange').classList.add('active-toggle');
                 renderExchangeItemsPanel();
                 updateExchangeCardPreview();
@@ -3672,7 +4043,6 @@ Real-time stock</textarea>
                 hideAllPanelsKeepData();
                 panel.style.display = 'block';
                 document.getElementById('multiReceiptCol').style.display = 'flex';
-                document.getElementById('waReceiptCol').style.display = 'none';
                 document.getElementById('exReceiptCol').style.display = 'none';
                 document.getElementById('btn-toggle-multi').classList.add('active-toggle');
                 
@@ -3850,32 +4220,54 @@ Real-time stock</textarea>
         function updateLocationCardPreview() {
             document.getElementById('loc-gajuwaka-wrapper').style.display = locationBranch === 'gajuwaka' ? 'block' : 'none';
             document.getElementById('loc-kurmannapalem-wrapper').style.display = locationBranch === 'kurmannapalem' ? 'block' : 'none';
+
+            ['gajuwaka', 'kurmannapalem'].forEach(branch => {
+                const addr = document.getElementById('loc-addr-' + branch).value.trim();
+                const phone = document.getElementById('loc-phone-' + branch).value.trim();
+                const mapsLink = document.getElementById('loc-maps-' + branch).value.trim();
+
+                document.getElementById('loc-addr-' + branch + '-display').textContent = addr;
+                document.getElementById('loc-phone-' + branch + '-display').textContent = phone;
+                if (mapsLink) {
+                    document.getElementById('loc-qr-' + branch).src = makeQrDataUrl(mapsLink);
+                }
+            });
         }
 
+        // Kept as a thin wrapper (rather than renamed) since it's still wired
+        // to the "Visiting Card Settings" fields' oninput handlers — the
+        // WhatsApp print/card itself has been removed entirely, so this now
+        // just refreshes the Visiting Card preview.
         function updateWhatsappCardPreview() {
+            updateVisitingCardPreview();
+        }
+
+        function updateVisitingCardPreview() {
             const link = document.getElementById('wa-group-link').value.trim();
             const phone = document.getElementById('wa-phone').value.trim();
             const website = document.getElementById('wa-website').value.trim();
             const addr1 = document.getElementById('wa-address1').value.trim();
             const addr2 = document.getElementById('wa-address2').value.trim();
-            const updatesRaw = document.getElementById('wa-updates').value;
+            const offeringsRaw = document.getElementById('vc-offerings').value;
 
-            const qrImg = document.getElementById('wa-qr-img');
+            const qrImg = document.getElementById('vc-qr-img');
             if (link) {
-                qrImg.src = 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=' + encodeURIComponent(link);
+                qrImg.src = makeQrDataUrl(link);
             }
-            document.getElementById('wa-phone-display').textContent = phone;
-            document.getElementById('wa-website-display').textContent = website;
-            document.getElementById('wa-addr1-display').textContent = addr1;
-            document.getElementById('wa-addr2-display').textContent = addr2;
+            document.getElementById('vc-phone-display').textContent = phone;
+            document.getElementById('vc-website-display').textContent = website;
+            document.getElementById('vc-address1-display').textContent = addr1;
+            document.getElementById('vc-address2-display').textContent = addr2;
 
-            const listEl = document.getElementById('wa-updates-list');
+            const listEl = document.getElementById('vc-offerings-list');
             listEl.innerHTML = '';
-            updatesRaw.split('\n').map(l => l.trim()).filter(l => l).forEach(line => {
+            offeringsRaw.split('\n').map(l => l.trim()).filter(l => l).forEach(line => {
                 const li = document.createElement('li');
                 li.textContent = line;
                 listEl.appendChild(li);
             });
+
+            buildMultiPreview();
         }
 
         let exchangeItems = [
@@ -4183,41 +4575,7 @@ Real-time stock</textarea>
 
                 let contentHTML = '';
 
-                if(val === 'whatsapp') {
-                    // Mirrors the live WhatsApp panel's own values (group link,
-                    // phone, website, addresses, updates list) instead of the
-                    // old hardcoded defaults, so an edit made in that panel is
-                    // reflected here too when it's added to a combined print.
-                    const waLink = document.getElementById('wa-group-link').value.trim() || 'https://chat.whatsapp.com/E8udXvgNXAOKSXWGvud4ct';
-                    const waPhone = document.getElementById('wa-phone').value.trim();
-                    const waWebsite = document.getElementById('wa-website').value.trim();
-                    const waAddr1 = document.getElementById('wa-address1').value.trim();
-                    const waAddr2 = document.getElementById('wa-address2').value.trim();
-                    const waUpdatesLines = document.getElementById('wa-updates').value.split('\n').map(l => l.trim()).filter(l => l);
-                    const waUpdatesHtml = waUpdatesLines.map(l => `<li>${escapeHtml(l)}</li>`).join('');
-
-                    contentHTML += `
-                        <div class="header">Join Our WhatsApp Group</div>
-                        <div class="side-by-side-whatsapp">
-                            <div class="notice-box">
-                                <div class="notice-title">Official updates on:</div>
-                                <ul class="notice-list">${waUpdatesHtml}</ul>
-                            </div>
-                            <div class="qr-container" style="width:75px;height:75px;">
-                                <img class="qr-code" src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(waLink)}" alt="QR">
-                            </div>
-                        </div>
-                        <div class="footer-text" style="text-align:left; margin-top:4px;">Scan QR code to join group.</div>
-                        <div class="divider"></div>
-                        <div class="address-section" style="text-align:left;">
-                            <div class="address-title" style="font-size:11px; font-weight:900; margin-bottom:2px;">OUR LOCATIONS</div>
-                            <div class="store-address-box" style="font-size:9.5px; font-weight:900; line-height:1.3;">
-                                <div class="address-line"><strong>Branch-1:</strong> ${escapeHtml(waAddr1)}</div>
-                                <div class="address-line"><strong>Branch-2:</strong> ${escapeHtml(waAddr2)}</div>
-                            </div>
-                        </div>
-                        <div style="font-size:10px; font-weight:900; margin-top:3px;">📞 ${escapeHtml(waPhone)}${waWebsite ? ' &nbsp;|&nbsp; 🌐 ' + escapeHtml(waWebsite) : ''}</div>`;
-                } else if(val === 'exchange') {
+                if(val === 'exchange') {
                     // Mirrors the live Exchange panel's editable items/rates and
                     // note instead of the old hardcoded Aluminium/Steel rows.
                     const exRowsHtml = exchangeItems
@@ -4270,7 +4628,7 @@ Real-time stock</textarea>
                         <div style="font-size:11px; font-weight:900; margin-bottom:4px;">Scan for directions</div>
                         <div style="display:flex; justify-content:center; margin:4px 0;">
                             <div class="qr-container" style="width:75px; height:75px;">
-                                <img class="qr-code" src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=https%3A%2F%2Fmaps.app.goo.gl%2FGzxq2iuM7fijRAQr6" alt="QR">
+                                <img class="qr-code" src="${makeQrDataUrl('https://maps.app.goo.gl/Gzxq2iuM7fijRAQr6')}" alt="QR">
                             </div>
                         </div>
                         <div class="location-card-branch" style="margin-top:4px;">Gajuwaka Branch</div>
@@ -4283,7 +4641,7 @@ Real-time stock</textarea>
                         <div style="font-size:11px; font-weight:900; margin-bottom:4px;">📞 9676287766</div>
                         <div style="display:flex; justify-content:center; margin:6px 0;">
                             <div class="qr-container" style="width:85px; height:85px;">
-                                <img class="qr-code" src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=https%3A%2F%2Fmaps.app.goo.gl%2FGzxq2iuM7fijRAQr6" alt="QR">
+                                <img class="qr-code" src="${makeQrDataUrl('https://maps.app.goo.gl/Gzxq2iuM7fijRAQr6')}" alt="QR">
                             </div>
                         </div>`;
                 } else if(val === 'loc-kurmannapalem') {
@@ -4293,7 +4651,7 @@ Real-time stock</textarea>
                         <div style="font-size:11px; font-weight:900; margin-bottom:4px;">📞 9676287766</div>
                         <div style="display:flex; justify-content:center; margin:6px 0;">
                             <div class="qr-container" style="width:85px; height:85px;">
-                                <img class="qr-code" src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=https%3A%2F%2Fmaps.app.goo.gl%2Fdpn7MfYHNzjBDrch6" alt="QR">
+                                <img class="qr-code" src="${makeQrDataUrl('https://maps.app.goo.gl/dpn7MfYHNzjBDrch6')}" alt="QR">
                             </div>
                         </div>`;
                 } else if(val === 'price') {
@@ -4384,18 +4742,19 @@ Real-time stock</textarea>
                             <span>₹${grandTotal.toFixed(2)}</span>
                         </div>`;
                 } else if(val === 'visiting') {
+                    // Name/tagline are dropped here too: the logo in the shared
+                    // header above already carries the business name, same as
+                    // on the standalone Visiting Card.
+                    const vcPhone = escapeHtml(document.getElementById('wa-phone').value.trim());
+                    const vcOfferings = document.getElementById('vc-offerings').value.split('\n').map(l => l.trim()).filter(l => l).map(escapeHtml).join(', ');
                     contentHTML += `
-                        <div style="border:2.5px solid #000; background:#000; color:#fff; padding:6px; margin-bottom:6px; text-transform:uppercase;">
-                            <div style="font-size:15px; font-weight:900;">Lalitha Naturals</div>
-                            <div style="font-size:10px; font-style:italic; font-weight:900;">Feel the earth</div>
-                        </div>
                         <div style="border:1.5px solid #000; padding:5px; margin-bottom:5px; text-align:left;">
                             <div style="font-size:10px; font-weight:900; text-transform:uppercase; border-bottom:1px dashed #000; margin-bottom:2px;">Core Offerings:</div>
-                            <div style="font-size:9.5px; font-weight:900; text-transform:uppercase;">Organic food, cold-pressed oils, spices & millets</div>
+                            <div style="font-size:9.5px; font-weight:900; text-transform:uppercase;">${vcOfferings}</div>
                         </div>
                         <div style="border:3px solid #000; background:#000; color:#fff; padding:6px; margin-top:6px; text-align:center;">
                             <div style="font-size:9px; font-weight:900; text-transform:uppercase;">📞 Call / WhatsApp</div>
-                            <div style="font-size:18px; font-weight:900; letter-spacing:1px;">9676287766</div>
+                            <div style="font-size:18px; font-weight:900; letter-spacing:1px;">${vcPhone}</div>
                         </div>`;
                 }
 
@@ -4437,8 +4796,7 @@ Real-time stock</textarea>
             }
 
             document.body.className = '';
-            if (type === 'whatsapp') document.body.classList.add('print-whatsapp');
-            else if (type === 'exchange') document.body.classList.add('print-exchange');
+            if (type === 'exchange') document.body.classList.add('print-exchange');
             else if (type === 'custom') document.body.classList.add('print-custom');
             else if (type === 'coupon-gajuwaka') document.body.classList.add('print-coupon', 'print-coupon-gajuwaka');
             else if (type === 'coupon-kurmannapalem') document.body.classList.add('print-coupon', 'print-coupon-kurmannapalem');
