@@ -376,6 +376,148 @@
             color: #0f172a;
         }
 
+        .tile-recent-btn {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            width: 24px;
+            height: 24px;
+            border-radius: 7px;
+            border: none;
+            background: rgba(255, 255, 255, 0.9);
+            color: #64748b;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 2;
+            box-shadow: 0 1px 4px rgba(15, 23, 42, 0.18);
+            -webkit-tap-highlight-color: transparent;
+        }
+        .tile-recent-btn svg {
+            width: 13px;
+            height: 13px;
+        }
+        .tile-recent-btn:hover {
+            background: #ffffff;
+            color: #0f172a;
+        }
+
+        .recent-prints-panel {
+            display: none;
+            width: calc(100% - 24px);
+            max-width: 380px;
+            max-height: calc(100vh - 24px);
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 16px 18px;
+            animation: fadeIn 0.15s ease-out;
+        }
+        .recent-prints-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        .recent-print-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 8px 10px;
+            background: #f8fafc;
+        }
+        .recent-print-info {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            min-width: 0;
+        }
+        .recent-print-label {
+            font-size: 13px;
+            font-weight: 800;
+            color: #0f172a;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 190px;
+        }
+        .recent-print-time {
+            font-size: 11px;
+            color: #64748b;
+            font-weight: 600;
+        }
+        .recent-print-actions {
+            display: flex;
+            gap: 6px;
+            flex-shrink: 0;
+        }
+        .recent-print-reprint-btn {
+            border: none;
+            background: #16a34a;
+            color: #fff;
+            font-size: 12px;
+            font-weight: 800;
+            padding: 6px 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+        .recent-print-reprint-btn:hover {
+            background: #15803d;
+        }
+        .recent-print-delete-btn {
+            border: none;
+            background: #fee2e2;
+            color: #b91c1c;
+            font-size: 12px;
+            font-weight: 800;
+            padding: 6px 8px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        .recent-print-delete-btn:hover {
+            background: #fecaca;
+        }
+        .recent-prints-empty {
+            font-size: 13px;
+            color: #64748b;
+            font-weight: 600;
+            text-align: center;
+            padding: 16px 4px;
+        }
+        .recent-prints-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 12px;
+            gap: 8px;
+        }
+        .recent-prints-clear-btn {
+            border: none;
+            background: none;
+            color: #b91c1c;
+            font-size: 12.5px;
+            font-weight: 800;
+            cursor: pointer;
+            padding: 4px 2px;
+        }
+        .recent-prints-close-btn {
+            border: none;
+            background: #f1f5f9;
+            color: #334155;
+            font-size: 12.5px;
+            font-weight: 800;
+            cursor: pointer;
+            padding: 8px 14px;
+            border-radius: 8px;
+        }
+
         .tile-icon {
             width: 22px;
             height: 22px;
@@ -1526,8 +1668,17 @@
             letter-spacing: 1.5px;
         }
 
-        .vc-huge-phone-box .vc-phone-number + .vc-phone-number {
-            margin-top: 4px;
+        .vc-huge-phone-box .vc-phone-branch-line + .vc-phone-branch-line {
+            margin-top: 6px;
+        }
+
+        .vc-huge-phone-box .vc-phone-branch-name {
+            font-size: 9px;
+            font-weight: 900;
+            color: #ffffff !important;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 1px;
         }
 
         .location-card-branch {
@@ -1602,6 +1753,18 @@
             }
 
             html, body {
+                /* Overrides the "exact" color-adjust above just for the page
+                   background: forces the browser back to its normal
+                   ink/heat-saving behavior for the plain white page itself,
+                   so any extra blank paper the printer driver feeds beyond
+                   our actual content (some thermal-printer drivers force a
+                   fixed minimum roll length regardless of page height) comes
+                   out as untouched blank paper instead of a printed white
+                   fill, which is what was showing as a gray/dark strip. The
+                   real receipt content (.card, .vc-huge-phone-box, etc.)
+                   still prints with exact solid colors as before. */
+                -webkit-print-color-adjust: economy !important;
+                print-color-adjust: economy !important;
                 background: #ffffff !important;
                 padding: 0 !important;
                 margin: 0 !important;
@@ -1776,6 +1939,9 @@
                     <button type="button" class="tile-settings-btn" title="Scrap Exchange Settings" onclick="event.stopPropagation(); toggleExchangePanel();">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z"/></svg>
                     </button>
+                    <button type="button" class="tile-recent-btn" title="Recent Scrap Exchange Prints" onclick="event.stopPropagation(); openRecentPrints('exchange');">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>
+                    </button>
                 </div>
 
                 <!-- 3. Store Location -->
@@ -1790,6 +1956,9 @@
                     </button>
                     <button type="button" class="tile-settings-btn" title="Store Location Settings" onclick="event.stopPropagation(); toggleLocationPanel();">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z"/></svg>
+                    </button>
+                    <button type="button" class="tile-recent-btn" title="Recent Store Location Prints" onclick="event.stopPropagation(); openRecentPrints('location');">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>
                     </button>
                 </div>
 
@@ -1806,6 +1975,9 @@
                     <button type="button" class="tile-settings-btn" title="Visiting Card Settings" onclick="event.stopPropagation(); toggleWhatsappPanel();">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z"/></svg>
                     </button>
+                    <button type="button" class="tile-recent-btn" title="Recent Visiting Card Prints" onclick="event.stopPropagation(); openRecentPrints('visiting');">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>
+                    </button>
                 </div>
 
             </div>
@@ -1817,44 +1989,64 @@
             <div class="big-buttons-bar">
 
                 <!-- 5. Custom Text -->
-                <button class="icon-btn custom" id="btn-toggle-custom" onclick="toggleCustomTextPanel()">
-                    <span class="tile-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/>
-                        </svg>
-                    </span>
-                    <span class="t1">Custom Text</span>
-                </button>
+                <div class="icon-btn-wrap">
+                    <button class="icon-btn custom" id="btn-toggle-custom" onclick="toggleCustomTextPanel()">
+                        <span class="tile-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/>
+                            </svg>
+                        </span>
+                        <span class="t1">Custom Text</span>
+                    </button>
+                    <button type="button" class="tile-recent-btn" title="Recent Custom Text Prints" onclick="event.stopPropagation(); openRecentPrints('custom');">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>
+                    </button>
+                </div>
 
                 <!-- 6. Coupon -->
-                <button class="icon-btn coupon" id="btn-toggle-coupon" onclick="toggleCouponPanel()">
-                    <span class="tile-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M13 5v14"/>
-                        </svg>
-                    </span>
-                    <span class="t1">Coupon</span>
-                </button>
+                <div class="icon-btn-wrap">
+                    <button class="icon-btn coupon" id="btn-toggle-coupon" onclick="toggleCouponPanel()">
+                        <span class="tile-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M13 5v14"/>
+                            </svg>
+                        </span>
+                        <span class="t1">Coupon</span>
+                    </button>
+                    <button type="button" class="tile-recent-btn" title="Recent Coupon Prints" onclick="event.stopPropagation(); openRecentPrints('coupon');">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>
+                    </button>
+                </div>
 
                 <!-- 7. Price Print -->
-                <button class="icon-btn price" id="btn-toggle-price" onclick="togglePricePanel()">
-                    <span class="tile-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M20.6 12.6 12 21.2 2.8 12 12.8 2h5.8a2 2 0 0 1 2 2Z"/><circle cx="16.5" cy="7.5" r="1.5"/>
-                        </svg>
-                    </span>
-                    <span class="t1">Price Print</span>
-                </button>
+                <div class="icon-btn-wrap">
+                    <button class="icon-btn price" id="btn-toggle-price" onclick="togglePricePanel()">
+                        <span class="tile-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M20.6 12.6 12 21.2 2.8 12 12.8 2h5.8a2 2 0 0 1 2 2Z"/><circle cx="16.5" cy="7.5" r="1.5"/>
+                            </svg>
+                        </span>
+                        <span class="t1">Price Print</span>
+                    </button>
+                    <button type="button" class="tile-recent-btn" title="Recent Price Prints" onclick="event.stopPropagation(); openRecentPrints('price');">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>
+                    </button>
+                </div>
 
                 <!-- 8. Estimate / Bill Calculator -->
-                <button class="icon-btn estimate" id="btn-toggle-estimate" onclick="toggleEstimatePanel()">
-                    <span class="tile-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <rect x="4" y="2" width="16" height="20" rx="2"/><path d="M8 7h8M8 11h8M8 15h4"/>
-                        </svg>
-                    </span>
-                    <span class="t1">Estimate Bill</span>
-                </button>
+                <div class="icon-btn-wrap">
+                    <button class="icon-btn estimate" id="btn-toggle-estimate" onclick="toggleEstimatePanel()">
+                        <span class="tile-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="4" y="2" width="16" height="20" rx="2"/><path d="M8 7h8M8 11h8M8 15h4"/>
+                            </svg>
+                        </span>
+                        <span class="t1">Estimate Bill</span>
+                    </button>
+                    <button type="button" class="tile-recent-btn" title="Recent Estimate Prints" onclick="event.stopPropagation(); openRecentPrints('estimate');">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>
+                    </button>
+                </div>
 
             </div>
         </div>
@@ -1865,14 +2057,19 @@
             <div class="big-buttons-bar">
 
                 <!-- Custom Multi-Select Combined Print Button -->
-                <button class="icon-btn multibutton" id="btn-toggle-multi" onclick="toggleMultiPanel()">
-                    <span class="tile-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/>
-                        </svg>
-                    </span>
-                    <span class="t1">Custom Combined Print</span>
-                </button>
+                <div class="icon-btn-wrap">
+                    <button class="icon-btn multibutton" id="btn-toggle-multi" onclick="toggleMultiPanel()">
+                        <span class="tile-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/>
+                            </svg>
+                        </span>
+                        <span class="t1">Custom Combined Print</span>
+                    </button>
+                    <button type="button" class="tile-recent-btn" title="Recent Combined Prints" onclick="event.stopPropagation(); openRecentPrints('multi');">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>
+                    </button>
+                </div>
 
             </div>
         </div>
@@ -2537,6 +2734,18 @@ Millet Groceries & Snacks</textarea>
                 <span class="location-choice-sub">Print both, one after another</span>
             </button>
             <button type="button" class="location-choice-cancel" onclick="hideAllPanelsKeepData()">Cancel</button>
+        </div>
+    </div>
+
+    <!-- Recent Prints: shared popup used by every tile's 🕘 icon -->
+    <div class="recent-prints-panel modal-panel" id="recentPrintsModal">
+        <div class="panel-header-row">
+            <span class="panel-title" id="recentPrintsTitle">🕘 Recent Prints</span>
+        </div>
+        <div class="recent-prints-list" id="recentPrintsList"></div>
+        <div class="recent-prints-footer">
+            <button type="button" class="recent-prints-clear-btn" onclick="clearRecentPrints()">Clear All</button>
+            <button type="button" class="recent-prints-close-btn" onclick="hideAllPanelsKeepData()">Close</button>
         </div>
     </div>
 
@@ -3951,7 +4160,7 @@ Millet Groceries & Snacks</textarea>
         }
 
         function hideAllPanelsKeepData() {
-            ['customInputPanel', 'couponInputPanel', 'locationInputPanel', 'priceInputPanel', 'estimateInputPanel', 'visitingInputPanel', 'multiInputPanel', 'whatsappInputPanel', 'exchangeInputPanel', 'locationChoiceModal', 'visitingChoiceModal'].forEach(id => {
+            ['customInputPanel', 'couponInputPanel', 'locationInputPanel', 'priceInputPanel', 'estimateInputPanel', 'visitingInputPanel', 'multiInputPanel', 'whatsappInputPanel', 'exchangeInputPanel', 'locationChoiceModal', 'visitingChoiceModal', 'recentPrintsModal'].forEach(id => {
                 const el = document.getElementById(id);
                 if(el) el.style.display = 'none';
             });
@@ -4065,6 +4274,280 @@ Millet Groceries & Snacks</textarea>
                     selectAndAddPct('10%');
                 }
                 focusFieldSoon('quickName');
+            }
+        }
+
+        // ===================== RECENT PRINTS =====================
+        // Every tile (Quick Print, Create & Print, Combined Print) has a
+        // small 🕘 icon that opens a list of the last few things printed
+        // from that tile, each with a "Print Again" button that restores
+        // the exact details (items, customer name, branch, text, etc.) and
+        // reprints — so a repeat customer doesn't need retyping everything.
+        // Stored in localStorage so it survives closing the browser/app.
+        const RECENT_PRINTS_MAX = 8;
+        const RECENT_TYPE_LABELS = {
+            exchange: 'Scrap Exchange',
+            custom: 'Custom Text',
+            coupon: 'Coupon',
+            location: 'Store Location',
+            price: 'Price Print',
+            estimate: 'Estimate Bill',
+            visiting: 'Visiting Card',
+            multi: 'Combined Print'
+        };
+
+        function loadRecentPrintsStore() {
+            try { return JSON.parse(localStorage.getItem('lp_recentPrints') || '{}'); }
+            catch (e) { return {}; }
+        }
+        let recentPrintsStore = loadRecentPrintsStore();
+
+        function saveRecentPrintsStore() {
+            try { localStorage.setItem('lp_recentPrints', JSON.stringify(recentPrintsStore)); }
+            catch (e) { /* storage full or unavailable — recent prints just won't persist */ }
+        }
+
+        function addRecentPrint(category, label, data) {
+            if (!recentPrintsStore[category]) recentPrintsStore[category] = [];
+            recentPrintsStore[category].unshift({
+                id: 'r' + Date.now() + Math.random().toString(36).slice(2, 7),
+                ts: Date.now(),
+                label: label || RECENT_TYPE_LABELS[category] || 'Print',
+                data: data
+            });
+            recentPrintsStore[category] = recentPrintsStore[category].slice(0, RECENT_PRINTS_MAX);
+            saveRecentPrintsStore();
+        }
+
+        function formatRecentTime(ts) {
+            const d = new Date(ts);
+            return d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short' }) + ' · ' +
+                   d.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+        }
+
+        // Generic helpers reused for Coupon/Price/Estimate: grab or restore
+        // every plain input/textarea/select value inside a panel by id.
+        function capturePanelFields(panelId) {
+            const panel = document.getElementById(panelId);
+            const map = {};
+            if (!panel) return map;
+            panel.querySelectorAll('input[id], textarea[id], select[id]').forEach(el => {
+                map[el.id] = (el.type === 'checkbox' || el.type === 'radio') ? el.checked : el.value;
+            });
+            return map;
+        }
+        function applyPanelFields(panelId, values) {
+            const panel = document.getElementById(panelId);
+            if (!panel || !values) return;
+            panel.querySelectorAll('input[id], textarea[id], select[id]').forEach(el => {
+                if (!(el.id in values)) return;
+                if (el.type === 'checkbox' || el.type === 'radio') el.checked = values[el.id];
+                else el.value = values[el.id];
+            });
+        }
+
+        // Called from triggerMobilePrint()/executeMultiPrint() right before
+        // the actual print, once we know printing is really going ahead.
+        function captureRecentPrint(type) {
+            try {
+                if (type === 'exchange') {
+                    const note = document.getElementById('exchange-note-input').value.trim();
+                    const items = JSON.parse(JSON.stringify(exchangeItems));
+                    const named = items.filter(it => it.name || it.rate);
+                    const label = named.length ? named.map(it => it.name).filter(Boolean).join(', ').slice(0, 40) : 'Scrap Exchange';
+                    addRecentPrint('exchange', label || 'Scrap Exchange', { items, note });
+                } else if (type === 'custom') {
+                    const editor = document.getElementById('editorCanvas');
+                    const text = editor.innerText.trim();
+                    addRecentPrint('custom', text ? text.slice(0, 40) : 'Custom Text', {
+                        html: editor.innerHTML,
+                        fontSize: document.getElementById('editor-fontsize-select').value,
+                        textAlign: editor.style.textAlign || 'center'
+                    });
+                } else if (type.indexOf('coupon') === 0) {
+                    const custName = document.getElementById('coupon-cust-name').value.trim();
+                    const custPhone = document.getElementById('coupon-cust-phone').value.trim();
+                    const label = custName || custPhone || 'Coupon';
+                    addRecentPrint('coupon', label, {
+                        printType: type,
+                        fields: capturePanelFields('couponInputPanel'),
+                        couponType: couponType,
+                        couponBranch: couponBranch,
+                        currentPct: currentPct,
+                        selectedStaff: selectedStaff
+                    });
+                } else if (type === 'location' || type === 'both-locations') {
+                    const branch = type === 'both-locations' ? 'both' : locationBranch;
+                    const label = branch === 'both' ? 'Both Branches' : (branch === 'gajuwaka' ? 'Gajuwaka' : 'Kurmannapalem');
+                    addRecentPrint('location', label, { branch });
+                } else if (type === 'price') {
+                    const name = document.getElementById('price-item-name').value.trim();
+                    addRecentPrint('price', name || 'Price Tag', {
+                        fields: capturePanelFields('priceInputPanel'),
+                        priceDiscType: priceDiscType,
+                        priceLayoutOption: priceLayoutOption,
+                        brandVisible: document.getElementById('price-brand-group').style.display !== 'none'
+                    });
+                } else if (type === 'estimate') {
+                    const custName = document.getElementById('est-cust-name').value.trim();
+                    const custPhone = document.getElementById('est-cust-phone').value.trim();
+                    const label = custName || custPhone || 'Estimate Bill';
+                    addRecentPrint('estimate', label, {
+                        items: JSON.parse(JSON.stringify(quickEstimateItems)),
+                        fields: capturePanelFields('estimateInputPanel')
+                    });
+                } else if (type === 'visiting') {
+                    const label = visitingCardBranch === 'both' ? 'Both Branches' : (visitingCardBranch === 'gajuwaka' ? 'Gajuwaka' : 'Kurmannapalem');
+                    addRecentPrint('visiting', label, { branch: visitingCardBranch });
+                }
+            } catch (e) {
+                console.error('Recent print capture failed:', e);
+            }
+        }
+
+        function captureRecentMultiPrint(selectedValues) {
+            try {
+                const label = selectedValues.length ? selectedValues.join(', ').slice(0, 40) : 'Combined Print';
+                addRecentPrint('multi', label, { selectedValues: selectedValues.slice() });
+            } catch (e) {
+                console.error('Recent print capture failed:', e);
+            }
+        }
+
+        function openRecentPrints(category) {
+            const modal = document.getElementById('recentPrintsModal');
+            if (modal.style.display === 'block' && modal.dataset.category === category) { hideAllPanelsKeepData(); return; }
+            hideAllPanelsKeepData();
+            modal.dataset.category = category;
+            document.getElementById('recentPrintsTitle').textContent = '🕘 Recent — ' + (RECENT_TYPE_LABELS[category] || 'Prints');
+            renderRecentPrintsList(category);
+            modal.style.display = 'block';
+        }
+
+        function renderRecentPrintsList(category) {
+            const listEl = document.getElementById('recentPrintsList');
+            const entries = recentPrintsStore[category] || [];
+            if (!entries.length) {
+                listEl.innerHTML = '<div class="recent-prints-empty">No recent prints yet. Once you print, it shows up here so you can print it again.</div>';
+                return;
+            }
+            listEl.innerHTML = entries.map(e => `
+                <div class="recent-print-item">
+                    <div class="recent-print-info">
+                        <div class="recent-print-label">${escapeHtml(e.label || 'Print')}</div>
+                        <div class="recent-print-time">${formatRecentTime(e.ts)}</div>
+                    </div>
+                    <div class="recent-print-actions">
+                        <button type="button" class="recent-print-reprint-btn" onclick="reprintRecent('${category}', '${e.id}')">🖨️ Print Again</button>
+                        <button type="button" class="recent-print-delete-btn" title="Remove" onclick="deleteRecentPrint('${category}', '${e.id}')">✕</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function deleteRecentPrint(category, id) {
+            recentPrintsStore[category] = (recentPrintsStore[category] || []).filter(e => e.id !== id);
+            saveRecentPrintsStore();
+            renderRecentPrintsList(category);
+        }
+
+        function clearRecentPrints() {
+            const modal = document.getElementById('recentPrintsModal');
+            const category = modal.dataset.category;
+            if (!category) return;
+            recentPrintsStore[category] = [];
+            saveRecentPrintsStore();
+            renderRecentPrintsList(category);
+        }
+
+        function reprintRecent(category, id) {
+            const entry = (recentPrintsStore[category] || []).find(e => e.id === id);
+            if (!entry) return;
+            const data = entry.data;
+            hideAllPanelsKeepData();
+
+            if (category === 'exchange') {
+                exchangeItems = JSON.parse(JSON.stringify((data.items && data.items.length) ? data.items : [{ name: '', rate: '' }]));
+                renderExchangeItemsPanel();
+                document.getElementById('exchange-note-input').value = data.note || '';
+                updateExchangeCardPreview();
+                document.getElementById('exReceiptCol').style.display = 'flex';
+                triggerMobilePrint('exchange');
+
+            } else if (category === 'custom') {
+                const editor = document.getElementById('editorCanvas');
+                editor.innerHTML = data.html || '';
+                editor.style.textAlign = data.textAlign || 'center';
+                if (data.fontSize) {
+                    editor.style.fontSize = data.fontSize;
+                    const sel = document.getElementById('editor-fontsize-select');
+                    if (sel) sel.value = data.fontSize;
+                }
+                document.getElementById('customReceiptCol').style.display = 'flex';
+                triggerMobilePrint('custom');
+
+            } else if (category === 'coupon') {
+                applyPanelFields('couponInputPanel', data.fields);
+                setCouponType(data.couponType || 'pct');
+                setCouponBranch(data.couponBranch || 'gajuwaka');
+                setStaffOption(data.selectedStaff || 'Bhargav');
+                applyPanelFields('couponInputPanel', data.fields);
+                currentPct = data.currentPct || 5;
+                document.getElementById('pct-val-display').textContent = currentPct + '%';
+                updateCouponCardPreview();
+                document.getElementById('couponReceiptCol').style.display = 'flex';
+                triggerMobilePrint(data.printType || ('coupon-' + couponBranch));
+
+            } else if (category === 'location') {
+                if (data.branch === 'both') {
+                    triggerMobilePrint('both-locations');
+                } else {
+                    setLocationBranch(data.branch || 'gajuwaka');
+                    document.getElementById('locationReceiptCol').style.display = 'flex';
+                    triggerMobilePrint('location');
+                }
+
+            } else if (category === 'price') {
+                applyPanelFields('priceInputPanel', data.fields);
+                const grp = document.getElementById('price-brand-group');
+                const btn = document.getElementById('price-brand-toggle-btn');
+                if (data.brandVisible) {
+                    grp.style.display = 'flex';
+                    btn.textContent = '✕ Remove Brand Name';
+                    btn.style.background = '#e2e8f0';
+                } else {
+                    grp.style.display = 'none';
+                    btn.textContent = '+ Add Brand Name';
+                    btn.style.background = '#f1f5f9';
+                }
+                setPriceDiscType(data.priceDiscType || 'pct');
+                setPriceLayout(data.priceLayoutOption || 1);
+                applyPanelFields('priceInputPanel', data.fields);
+                updatePriceCardPreview();
+                document.getElementById('priceReceiptCol').style.display = 'flex';
+                triggerMobilePrint('price');
+
+            } else if (category === 'estimate') {
+                quickEstimateItems = JSON.parse(JSON.stringify(data.items || []));
+                renderQuickItemsTable();
+                applyPanelFields('estimateInputPanel', data.fields);
+                updateEstimateCardPreview();
+                document.getElementById('estimateReceiptCol').style.display = 'flex';
+                triggerMobilePrint('estimate');
+
+            } else if (category === 'visiting') {
+                visitingCardBranch = data.branch || 'both';
+                document.getElementById('visitingReceiptCol').style.display = 'flex';
+                document.getElementById('btn-toggle-visiting').classList.add('active-toggle');
+                updateWhatsappCardPreview();
+                triggerMobilePrint('visiting');
+
+            } else if (category === 'multi') {
+                document.querySelectorAll('#multiInputPanel input[type=checkbox]').forEach(cb => {
+                    cb.checked = (data.selectedValues || []).includes(cb.value);
+                });
+                document.getElementById('multiReceiptCol').style.display = 'flex';
+                executeMultiPrint();
             }
         }
 
@@ -4348,15 +4831,19 @@ Millet Groceries & Snacks</textarea>
 
             // Which number(s) show depends on the branch choice made when the
             // Visiting Card tile was tapped (or 'both' while editing settings).
+            // When both are shown, each number gets a small branch label above
+            // it so it's clear which number belongs to which branch.
             const numbersEl = document.getElementById('vc-phone-numbers');
-            let numbersToShow;
-            if (visitingCardBranch === 'gajuwaka') numbersToShow = [phoneGajuwaka];
-            else if (visitingCardBranch === 'kurmannapalem') numbersToShow = [phoneKurmannapalem];
-            else numbersToShow = [phoneGajuwaka, phoneKurmannapalem];
-            numbersEl.innerHTML = numbersToShow
-                .filter(n => n)
-                .map(n => `<div class="vc-phone-number">${escapeHtml(n)}</div>`)
-                .join('');
+            if (visitingCardBranch === 'gajuwaka') {
+                numbersEl.innerHTML = phoneGajuwaka ? `<div class="vc-phone-number">${escapeHtml(phoneGajuwaka)}</div>` : '';
+            } else if (visitingCardBranch === 'kurmannapalem') {
+                numbersEl.innerHTML = phoneKurmannapalem ? `<div class="vc-phone-number">${escapeHtml(phoneKurmannapalem)}</div>` : '';
+            } else {
+                numbersEl.innerHTML = [
+                    phoneGajuwaka ? `<div class="vc-phone-branch-line"><div class="vc-phone-branch-name">Gajuwaka</div><div class="vc-phone-number">${escapeHtml(phoneGajuwaka)}</div></div>` : '',
+                    phoneKurmannapalem ? `<div class="vc-phone-branch-line"><div class="vc-phone-branch-name">Kurmannapalem</div><div class="vc-phone-number">${escapeHtml(phoneKurmannapalem)}</div></div>` : ''
+                ].join('');
+            }
 
             document.getElementById('vc-website-display').textContent = website;
             document.getElementById('vc-address1-display').textContent = addr1;
@@ -4858,8 +5345,10 @@ Millet Groceries & Snacks</textarea>
                         </div>
                         <div style="border:3px solid #000; background:#000; color:#fff; padding:6px; margin-top:6px; text-align:center;">
                             <div style="font-size:9px; font-weight:900; text-transform:uppercase;">📞 Call / WhatsApp</div>
+                            <div style="font-size:8.5px; font-weight:900; text-transform:uppercase; margin-top:4px;">Gajuwaka</div>
                             <div style="font-size:18px; font-weight:900; letter-spacing:1px;">${vcPhoneGajuwaka}</div>
-                            <div style="font-size:18px; font-weight:900; letter-spacing:1px; margin-top:4px;">${vcPhoneKurmannapalem}</div>
+                            <div style="font-size:8.5px; font-weight:900; text-transform:uppercase; margin-top:5px;">Kurmannapalem</div>
+                            <div style="font-size:18px; font-weight:900; letter-spacing:1px;">${vcPhoneKurmannapalem}</div>
                         </div>`;
                 }
 
@@ -4876,6 +5365,8 @@ Millet Groceries & Snacks</textarea>
 
         function executeMultiPrint() {
             buildMultiPreview();
+            const selectedValues = Array.from(document.querySelectorAll('#multiInputPanel input[type=checkbox]:checked')).map(cb => cb.value);
+            captureRecentMultiPrint(selectedValues);
             document.body.className = '';
             document.body.classList.add('print-multi');
             window.print();
@@ -4899,6 +5390,8 @@ Millet Groceries & Snacks</textarea>
                     return;
                 }
             }
+
+            captureRecentPrint(type);
 
             document.body.className = '';
             if (type === 'exchange') document.body.classList.add('print-exchange');
