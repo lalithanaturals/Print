@@ -1752,6 +1752,23 @@
                 display: none !important;
             }
 
+            /* The dark overlay behind popups (Store Location's branch choice,
+               Visiting Card's branch choice, Recent Prints) is closed by a
+               MutationObserver, which runs as a microtask — but window.print()
+               is called synchronously right after the popup is closed, and
+               blocks the page before that microtask gets a chance to run. So
+               at the exact moment printing happens, the overlay can still be
+               technically "active" and would otherwise get rasterized as a
+               huge dark rectangle covering the printed page. Forcing it off
+               here, regardless of its on-screen state, is what actually fixes
+               that — see also the synchronous fix in hideAllPanelsKeepData(). */
+            #modalBackdrop, .modal-backdrop {
+                display: none !important;
+            }
+            body.modal-open {
+                overflow: visible !important;
+            }
+
             html, body {
                 /* Overrides the "exact" color-adjust above just for the page
                    background: forces the browser back to its normal
@@ -4174,6 +4191,18 @@ Millet Groceries & Snacks</textarea>
                 const btn = document.getElementById(id);
                 if(btn) btn.classList.remove('active-toggle');
             });
+
+            // Close the modal backdrop synchronously here too, instead of
+            // relying only on the MutationObserver in initModalBackdropSync()
+            // (which runs as a microtask). Callers that close a popup and
+            // immediately call window.print() in the same synchronous burst
+            // (Store Location's/Visiting Card's branch choice, Recent Prints)
+            // would otherwise still have the dark overlay "on" at the exact
+            // moment printing happens, since window.print() blocks before
+            // that microtask gets a chance to run.
+            const backdrop = document.getElementById('modalBackdrop');
+            if (backdrop) backdrop.classList.remove('active');
+            document.body.classList.remove('modal-open');
         }
 
         function focusFieldSoon(id) {
