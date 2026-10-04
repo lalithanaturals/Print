@@ -1,3 +1,15 @@
+<!--
+    Lalitha Print Studio — version log
+    Bump APP_VERSION (search for it in the script section below) and add a
+    line here every time this file is updated and re-uploaded to GitHub.
+
+    v1.0.0 (2026-10-04) — Added app version number/changelog system.
+    v1.1.0 (2026-10-04) — Price Tag: more font-size options, MRP font
+      control, "You Save" line toggle (on by default), tighter/compact
+      layout. Added a "Number of Prints" stepper (default 1) to every
+      Quick Print tile, Create & Print panel and Combined Print, with an
+      automatic cut point between copies when printing more than one.
+-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -322,6 +334,73 @@
         .icon-btn-wrap .icon-btn {
             flex: 1;
         }
+
+        /* Wraps a tile (.icon-btn-wrap) together with its "Number of
+           Prints" stepper underneath, so the pair stays together as one
+           grid cell in .big-buttons-bar. */
+        .tile-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .tile-qty-stepper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            background: #fff7ed;
+            border: 1.5px solid #fed7aa;
+            border-radius: 8px;
+            padding: 4px 6px;
+        }
+
+        .tile-qty-stepper .qty-btn {
+            width: 22px;
+            height: 22px;
+            border-radius: 6px;
+            border: none;
+            background: #ea580c;
+            color: #ffffff;
+            font-size: 14px;
+            font-weight: 900;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            line-height: 1;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .tile-qty-stepper .qty-btn:active {
+            transform: scale(0.92);
+        }
+
+        .tile-qty-stepper .qty-label {
+            font-size: 10px;
+            font-weight: 800;
+            color: #9a3412;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .tile-qty-stepper .qty-value {
+            font-size: 13px;
+            font-weight: 900;
+            color: #334155;
+            min-width: 16px;
+            text-align: center;
+        }
+
+        /* Reusable "Number of Prints" stepper placed inside a panel's own
+           grid (Create & Print / Combined Print), styled to match the
+           existing counter-box/type-btn pattern used elsewhere. */
+        .panel-qty-stepper {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
         .tile-share-btn {
             position: absolute;
             top: 6px;
@@ -584,6 +663,14 @@
             margin: 0;
             font-weight: 900;
             color: #0f172a;
+        }
+
+        .app-version-tag {
+            display: inline-block;
+            font-size: 11px;
+            font-weight: 700;
+            color: #64748b;
+            margin-top: 2px;
         }
 
         /* Panels Shared — normal in-page panels. Every settings/editing panel
@@ -1356,6 +1443,13 @@
             margin: 5px 0;
         }
 
+        /* Temporary marker inserted between duplicated copies when printing
+           more than one "Number of Prints" — only ever meant to be seen by
+           the printer (see the .print-cut-break rule inside @media print). */
+        .print-cut-break {
+            display: none;
+        }
+
         .side-by-side-whatsapp {
             display: flex;
             align-items: center;
@@ -1801,6 +1895,22 @@
                 display: none !important;
             }
 
+            /* Marks the join between two copies of the same receipt when
+               "Number of Prints" > 1 (see printWithCopies() in the script).
+               Forcing a page break here is what makes a thermal printer's
+               driver-level auto-cutter (when the printer/driver is set to
+               cut after every page) cut between each copy, instead of
+               printing them back-to-back on one unbroken strip. */
+            .print-cut-break {
+                display: block !important;
+                height: 0 !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                border: none !important;
+                page-break-after: always !important;
+                break-after: page !important;
+            }
+
             /* The dark overlay behind popups (Store Location's branch choice,
                Visiting Card's branch choice, Recent Prints) is closed by a
                MutationObserver, which runs as a microtask — but window.print()
@@ -1964,6 +2074,7 @@
 
     <div class="page-title">
         <h1>Lalitha Print Studio</h1>
+        <span class="app-version-tag" id="app-version-tag">v1.0.0</span>
     </div>
 
     <div class="pos-shell">
@@ -1997,6 +2108,7 @@
             <div class="big-buttons-bar">
 
                 <!-- 2. Print Exchange -->
+                <div class="tile-group">
                 <div class="icon-btn-wrap">
                     <button class="icon-btn exchange" id="btn-toggle-exchange" onclick="triggerMobilePrint('exchange')">
                         <span class="tile-icon">
@@ -2013,8 +2125,15 @@
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>
                     </button>
                 </div>
+                <div class="tile-qty-stepper" onclick="event.stopPropagation();">
+                    <button type="button" class="qty-btn" onclick="adjustPrintQty('exchange', -1)">−</button>
+                    <span class="qty-value" data-qty-key="exchange">1</span>
+                    <button type="button" class="qty-btn" onclick="adjustPrintQty('exchange', 1)">+</button>
+                </div>
+                </div>
 
                 <!-- 3. Store Location -->
+                <div class="tile-group">
                 <div class="icon-btn-wrap">
                     <button class="icon-btn location" id="btn-toggle-location" onclick="openLocationChoiceModal()">
                         <span class="tile-icon">
@@ -2031,8 +2150,15 @@
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>
                     </button>
                 </div>
+                <div class="tile-qty-stepper" onclick="event.stopPropagation();">
+                    <button type="button" class="qty-btn" onclick="adjustPrintQty('location', -1)">−</button>
+                    <span class="qty-value" data-qty-key="location">1</span>
+                    <button type="button" class="qty-btn" onclick="adjustPrintQty('location', 1)">+</button>
+                </div>
+                </div>
 
                 <!-- 4. Visiting Card -->
+                <div class="tile-group">
                 <div class="icon-btn-wrap">
                     <button class="icon-btn visiting" id="btn-toggle-visiting" onclick="printVisitingCard()">
                         <span class="tile-icon">
@@ -2048,6 +2174,12 @@
                     <button type="button" class="tile-recent-btn" title="Recent Visiting Card Prints" onclick="event.stopPropagation(); openRecentPrints('visiting');">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>
                     </button>
+                </div>
+                <div class="tile-qty-stepper" onclick="event.stopPropagation();">
+                    <button type="button" class="qty-btn" onclick="adjustPrintQty('visiting', -1)">−</button>
+                    <span class="qty-value" data-qty-key="visiting">1</span>
+                    <button type="button" class="qty-btn" onclick="adjustPrintQty('visiting', 1)">+</button>
+                </div>
                 </div>
 
             </div>
@@ -2309,6 +2441,14 @@ Millet Groceries & Snacks</textarea>
         </div>
         <div class="multi-grid">
             <div class="form-group full-width">
+                <label>Number of Prints</label>
+                <div class="panel-qty-stepper">
+                    <button type="button" class="cnt-btn type-btn" style="flex:0; width:40px;" onclick="adjustPrintQty('multi', -1)">-</button>
+                    <span class="cnt-value qty-value" data-qty-key="multi" style="font-weight:900; font-size:16px;">1</span>
+                    <button type="button" class="cnt-btn type-btn" style="flex:0; width:40px;" onclick="adjustPrintQty('multi', 1)">+</button>
+                </div>
+            </div>
+            <div class="form-group full-width">
                 <label>Check items to include in your exact chosen order:</label>
                 <div class="checkbox-cards-grid" id="multi-checkboxes-container">
                     <label class="checkbox-card-item"><input type="checkbox" value="exchange" checked onchange="buildMultiPreview()"> Scrap Exchange</label>
@@ -2361,6 +2501,12 @@ Millet Groceries & Snacks</textarea>
             <button class="upload-logo-action-btn" onclick="document.getElementById('customLogoUploadInput').click()">📁 Upload Logo (JPEG/PNG/SVG)</button>
             <button class="reset-logo-btn" onclick="resetDefaultCustomLogo()" title="Restore default logo for custom text">↺ Default Logo</button>
             <input type="file" id="customLogoUploadInput" accept="image/jpeg,image/png,image/svg+xml" style="display: none;" onchange="handleCustomLogoUpload(event)">
+            <div class="toolbar-group panel-qty-stepper" style="margin-left:auto;">
+                <span style="font-size:11px; font-weight:800;">Number of Prints:</span>
+                <button type="button" class="cnt-btn type-btn" style="flex:0; width:36px;" onclick="adjustPrintQty('custom', -1)">-</button>
+                <span class="cnt-value qty-value" data-qty-key="custom" style="font-weight:900; font-size:15px;">1</span>
+                <button type="button" class="cnt-btn type-btn" style="flex:0; width:36px;" onclick="adjustPrintQty('custom', 1)">+</button>
+            </div>
         </div>
         
         <div class="editor-canvas" id="editorCanvas" contenteditable="true" placeholder="Type or upload text to print..." oninput="handleEditorInput()" style="text-align: center; font-size: 28px; line-height: 1.3;"></div>
@@ -2522,6 +2668,14 @@ Millet Groceries & Snacks</textarea>
                     <input type="checkbox" id="price-show-save-line" checked onchange="updatePriceCardPreview()"> Show "You Save ₹X (Y% OFF)" line
                 </label>
             </div>
+            <div class="form-group full-width">
+                <label>Number of Prints</label>
+                <div class="panel-qty-stepper">
+                    <button type="button" class="cnt-btn type-btn" style="flex:0; width:40px;" onclick="adjustPrintQty('price', -1)">-</button>
+                    <span class="cnt-value qty-value" data-qty-key="price" style="font-weight:900; font-size:16px;">1</span>
+                    <button type="button" class="cnt-btn type-btn" style="flex:0; width:40px;" onclick="adjustPrintQty('price', 1)">+</button>
+                </div>
+            </div>
 
             <div class="form-group full-width collapsible-section">
                 <div class="collapsible-toggle-header" onclick="toggleFontDrawer()">
@@ -2637,6 +2791,14 @@ Millet Groceries & Snacks</textarea>
                 <label>Phone Number (Optional)</label>
                 <input type="text" class="form-control" id="est-cust-phone" placeholder="e.g. 9876543210" oninput="updateEstimateCardPreview()">
             </div>
+            <div class="form-group">
+                <label>Number of Prints</label>
+                <div class="panel-qty-stepper">
+                    <button type="button" class="cnt-btn type-btn" style="flex:0; width:40px;" onclick="adjustPrintQty('estimate', -1)">-</button>
+                    <span class="cnt-value qty-value" data-qty-key="estimate" style="font-weight:900; font-size:16px;">1</span>
+                    <button type="button" class="cnt-btn type-btn" style="flex:0; width:40px;" onclick="adjustPrintQty('estimate', 1)">+</button>
+                </div>
+            </div>
 
             <div class="form-group full-width estimate-quick-bar">
                 <label id="quick-entry-form-title">Quick Add Item (Press Enter in Item Name to go to MRP, press Enter in MRP to add item):</label>
@@ -2730,6 +2892,14 @@ Millet Groceries & Snacks</textarea>
             <div class="form-group">
                 <label>Customer Number (Optional)</label>
                 <input type="text" class="form-control" id="coupon-cust-phone" placeholder="e.g. 9876543210" oninput="updateCouponCardPreview()">
+            </div>
+            <div class="form-group">
+                <label>Number of Prints</label>
+                <div class="panel-qty-stepper">
+                    <button type="button" class="cnt-btn type-btn" style="flex:0; width:40px;" onclick="adjustPrintQty('coupon', -1)">-</button>
+                    <span class="cnt-value qty-value" data-qty-key="coupon" style="font-weight:900; font-size:16px;">1</span>
+                    <button type="button" class="cnt-btn type-btn" style="flex:0; width:40px;" onclick="adjustPrintQty('coupon', 1)">+</button>
+                </div>
             </div>
             <div class="form-group">
                 <label>Coupon Type</label>
@@ -3193,6 +3363,40 @@ Millet Groceries & Snacks</textarea>
     <div class="modal-backdrop" id="modalBackdrop" onclick="hideAllPanelsKeepData()"></div>
 
     <script>
+        // ---- App version ----
+        // Bump this (and add a line to the version-log comment at the very
+        // top of this file) every time the file is updated and re-uploaded.
+        const APP_VERSION = 'v1.1.0';
+
+        // ---- Number of Prints ----
+        // One count per print type, shown as a +/- stepper on the Quick
+        // Print tiles and inside each Create & Print / Combined Print
+        // panel. Always starts at 1. See adjustPrintQty() and
+        // printWithCopies() below for how it's used at print time.
+        const PRINT_QTY_MIN = 1;
+        const PRINT_QTY_MAX = 50;
+        let printQty = {
+            exchange: 1,
+            location: 1,
+            visiting: 1,
+            custom: 1,
+            coupon: 1,
+            price: 1,
+            estimate: 1,
+            multi: 1
+        };
+
+        function adjustPrintQty(key, delta) {
+            const current = printQty[key] || 1;
+            let next = current + delta;
+            if (next < PRINT_QTY_MIN) next = PRINT_QTY_MIN;
+            if (next > PRINT_QTY_MAX) next = PRINT_QTY_MAX;
+            printQty[key] = next;
+            document.querySelectorAll('.qty-value[data-qty-key="' + key + '"]').forEach(el => {
+                el.textContent = next;
+            });
+        }
+
         let currentPct = 5;
         let couponType = 'pct';
         let couponBranch = 'gajuwaka';
@@ -3371,6 +3575,9 @@ Millet Groceries & Snacks</textarea>
         }
 
         window.addEventListener('DOMContentLoaded', () => {
+            const versionTag = document.getElementById('app-version-tag');
+            if (versionTag) versionTag.textContent = APP_VERSION;
+
             const todayStr = getLocalDateStr();
             const dateInput = document.getElementById('coupon-from-date');
             if (dateInput) dateInput.value = todayStr;
@@ -3414,8 +3621,8 @@ Millet Groceries & Snacks</textarea>
             const q = document.getElementById('toolSearchInput').value.trim().toLowerCase();
             document.querySelectorAll('.dashboard-section').forEach(section => {
                 let anyVisible = false;
-                section.querySelectorAll('.big-buttons-bar > .icon-btn, .big-buttons-bar > .icon-btn-wrap').forEach(el => {
-                    const btn = el.classList.contains('icon-btn-wrap') ? el.querySelector('.icon-btn') : el;
+                section.querySelectorAll('.big-buttons-bar > .icon-btn, .big-buttons-bar > .icon-btn-wrap, .big-buttons-bar > .tile-group').forEach(el => {
+                    const btn = el.classList.contains('icon-btn') ? el : (el.querySelector('.icon-btn') || el);
                     const label = (btn.querySelector('.t1')?.textContent || '').toLowerCase();
                     const match = !q || label.includes(q);
                     el.style.display = match ? '' : 'none';
@@ -5510,13 +5717,64 @@ Millet Groceries & Snacks</textarea>
             });
         }
 
+        // ---- Number of Prints (cont'd) — printing N copies with a cut
+        // between each ----
+        // The whole app prints by toggling a body class, which shows the one
+        // receipt-column (columnId) matching whatever's being printed and
+        // hides everything else (see the body.print-* rules under
+        // @media print). To print more than one copy, this temporarily
+        // repeats that column's own markup N times, with a .print-cut-break
+        // between each repeat so the printer driver's auto-cutter (when the
+        // printer is set to cut after every page) cuts between copies, then
+        // puts the column back to its normal single-copy content right
+        // after window.print() returns — window.print() is synchronous and
+        // blocks until the print dialog is dismissed, so nothing else in
+        // the app can observe the duplicated markup in between.
+        function printWithCopies(columnId, qty) {
+            const col = columnId ? document.getElementById(columnId) : null;
+            if (!col || !qty || qty <= 1) {
+                window.print();
+                return;
+            }
+            const original = col.innerHTML;
+            let html = original;
+            for (let i = 1; i < qty; i++) {
+                html += '<div class="print-cut-break"></div>' + original;
+            }
+            col.innerHTML = html;
+            window.print();
+            col.innerHTML = original;
+        }
+
+        function printQtyKeyForType(type) {
+            if (type === 'exchange') return 'exchange';
+            if (type === 'custom') return 'custom';
+            if (type.indexOf('coupon') === 0) return 'coupon';
+            if (type === 'location' || type === 'both-locations') return 'location';
+            if (type === 'price') return 'price';
+            if (type === 'estimate') return 'estimate';
+            if (type === 'visiting') return 'visiting';
+            return type;
+        }
+
+        function printColumnIdForType(type) {
+            if (type === 'exchange') return 'exReceiptCol';
+            if (type === 'custom') return 'customReceiptCol';
+            if (type.indexOf('coupon') === 0) return 'couponReceiptCol';
+            if (type === 'location' || type === 'both-locations') return 'locationReceiptCol';
+            if (type === 'price') return 'priceReceiptCol';
+            if (type === 'estimate') return 'estimateReceiptCol';
+            if (type === 'visiting') return 'visitingReceiptCol';
+            return null;
+        }
+
         function executeMultiPrint() {
             buildMultiPreview();
             const selectedValues = Array.from(document.querySelectorAll('#multiInputPanel input[type=checkbox]:checked')).map(cb => cb.value);
             captureRecentMultiPrint(selectedValues);
             document.body.className = '';
             document.body.classList.add('print-multi');
-            window.print();
+            printWithCopies('multiReceiptCol', printQty.multi);
         }
 
         function triggerMobilePrint(type) {
@@ -5552,7 +5810,8 @@ Millet Groceries & Snacks</textarea>
             else if (type === 'estimate') document.body.classList.add('print-estimate');
             else if (type === 'visiting') document.body.classList.add('print-visiting');
 
-            window.print();
+            const qtyKey = printQtyKeyForType(type);
+            printWithCopies(printColumnIdForType(type), printQty[qtyKey]);
         }
     </script>
 </body>
