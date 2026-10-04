@@ -1507,71 +1507,107 @@
         }
 
         .price-card {
-            padding-top: 0px !important;
-            padding-bottom: 3mm !important;
+            padding: 14px 16px 10px !important;
+            border: 2px dashed #000000 !important;
         }
 
-        .price-tag-brand {
-            font-size: 15px;
+        .price-tag-sp-row {
+            display: flex;
+            align-items: baseline;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 4px;
+        }
+
+        .price-tag-sp-label {
+            font-size: 16px;
             font-weight: 900;
             text-transform: uppercase;
-            margin-bottom: 2px;
             letter-spacing: 0.5px;
         }
 
-        .price-tag-item-name {
-            font-size: 18px;
+        .price-tag-sp-value {
+            font-size: 32px;
             font-weight: 900;
-            text-transform: uppercase;
-            border: 2px solid #000000;
-            padding: 5px 4px;
-            margin: 4px 0;
-            background: #fff;
             letter-spacing: 0.5px;
         }
 
-        .price-tag-qty {
+        .price-tag-save-line {
+            font-size: 12px;
+            font-weight: 900;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .price-tag-hr {
+            border-top: 3px solid #000;
+            margin: 8px 0 12px;
+        }
+
+        .price-tag-footer-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            text-align: left;
+            gap: 10px;
+        }
+
+        .price-tag-footer-row.centered {
+            justify-content: center;
+            text-align: center;
+        }
+
+        .price-tag-mrp-col {
+            flex-shrink: 0;
+        }
+
+        .price-tag-mrp-label {
             font-size: 13px;
             font-weight: 900;
             text-transform: uppercase;
-            margin: 3px 0;
-            letter-spacing: 0.5px;
         }
 
-        .price-tag-mrp-box {
-            font-size: 26px;
+        .price-tag-mrp-value {
+            font-size: 20px;
             font-weight: 900;
-            border: 3px solid #000000;
-            padding: 6px 4px;
-            margin: 6px 0;
-            background: #fff;
-            letter-spacing: 1px;
         }
 
-        .price-tag-mrp-small-struck {
-            font-size: 14px;
+        .price-tag-brand-col {
+            text-align: right;
+            min-width: 0;
+        }
+
+        .price-tag-footer-row.centered .price-tag-brand-col {
+            text-align: center;
+        }
+
+        .price-tag-brand-name {
+            font-size: 15px;
             font-weight: 900;
-            text-decoration: line-through;
             text-transform: uppercase;
-            margin-top: 4px;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.3px;
+            margin-bottom: 2px;
         }
 
-        .price-tag-final-price-box {
-            font-size: 26px;
-            font-weight: 900;
-            border: 3px solid #000000;
-            padding: 6px 4px;
-            margin: 4px 0;
-            background: #fff;
-            letter-spacing: 1px;
+        .price-tag-item-name-v2 {
+            font-size: 18px;
+            font-weight: 700;
+            text-transform: uppercase;
+            word-break: break-word;
+        }
+
+        .price-tag-item-qty-v2 {
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
         }
 
         .price-tag-notes {
             font-size: 11px;
             font-weight: 900;
             text-transform: uppercase;
-            margin-top: 4px;
+            margin-top: 10px;
+            text-align: left;
         }
 
         .visiting-card {
@@ -1866,8 +1902,12 @@
             }
 
             .price-card {
-                padding-top: 0px !important;
-                padding-bottom: 5mm !important;
+                padding: 10px 12px 8mm !important;
+                /* The dashed line is the sticker's cut/tear line, so unlike
+                   every other card it must survive printing — restore it
+                   here since the generic ".card { border:none }" rule above
+                   would otherwise strip it. */
+                border: 2px dashed #000 !important;
             }
 
             body.print-exchange .exchange-column { display: block !important; }
@@ -2035,7 +2075,7 @@
                     </button>
                 </div>
 
-                <!-- 7. Price Print -->
+                <!-- 7. Price Tag -->
                 <div class="icon-btn-wrap">
                     <button class="icon-btn price" id="btn-toggle-price" onclick="togglePricePanel()">
                         <span class="tile-icon">
@@ -2043,9 +2083,9 @@
                                 <path d="M20.6 12.6 12 21.2 2.8 12 12.8 2h5.8a2 2 0 0 1 2 2Z"/><circle cx="16.5" cy="7.5" r="1.5"/>
                             </svg>
                         </span>
-                        <span class="t1">Price Print</span>
+                        <span class="t1">Price Tag</span>
                     </button>
-                    <button type="button" class="tile-recent-btn" title="Recent Price Prints" onclick="event.stopPropagation(); openRecentPrints('price');">
+                    <button type="button" class="tile-recent-btn" title="Recent Price Tags" onclick="event.stopPropagation(); openRecentPrints('price');">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>
                     </button>
                 </div>
@@ -2396,7 +2436,7 @@ Millet Groceries & Snacks</textarea>
         </div>
     </div>
 
-    <!-- Price Print Input Panel -->
+    <!-- Price Tag Input Panel -->
     <div class="price-panel" id="priceInputPanel">
         <div class="panel-header-row">
             <span class="panel-title">🏷️ Item Price Tag Creator</span>
@@ -2429,14 +2469,6 @@ Millet Groceries & Snacks</textarea>
         </div>
 
         <div class="price-grid">
-            <div class="form-group full-width">
-                <label>Layout Structure Options:</label>
-                <div class="type-selector-btns">
-                    <button class="type-btn active" id="p-layout-1-btn" onclick="setPriceLayout(1)">1. Item Name Big / Price Small</button>
-                    <button class="type-btn" id="p-layout-2-btn" onclick="setPriceLayout(2)">2. Price Big / Item Name Small</button>
-                </div>
-            </div>
-
             <div class="form-group full-width">
                 <button type="button" class="type-btn" id="price-brand-toggle-btn" onclick="togglePriceBrandInput()" style="background:#f1f5f9; border-style: dashed; padding: 8px;">+ Add Brand Name</button>
             </div>
@@ -2472,6 +2504,11 @@ Millet Groceries & Snacks</textarea>
                 <label>Notes (Optional)</label>
                 <input type="text" class="form-control sentence-case-input" id="price-notes" placeholder="" value="" oninput="updatePriceCardPreview()">
             </div>
+            <div class="form-group full-width">
+                <label class="custom-checkbox-label">
+                    <input type="checkbox" id="price-show-save-line" checked onchange="updatePriceCardPreview()"> Show "You Save ₹X (Y% OFF)" line
+                </label>
+            </div>
 
             <div class="form-group full-width collapsible-section">
                 <div class="collapsible-toggle-header" onclick="toggleFontDrawer()">
@@ -2482,45 +2519,85 @@ Millet Groceries & Snacks</textarea>
                     <div class="form-group">
                         <label>Item Name Font</label>
                         <select class="form-control" id="p-font-name" onchange="updatePriceCardPreview()">
+                            <option value="12px">12px</option>
+                            <option value="14px">14px</option>
                             <option value="16px">16px (Small)</option>
-                            <option value="18px">18px</option>
+                            <option value="18px" selected>18px (Default)</option>
+                            <option value="20px">20px</option>
                             <option value="22px">22px</option>
-                            <option value="26px" selected>26px (Big)</option>
+                            <option value="24px">24px</option>
+                            <option value="26px">26px (Big)</option>
+                            <option value="28px">28px</option>
                             <option value="32px">32px</option>
+                            <option value="36px">36px</option>
+                            <option value="40px">40px</option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <label>Price Font</label>
+                        <label>SP (Selling Price) Font</label>
                         <select class="form-control" id="p-font-price" onchange="updatePriceCardPreview()">
                             <option value="16px">16px (Small)</option>
-                            <option value="20px" selected>20px</option>
+                            <option value="20px">20px</option>
+                            <option value="24px">24px</option>
                             <option value="26px">26px</option>
-                            <option value="32px">32px (Big)</option>
-                            <option value="40px">40px</option>
+                            <option value="28px">28px</option>
+                            <option value="32px" selected>32px (Default)</option>
+                            <option value="36px">36px</option>
+                            <option value="40px">40px (Big)</option>
+                            <option value="44px">44px</option>
+                            <option value="48px">48px</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>MRP Font</label>
+                        <select class="form-control" id="p-font-mrp" onchange="updatePriceCardPreview()">
+                            <option value="14px">14px</option>
+                            <option value="16px">16px</option>
+                            <option value="18px">18px</option>
+                            <option value="20px" selected>20px (Default)</option>
+                            <option value="22px">22px</option>
+                            <option value="24px">24px</option>
+                            <option value="26px">26px (Big)</option>
+                            <option value="28px">28px</option>
+                            <option value="32px">32px</option>
+                            <option value="36px">36px</option>
                         </select>
                     </div>
                     <div class="form-group">
                         <label>Brand Font</label>
                         <select class="form-control" id="p-font-brand" onchange="updatePriceCardPreview()">
+                            <option value="10px">10px</option>
                             <option value="12px">12px</option>
                             <option value="15px" selected>15px (Default)</option>
                             <option value="18px">18px</option>
+                            <option value="20px">20px</option>
+                            <option value="24px">24px</option>
                         </select>
                     </div>
                     <div class="form-group">
                         <label>Quantity Font</label>
                         <select class="form-control" id="p-font-qty" onchange="updatePriceCardPreview()">
+                            <option value="10px">10px</option>
                             <option value="11px">11px</option>
+                            <option value="12px">12px</option>
                             <option value="13px" selected>13px (Default)</option>
+                            <option value="14px">14px</option>
                             <option value="16px">16px</option>
+                            <option value="18px">18px</option>
+                            <option value="20px">20px</option>
                         </select>
                     </div>
                     <div class="form-group">
                         <label>Notes Font</label>
                         <select class="form-control" id="p-font-notes" onchange="updatePriceCardPreview()">
+                            <option value="8px">8px</option>
+                            <option value="9px">9px</option>
                             <option value="10px">10px</option>
                             <option value="11px" selected>11px (Default)</option>
+                            <option value="12px">12px</option>
                             <option value="14px">14px</option>
+                            <option value="16px">16px</option>
+                            <option value="18px">18px</option>
                         </select>
                     </div>
                 </div>
@@ -2821,7 +2898,7 @@ Millet Groceries & Snacks</textarea>
             </div>
         </div>
 
-        <!-- Price Print Receipt Column -->
+        <!-- Price Tag Receipt Column -->
         <div class="receipt-column price-receipt-column" id="priceReceiptCol">
             <div class="card-label-row">
                 <div class="card-label">Price Tag Sticker (80mm)</div>
@@ -2833,10 +2910,24 @@ Millet Groceries & Snacks</textarea>
                     <div class="tagline" id="price-receipt-tagline" style="display: none;">Feel the earth</div>
                     <div class="divider" id="price-receipt-divider" style="display: none;"></div>
 
-                    <div class="price-tag-brand" id="p-card-brand" style="display: none;"></div>
-                    <div class="divider" id="p-card-brand-divider" style="display: none;"></div>
-                    
-                    <div id="p-card-content-wrapper">
+                    <div class="price-tag-sp-row">
+                        <span class="price-tag-sp-label" id="p-card-sp-label">SP</span>
+                        <span class="price-tag-sp-value" id="p-card-sp-value">₹0.00</span>
+                    </div>
+                    <div class="price-tag-save-line" id="p-card-save-line" style="display: none;"></div>
+
+                    <div class="price-tag-hr"></div>
+
+                    <div class="price-tag-footer-row" id="p-card-footer-row">
+                        <div class="price-tag-mrp-col" id="p-card-mrp-col">
+                            <div class="price-tag-mrp-label">MRP</div>
+                            <div class="price-tag-mrp-value" id="p-card-mrp-value">₹0.00</div>
+                        </div>
+                        <div class="price-tag-brand-col">
+                            <div class="price-tag-brand-name" id="p-card-brand-name" style="display: none;"></div>
+                            <div class="price-tag-item-name-v2" id="p-card-item-name">Item Name</div>
+                            <div class="price-tag-item-qty-v2" id="p-card-item-qty" style="display: none;"></div>
+                        </div>
                     </div>
 
                     <div id="p-card-notes-wrapper" style="display: none;">
@@ -3494,18 +3585,12 @@ Millet Groceries & Snacks</textarea>
             }
         }
 
+        // The old "Layout 1 / Layout 2" switcher is gone now that the Price
+        // Tag has one fixed design, but this stays as a harmless no-op so
+        // older Recent Prints entries (which stored a layout choice) still
+        // restore without errors.
         function setPriceLayout(opt) {
             priceLayoutOption = opt;
-            document.getElementById('p-layout-1-btn').classList.toggle('active', opt === 1);
-            document.getElementById('p-layout-2-btn').classList.toggle('active', opt === 2);
-
-            if(opt === 1) {
-                document.getElementById('p-font-name').value = '26px';
-                document.getElementById('p-font-price').value = '20px';
-            } else {
-                document.getElementById('p-font-name').value = '16px';
-                document.getElementById('p-font-price').value = '32px';
-            }
             updatePriceCardPreview();
         }
 
@@ -4319,7 +4404,7 @@ Millet Groceries & Snacks</textarea>
             custom: 'Custom Text',
             coupon: 'Coupon',
             location: 'Store Location',
-            price: 'Price Print',
+            price: 'Price Tag',
             estimate: 'Estimate Bill',
             visiting: 'Visiting Card',
             multi: 'Combined Print'
@@ -4715,55 +4800,75 @@ Millet Groceries & Snacks</textarea>
 
             const fName = document.getElementById('p-font-name').value;
             const fPrice = document.getElementById('p-font-price').value;
+            const fMrp = document.getElementById('p-font-mrp').value;
             const fBrand = document.getElementById('p-font-brand').value;
             const fQty = document.getElementById('p-font-qty').value;
             const fNotes = document.getElementById('p-font-notes').value;
+            const showSaveLine = document.getElementById('price-show-save-line').checked;
 
-            const brandEl = document.getElementById('p-card-brand');
-            const brandDivider = document.getElementById('p-card-brand-divider');
-
+            // Brand name + item name/qty always sit in the footer's right
+            // column now (next to MRP), rather than as a separate block up top.
+            const brandEl = document.getElementById('p-card-brand-name');
             if (brandGroup.style.display !== 'none' && brandName) {
                 brandEl.style.display = 'block';
-                brandDivider.style.display = 'block';
                 brandEl.textContent = brandName;
                 brandEl.style.fontSize = fBrand;
             } else {
                 brandEl.style.display = 'none';
-                brandDivider.style.display = 'none';
             }
 
-            const contentWrapper = document.getElementById('p-card-content-wrapper');
-            
-            let qtyHtml = itemQty ? `<div style="font-size:${fQty}; font-weight:900; text-transform:uppercase; margin:3px 0;">${escapeHtml(itemQty)}</div>` : '';
-            let nameHtml = `<div style="font-size:${fName}; font-weight:900; text-transform:uppercase; border:2px solid #000; padding:5px 4px; margin:4px 0; background:#fff;">${escapeHtml(itemName)}</div>`;
-            
-            let priceHtml = '';
-            if (itemVal > 0) {
-                if (discVal > 0) {
-                    let finalPrice = computePriceTagFinal(itemVal, discVal, priceDiscType);
-                    priceHtml = `
-                        <div style="font-size:13px; font-weight:900; text-decoration:line-through; text-transform:uppercase; margin-top:4px;">MRP: ₹${itemVal.toFixed(2)}${priceTagDiscountLabel(discVal, priceDiscType)}</div>
-                        <div style="font-size:${fPrice}; font-weight:900; border:3px solid #000; padding:6px 4px; margin:4px 0; background:#fff;">PRICE: ₹${finalPrice.toFixed(2)}</div>
-                    `;
+            document.getElementById('p-card-item-name').textContent = itemName;
+            document.getElementById('p-card-item-name').style.fontSize = fName;
+
+            const qtyEl = document.getElementById('p-card-item-qty');
+            if (itemQty) {
+                qtyEl.style.display = 'block';
+                qtyEl.textContent = itemQty;
+                qtyEl.style.fontSize = fQty;
+            } else {
+                qtyEl.style.display = 'none';
+            }
+
+            const spLabelEl = document.getElementById('p-card-sp-label');
+            const spValueEl = document.getElementById('p-card-sp-value');
+            const saveLineEl = document.getElementById('p-card-save-line');
+            const mrpColEl = document.getElementById('p-card-mrp-col');
+            const mrpValueEl = document.getElementById('p-card-mrp-value');
+            const footerRowEl = document.getElementById('p-card-footer-row');
+
+            spValueEl.style.fontSize = fPrice;
+            mrpValueEl.style.fontSize = fMrp;
+
+            if (itemVal > 0 && discVal > 0) {
+                // A discount is set: SP is the main price, MRP shows
+                // alongside it (not struck through — kept big and legible
+                // for a thermal print), plus a "You Save" line.
+                const finalPrice = computePriceTagFinal(itemVal, discVal, priceDiscType);
+                const saved = Math.max(0, itemVal - finalPrice);
+                const savedPct = itemVal > 0 ? Math.round((saved / itemVal) * 100) : 0;
+
+                spLabelEl.textContent = 'SP';
+                spValueEl.textContent = `₹${finalPrice.toFixed(2)}`;
+
+                if (saved > 0 && showSaveLine) {
+                    saveLineEl.style.display = 'block';
+                    saveLineEl.textContent = `You Save ₹${saved.toFixed(2)} (${savedPct}% OFF)`;
                 } else {
-                    priceHtml = `<div style="font-size:${fPrice}; font-weight:900; border:3px solid #000; padding:6px 4px; margin:6px 0; background:#fff;">MRP: ₹${itemVal.toFixed(2)}</div>`;
+                    saveLineEl.style.display = 'none';
                 }
-            } else {
-                priceHtml = `<div style="font-size:${fPrice}; font-weight:900; border:3px solid #000; padding:6px 4px; margin:6px 0; background:#fff;">MRP: ₹0</div>`;
-            }
 
-            if (priceLayoutOption === 1) {
-                contentWrapper.innerHTML = `
-                    ${nameHtml}
-                    ${qtyHtml}
-                    ${priceHtml}
-                `;
+                mrpColEl.style.display = '';
+                mrpValueEl.textContent = `₹${itemVal.toFixed(2)}`;
+                footerRowEl.classList.remove('centered');
             } else {
-                contentWrapper.innerHTML = `
-                    ${priceHtml}
-                    ${nameHtml}
-                    ${qtyHtml}
-                `;
+                // No discount set: there's only one price, so it becomes the
+                // big main price under the "MRP" label instead — no second,
+                // smaller price squeezed in next to it.
+                spLabelEl.textContent = 'MRP';
+                spValueEl.textContent = `₹${itemVal.toFixed(2)}`;
+                saveLineEl.style.display = 'none';
+                mrpColEl.style.display = 'none';
+                footerRowEl.classList.add('centered');
             }
 
             const notesWrapper = document.getElementById('p-card-notes-wrapper');
