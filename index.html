@@ -9,7 +9,72 @@
       layout. Added a "Number of Prints" stepper (default 1) to every
       Quick Print tile, Create & Print panel and Combined Print, with an
       automatic cut point between copies when printing more than one.
+    v1.2.0 (2026-10-04) — Added print-confirmation toasts, tap-to-enlarge
+      preview, Export/Import Settings backup, most-used tile ordering,
+      a daily print-count tracker, and an estimate payment note. Added a
+      Test Print / calibration card. Moved Test Print, Backup Settings and
+      Restore Settings into a single ⚙️ Settings menu (top right) instead
+      of separate top-bar icons. Visiting Card's branch choice is now
+      shown inline below its tile (with the live preview still visible)
+      instead of a popup. Recent Prints now keeps the last 10 designs per
+      type and, instead of logging repeat prints of the same design as
+      separate copies, bumps the existing entry to the top with a ×N
+      repeat count.
+    v1.3.0 (2026-10-04) — Added a Promo Tag tile (Create & Print): preset
+      attention-grabbing tags (New Arrival, Best Seller, Rare Item, Must
+      Try, Flat 10/20/50% Off, Combo Offer, Limited Stock, Sale) that print
+      as just the logo and one big bold line of text, editable after
+      picking a preset. Fixed the new Test Print card briefly showing on
+      screen by default alongside Exchange.
+    v1.3.1 (2026-10-04) — Fixed Visiting Card's branch-choice panel
+      sometimes opening above the Quick Print tiles instead of directly
+      below the Visiting Card tile, once most-used tile reordering had
+      moved that tile — the panel now always follows its tile.
+    v1.4.0 (2026-10-04) — Added Shop Floor Mode: an optional, toggleable
+      layout (Settings → Shop Floor Mode) built for one-handed use at the
+      counter — bigger tiles, a bottom tab bar for switching sections
+      without reaching the top, and a floating button that repeats
+      whatever was printed last, from any category. Off by default;
+      switching it off returns to the classic layout exactly as before.
+      Also fixed a bug (caught before shipping) where printing anything
+      while in a future alternate mode would have silently turned that
+      mode off.
+    v1.5.0 (2026-10-04) — Every tile's settings panel and choice popup
+      (Exchange, Store Location's branch choice + address settings,
+      Visiting Card's branch choice + number settings, Custom Text,
+      Coupon, Price Tag, Promo Tag, Estimate, Combined Print) now opens
+      inline directly below that tile — like Visiting Card already did —
+      instead of as a popup or a panel sitting elsewhere on the page.
+      Store Location's branch choice is no longer a centered popup either.
+    v1.5.1 (2026-10-04) — Tightened spacing across every tile's settings
+      panel (padding, header gaps, field gaps, the options bar, grid row
+      gaps, buttons) for a cleaner, more compact look with less empty
+      space — applies to all of them (Exchange, Store Location, Visiting
+      Card, Custom Text, Coupon, Price Tag, Promo Tag, Estimate, Combined
+      Print), not just Price Tag.
+    v1.6.0 (2026-10-04) — UI polish pass: each tile's icon now sits in a
+      small tinted chip so tiles are easier to tell apart at a glance; the
+      open settings panel below a tile gets a colored left-edge stripe
+      matching its section (orange/Quick, blue/Create, purple/Combined);
+      a friendlier empty state for Recent Prints with an icon and clearer
+      message; and the Settings menu is now grouped into labeled sections
+      (Appearance, Printer, Data).
+    v1.6.1 (2026-10-04) — Fixed: opening any tile's settings (e.g. Price
+      Tag, Promo Tag) no longer shifts the other tiles that share its row
+      to a new row underneath it. Every tile now stays exactly where it
+      is at all times — only the panel itself appears, directly below the
+      full row the tapped tile belongs to, and only rows further down
+      shift to make room.
+    v1.6.2 (2026-10-04) — Fixed: a selected/open tile's label became
+      almost unreadable (faint white-on-white) while the mouse cursor
+      rested on it, because hovering lightened the tile's background but
+      didn't change its white text. Selected tiles now keep their solid
+      color and white text on hover too, in every section.
+    v1.6.3 (2026-10-04) — Removed the "Today: N prints" bar from the top
+      of the app (not needed).
 -->
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -197,6 +262,69 @@
             height: 17px;
         }
 
+        .settings-menu-wrap {
+            position: relative;
+        }
+        .settings-menu-panel {
+            display: none;
+            position: absolute;
+            top: calc(100% + 8px);
+            right: 0;
+            min-width: 190px;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            box-shadow: 0 12px 30px rgba(15, 23, 42, 0.18);
+            padding: 6px;
+            z-index: 500;
+            flex-direction: column;
+            gap: 2px;
+        }
+        .settings-menu-panel.show {
+            display: flex;
+        }
+        .settings-menu-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+            background: transparent;
+            border: none;
+            border-radius: 8px;
+            padding: 9px 10px;
+            font-size: 13px;
+            font-weight: 800;
+            color: #334155;
+            text-align: left;
+            cursor: pointer;
+        }
+        .settings-menu-item:hover {
+            background: #f1f5f9;
+            color: #0f172a;
+        }
+        .settings-menu-item svg {
+            width: 16px;
+            height: 16px;
+            flex-shrink: 0;
+        }
+        .settings-menu-divider {
+            height: 1px;
+            background: #e2e8f0;
+            margin: 4px 2px;
+        }
+        .settings-menu-label {
+            font-size: 10.5px;
+            font-weight: 900;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            color: #94a3b8;
+            padding: 8px 10px 3px;
+        }
+        #shopfloorModeMenuBtn.on {
+            background: #fff7ed;
+            color: #ea580c;
+        }
+
         .pos-search-row {
             max-height: 0;
             overflow: hidden;
@@ -237,6 +365,195 @@
 
         .pos-search-row input::placeholder {
             color: #94a3b8;
+        }
+
+        .print-stats-bar {
+            display: none;
+            align-items: center;
+            justify-content: space-between;
+            margin: 10px 20px 0;
+            padding: 8px 12px;
+            background: #f8fafc;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 12.5px;
+            font-weight: 800;
+            color: #334155;
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .print-stats-caret {
+            color: #94a3b8;
+            transition: transform 0.15s ease;
+        }
+
+        .print-stats-bar.open .print-stats-caret {
+            transform: rotate(180deg);
+        }
+
+        .print-stats-detail {
+            display: none;
+            margin: 6px 20px 0;
+            padding: 8px 12px;
+            background: #ffffff;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: 700;
+            color: #475569;
+        }
+
+        .print-stats-detail.show {
+            display: block;
+        }
+
+        .print-stats-detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 3px 0;
+        }
+
+        .print-stats-detail-row + .print-stats-detail-row {
+            border-top: 1px dashed #e2e8f0;
+        }
+
+        .section-jump-nav {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            padding: 10px 20px 2px;
+            scrollbar-width: none;
+        }
+
+        .section-jump-nav::-webkit-scrollbar {
+            display: none;
+        }
+
+        .section-jump-chip {
+            flex-shrink: 0;
+            border: 1.5px solid #e2e8f0;
+            background: #f8fafc;
+            color: #334155;
+            font-size: 12px;
+            font-weight: 800;
+            padding: 7px 14px;
+            border-radius: 999px;
+            cursor: pointer;
+            white-space: nowrap;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .section-jump-chip:active {
+            transform: scale(0.96);
+        }
+
+        /* ===================== SHOP FLOOR MODE =====================
+           Off by default. Toggled from the ⚙ Settings menu and remembered
+           per device. Everything here either only appears while
+           body.shopfloor-mode is set, or only changes sizing within it —
+           classic mode is untouched. */
+        .shopfloor-tabbar, .shopfloor-fab {
+            display: none;
+        }
+        .shopfloor-tabbar {
+            position: fixed;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 600;
+            background: #ffffff;
+            border-top: 1px solid #e2e8f0;
+            box-shadow: 0 -8px 24px rgba(15, 23, 42, 0.08);
+            padding: 6px 4px calc(6px + env(safe-area-inset-bottom, 0px));
+            align-items: stretch;
+            justify-content: space-between;
+        }
+        .shopfloor-tab {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 2px;
+            min-height: 54px;
+            background: transparent;
+            border: none;
+            border-radius: 10px;
+            color: #64748b;
+            font-size: 10.5px;
+            font-weight: 800;
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .shopfloor-tab:active {
+            background: #f1f5f9;
+        }
+        .shopfloor-tab.active {
+            color: #ea580c;
+        }
+        .shopfloor-tab-icon {
+            font-size: 20px;
+        }
+        .shopfloor-fab {
+            position: fixed;
+            right: 16px;
+            bottom: 86px;
+            z-index: 601;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: #ea580c;
+            color: #ffffff;
+            border: none;
+            box-shadow: 0 10px 24px -6px rgba(234, 88, 12, 0.55);
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .shopfloor-fab:active {
+            transform: scale(0.94);
+        }
+        .shopfloor-fab svg {
+            width: 24px;
+            height: 24px;
+        }
+        body.shopfloor-mode .shopfloor-tabbar,
+        body.shopfloor-mode .shopfloor-fab {
+            display: flex;
+        }
+        /* Fixed bottom bar + FAB need room reserved so they never cover
+           the last row of tiles or the print preview. */
+        body.shopfloor-mode .app-layout {
+            padding-bottom: 90px;
+        }
+        /* The top quick-jump chip row is now redundant with the bottom
+           tab bar, so it steps aside in Shop Floor Mode. */
+        body.shopfloor-mode .section-jump-nav {
+            display: none;
+        }
+        /* Bigger tap targets everywhere a tile can be tapped, so a thumb
+           working one-handed doesn't need to aim carefully. */
+        body.shopfloor-mode .icon-btn {
+            min-height: 108px;
+            padding: 20px 8px;
+        }
+        body.shopfloor-mode .icon-btn .tile-icon svg {
+            width: 26px;
+            height: 26px;
+        }
+        body.shopfloor-mode .icon-btn .t1 {
+            font-size: 13px;
+        }
+        body.shopfloor-mode .tile-settings-btn,
+        body.shopfloor-mode .tile-recent-btn {
+            width: 34px;
+            height: 34px;
+        }
+        @media print {
+            .shopfloor-tabbar, .shopfloor-fab { display: none !important; }
         }
 
         .dashboard-sections {
@@ -327,6 +644,36 @@
             box-shadow: 0 8px 18px -8px rgba(234, 88, 12, 0.45);
         }
 
+        /* Each section gets its own tile accent color, so it's faster to
+           spot the right group of tiles at a glance: Quick Print stays
+           orange, Create & Print is blue, Combined Print is purple,
+           External Tools is teal. .icon-btn reads this via --tile-color. */
+        #section-create .icon-btn { --tile-color: #2563eb; }
+        #section-create .icon-btn:hover { background: #eff6ff; box-shadow: 0 10px 18px -10px rgba(37, 99, 235, 0.35); }
+        #section-combined .icon-btn { --tile-color: #7c3aed; }
+        #section-combined .icon-btn:hover { background: #f5f3ff; box-shadow: 0 10px 18px -10px rgba(124, 58, 237, 0.35); }
+        #section-external .icon-btn { --tile-color: #0d9488; }
+        #section-external .icon-btn:hover { background: #f0fdfa; box-shadow: 0 10px 18px -10px rgba(13, 148, 136, 0.35); }
+
+        /* A tile that's open (.active-toggle, solid color + white text) must
+           stay readable even while the mouse is resting on it — otherwise
+           the plain :hover rules above (light tint background) win out over
+           active-toggle's background but NOT its white text color, leaving
+           barely-visible white-on-pale text. Keep the solid color on hover
+           for every section, just darken it slightly so hovering still
+           gives some feedback. */
+        .icon-btn.active-toggle:hover,
+        #section-quick .icon-btn.active-toggle:hover,
+        #section-create .icon-btn.active-toggle:hover,
+        #section-combined .icon-btn.active-toggle:hover,
+        #section-external .icon-btn.active-toggle:hover {
+            background: var(--tile-color);
+            border-color: var(--tile-color);
+            color: #ffffff;
+            filter: brightness(1.08);
+            box-shadow: 0 10px 20px -8px rgba(15, 23, 42, 0.45);
+        }
+
         .icon-btn-wrap {
             position: relative;
             display: flex;
@@ -349,20 +696,31 @@
             align-items: center;
             justify-content: center;
             gap: 6px;
-            background: #fff7ed;
-            border: 1.5px solid #fed7aa;
+            background: #f8fafc;
+            border: 1.5px solid #e2e8f0;
             border-radius: 8px;
             padding: 4px 6px;
+            transition: background-color 0.15s ease, border-color 0.15s ease;
+        }
+
+        /* Once qty has been changed away from the default (1), the stepper
+           "lights up" in the tile's own color so it's obvious at a glance
+           that this tile is about to print more than one copy. Muted/gray
+           otherwise, so it doesn't compete for attention on the common case
+           of printing just 1. */
+        .tile-qty-stepper.qty-active {
+            background: #fff7ed;
+            border-color: #fed7aa;
         }
 
         .tile-qty-stepper .qty-btn {
-            width: 22px;
-            height: 22px;
-            border-radius: 6px;
+            width: 26px;
+            height: 26px;
+            border-radius: 7px;
             border: none;
-            background: #ea580c;
+            background: #94a3b8;
             color: #ffffff;
-            font-size: 14px;
+            font-size: 15px;
             font-weight: 900;
             display: flex;
             align-items: center;
@@ -371,6 +729,11 @@
             line-height: 1;
             padding: 0;
             -webkit-tap-highlight-color: transparent;
+            transition: background-color 0.15s ease;
+        }
+
+        .tile-qty-stepper.qty-active .qty-btn {
+            background: #ea580c;
         }
 
         .tile-qty-stepper .qty-btn:active {
@@ -526,6 +889,10 @@
             text-overflow: ellipsis;
             max-width: 190px;
         }
+        .recent-print-count {
+            color: #64748b;
+            font-weight: 900;
+        }
         .recent-print-time {
             font-size: 11px;
             color: #64748b;
@@ -568,7 +935,29 @@
             color: #64748b;
             font-weight: 600;
             text-align: center;
-            padding: 16px 4px;
+            padding: 20px 16px;
+        }
+        .recent-prints-empty-icon {
+            width: 46px;
+            height: 46px;
+            border-radius: 50%;
+            background: #f1f5f9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 10px;
+        }
+        .recent-prints-empty-title {
+            font-size: 13.5px;
+            font-weight: 900;
+            color: #334155;
+            margin-bottom: 4px;
+        }
+        .recent-prints-empty-sub {
+            font-size: 11.5px;
+            font-weight: 700;
+            color: #94a3b8;
+            line-height: 1.5;
         }
         .recent-prints-footer {
             display: flex;
@@ -598,25 +987,46 @@
         }
 
         .tile-icon {
-            width: 22px;
-            height: 22px;
+            width: 36px;
+            height: 36px;
             flex-shrink: 0;
             display: flex;
             align-items: center;
             justify-content: center;
+            border-radius: 10px;
+            background: rgba(15, 23, 42, 0.05);
         }
 
         .tile-icon svg {
-            width: 22px;
-            height: 22px;
+            width: 19px;
+            height: 19px;
             color: currentColor;
         }
 
         .tile-icon img.btn-img-icon {
-            width: 22px;
-            height: 22px;
+            width: 19px;
+            height: 19px;
             object-fit: contain;
         }
+
+        /* Each tile gets its own icon-chip tint (within its section's
+           accent family) so tiles are easier to tell apart at a glance,
+           on top of the section-level accent color they already share. */
+        .icon-btn.exchange .tile-icon { background: #ffedd5; }
+        .icon-btn.location .tile-icon { background: #ffe4d5; }
+        .icon-btn.visiting .tile-icon { background: #fef0c7; }
+        .icon-btn.custom .tile-icon { background: #dbeafe; }
+        .icon-btn.coupon .tile-icon { background: #e0e7ff; }
+        .icon-btn.price .tile-icon { background: #dbf0fe; }
+        .icon-btn.promo .tile-icon { background: #e0f2fe; }
+        .icon-btn.estimate .tile-icon { background: #d9ebfe; }
+        .icon-btn.multibutton .tile-icon { background: #ede9fe; }
+        .icon-btn.labelprinter .tile-icon { background: #ccfbf1; }
+        .icon-btn.calculator .tile-icon { background: #cffafe; }
+        .icon-btn.denomination .tile-icon { background: #d1fae5; }
+        .icon-btn.offercalc .tile-icon { background: #e0f2fe; }
+        .icon-btn.transfer .tile-icon { background: #e6fffa; }
+        .icon-btn.active-toggle .tile-icon { background: rgba(255, 255, 255, 0.25); }
 
         .icon-btn .t1 {
             font-weight: 800;
@@ -682,9 +1092,9 @@
             max-width: 900px;
             background: #ffffff;
             border: 1px solid #e2e8f0;
-            border-radius: 16px;
-            padding: 18px 20px;
-            margin-bottom: 24px;
+            border-radius: 14px;
+            padding: 14px 16px;
+            margin-bottom: 16px;
             box-shadow: var(--card-shadow);
             animation: fadeIn 0.2s ease-out;
         }
@@ -718,6 +1128,32 @@
             border-radius: 16px;
             padding: 18px 20px;
             animation: fadeIn 0.15s ease-out;
+        }
+        /* Every tile's settings/input panel and choice popup now sits
+           inside its own tile grid (right after that tile, tracked via
+           data-anchor-tile), spanning the full row so it opens directly
+           underneath the tile that was tapped — like Visiting Card's
+           branch choice — instead of a centered popup or a panel sitting
+           somewhere else on the page. One rule covers all of them. */
+        .big-buttons-bar > [data-anchor-tile] {
+            grid-column: 1 / -1;
+            max-width: none;
+            width: 100%;
+            margin: 0 0 4px;
+            transform-origin: top center;
+            animation: expandFromTile 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+            /* A left accent stripe, colored to match the section the open
+               tile belongs to, so it's obvious at a glance which panel is
+               open even after scrolling past its tile. */
+            border-left-width: 4px !important;
+            border-left-style: solid !important;
+        }
+        #section-quick .big-buttons-bar > [data-anchor-tile] { border-left-color: #ea580c !important; }
+        #section-create .big-buttons-bar > [data-anchor-tile] { border-left-color: #2563eb !important; }
+        #section-combined .big-buttons-bar > [data-anchor-tile] { border-left-color: #7c3aed !important; }
+        @keyframes expandFromTile {
+            from { opacity: 0; transform: scaleY(0.8) translateY(-12px); }
+            to { opacity: 1; transform: scaleY(1) translateY(0); }
         }
         .location-choice-grid {
             display: flex;
@@ -793,13 +1229,69 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
+        .app-toast {
+            position: fixed;
+            left: 50%;
+            bottom: 24px;
+            transform: translate(-50%, 16px);
+            background: #0f172a;
+            color: #ffffff;
+            font-size: 13.5px;
+            font-weight: 800;
+            padding: 11px 18px;
+            border-radius: 999px;
+            box-shadow: 0 10px 24px -8px rgba(15, 23, 42, 0.5);
+            z-index: 1200;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease, transform 0.2s ease;
+            max-width: calc(100vw - 32px);
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .app-toast.show {
+            opacity: 1;
+            transform: translate(-50%, 0);
+        }
+
+        .preview-lightbox {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.72);
+            z-index: 1300;
+            align-items: center;
+            justify-content: center;
+            padding: 24px 16px;
+            overflow-y: auto;
+        }
+
+        .preview-lightbox.active {
+            display: flex;
+        }
+
+        .preview-lightbox-inner {
+            width: min(90mm, 92vw);
+            cursor: zoom-out;
+        }
+
+        .preview-lightbox-inner .card {
+            width: 100% !important;
+            transform: scale(1.35);
+            transform-origin: top center;
+            margin-bottom: 60px;
+        }
+
         .panel-header-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 12px;
+            margin-bottom: 8px;
             flex-wrap: wrap;
-            gap: 10px;
+            gap: 8px;
         }
 
         .panel-title {
@@ -812,7 +1304,7 @@
 
         .panel-header-actions {
             display: flex;
-            gap: 10px;
+            gap: 8px;
             align-items: center;
             flex-wrap: wrap;
         }
@@ -820,14 +1312,14 @@
         .coupon-grid, .location-grid, .price-grid, .estimate-grid, .visiting-grid, .multi-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 12px;
-            margin-top: 6px;
+            gap: 8px 12px;
+            margin-top: 4px;
         }
 
         .form-group {
             display: flex;
             flex-direction: column;
-            gap: 4px;
+            gap: 3px;
         }
 
         .form-group.full-width {
@@ -842,7 +1334,7 @@
         }
 
         .form-control {
-            padding: 9px 12px;
+            padding: 8px 10px;
             font-size: 14px;
             font-weight: 900;
             border: 1.5px solid #cbd5e1;
@@ -867,7 +1359,7 @@
         .type-btn {
             flex: 1;
             min-width: 50px;
-            padding: 8px 6px;
+            padding: 7px 6px;
             border: 1.5px solid #cbd5e1;
             border-radius: 8px;
             background: #f8fafc;
@@ -889,8 +1381,8 @@
             background: #f8fafc;
             border: 1.5px solid #e2e8f0;
             border-radius: 10px;
-            padding: 10px 14px;
-            margin-top: 4px;
+            padding: 8px 12px;
+            margin-top: 2px;
         }
 
         .collapsible-toggle-header {
@@ -918,8 +1410,8 @@
             background: #f1f5f9;
             border: 1.5px solid #cbd5e1;
             border-radius: 12px;
-            padding: 14px;
-            margin-bottom: 14px;
+            padding: 10px 12px;
+            margin-bottom: 10px;
         }
 
         .estimate-quick-grid {
@@ -1203,20 +1695,49 @@
 
         .custom-options-bar {
             display: flex;
-            gap: 15px;
+            gap: 10px;
             align-items: center;
             flex-wrap: wrap;
-            margin-bottom: 12px;
+            margin-bottom: 8px;
             background: #f1f5f9;
-            padding: 10px 14px;
+            padding: 8px 12px;
             border-radius: 10px;
             border: 1.5px solid #cbd5e1;
+        }
+
+        .promo-preset-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 8px;
+        }
+        .promo-preset-btn {
+            background: #eff6ff;
+            border: 1.5px solid #bfdbfe;
+            border-radius: 10px;
+            padding: 10px 8px;
+            font-size: 12.5px;
+            font-weight: 900;
+            color: #1d4ed8;
+            cursor: pointer;
+            text-align: center;
+        }
+        .promo-preset-btn:hover {
+            background: #dbeafe;
+            border-color: #93c5fd;
+        }
+        .promo-big-text {
+            font-weight: 900;
+            text-transform: uppercase;
+            text-align: center;
+            line-height: 1.2;
+            word-break: break-word;
+            padding: 6px 2px;
         }
 
         .custom-checkbox-label {
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 5px;
             font-size: 12px;
             font-weight: 900;
             color: #334155;
@@ -1344,7 +1865,7 @@
             align-items: center;
         }
 
-        .custom-text-column, .coupon-receipt-column, .location-receipt-column, .price-receipt-column, .estimate-receipt-column, .visiting-receipt-column, .multi-receipt-column {
+        .custom-text-column, .coupon-receipt-column, .location-receipt-column, .price-receipt-column, .estimate-receipt-column, .visiting-receipt-column, .multi-receipt-column, .test-receipt-column, .promo-receipt-column {
             display: none;
         }
 
@@ -1392,6 +1913,18 @@
             overflow: visible;
             display: flex;
             justify-content: center;
+            /* A soft gradient "surface" behind the receipt card, so the
+               live preview reads more like a sheet of paper sitting on a
+               counter than a plain white box floating on the page. Purely
+               cosmetic — @media print strips all shadows/backgrounds here
+               the same as before, so nothing about the actual print
+               changes. */
+            padding: 14px 0 20px;
+            cursor: zoom-in;
+        }
+
+        .preview-box .card {
+            box-shadow: 0 2px 4px rgba(15, 23, 42, 0.06), 0 14px 28px -10px rgba(15, 23, 42, 0.18);
         }
 
         .card {
@@ -1891,7 +2424,7 @@
                 -webkit-font-smoothing: none !important;
             }
 
-            .app-main, .card-label-row {
+            .app-main, .card-label-row, .app-toast, .preview-lightbox {
                 display: none !important;
             }
 
@@ -2040,6 +2573,8 @@
             body.print-price .price-receipt-column { display: block !important; }
             body.print-estimate .estimate-receipt-column { display: block !important; }
             body.print-visiting .visiting-receipt-column { display: block !important; }
+            body.print-test .test-receipt-column { display: block !important; }
+            body.print-promo .promo-receipt-column { display: block !important; }
 
             body.print-both-locations .location-receipt-column { 
                 display: block !important; 
@@ -2084,6 +2619,35 @@
             </button>
             <span class="pos-brand">LALITHA NATURALS</span>
             <div class="pos-topbar-actions">
+                <div class="settings-menu-wrap">
+                    <button class="pos-icon-btn" title="Settings (test print, backup &amp; restore)" onclick="toggleSettingsMenu(event)">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                    </button>
+                    <div class="settings-menu-panel" id="settingsMenuPanel">
+                        <div class="settings-menu-label">Appearance</div>
+                        <button type="button" class="settings-menu-item" id="shopfloorModeMenuBtn" onclick="toggleShopFloorMode();">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+                            <span id="shopfloorModeMenuLabel">Shop Floor Mode: Off</span>
+                        </button>
+                        <div class="settings-menu-divider"></div>
+                        <div class="settings-menu-label">Printer</div>
+                        <button type="button" class="settings-menu-item" onclick="toggleSettingsMenu(); printTestCalibration();">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+                            Test Print
+                        </button>
+                        <div class="settings-menu-divider"></div>
+                        <div class="settings-menu-label">Data</div>
+                        <button type="button" class="settings-menu-item" onclick="toggleSettingsMenu(); exportAppSettings();">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                            Backup Settings
+                        </button>
+                        <button type="button" class="settings-menu-item" onclick="toggleSettingsMenu(); document.getElementById('settingsImportInput').click();">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 8 12 3 17 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                            Restore Settings
+                        </button>
+                    </div>
+                </div>
+                <input type="file" id="settingsImportInput" accept="application/json" style="display:none;" onchange="importAppSettingsFile(event)">
                 <button class="pos-icon-btn" title="Reload Page" onclick="location.reload()">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>
                 </button>
@@ -2096,8 +2660,28 @@
         <div class="pos-search-row" id="posSearchRow">
             <div class="pos-search-inner">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
-                <input type="text" id="toolSearchInput" placeholder="Search a print tool…" oninput="filterTools()">
+                <input type="text" id="toolSearchInput" placeholder="Search a print tool… (Enter opens it)" oninput="filterTools()" onkeydown="handleSearchKeydown(event)">
             </div>
+        </div>
+
+        <!-- Today's print count, tap to see the last 7 days. Built from a
+             running daily counter kept alongside Recent Prints (see
+             recordPrintStat()), not from Recent Prints itself, since that
+             list is capped at 8 entries per category and would undercount
+             a busy day. -->
+        <div class="print-stats-bar" id="printStatsBar" onclick="togglePrintStatsDetail()">
+            <span id="printStatsToday">🖨️ Today: 0 prints</span>
+            <span class="print-stats-caret" id="printStatsCaret">▾</span>
+        </div>
+        <div class="print-stats-detail" id="printStatsDetail"></div>
+
+        <!-- Quick-jump: scrolls straight to a section instead of scrolling
+             past everything by hand once there are several sections. -->
+        <div class="section-jump-nav">
+            <button type="button" class="section-jump-chip" onclick="jumpToSection('section-quick')">🖨️ Quick</button>
+            <button type="button" class="section-jump-chip" onclick="jumpToSection('section-create')">✍️ Create</button>
+            <button type="button" class="section-jump-chip" onclick="jumpToSection('section-combined')">🛠️ Combined</button>
+            <button type="button" class="section-jump-chip" onclick="jumpToSection('section-external')">↗️ Tools</button>
         </div>
 
         <div class="dashboard-sections">
@@ -2108,9 +2692,9 @@
             <div class="big-buttons-bar">
 
                 <!-- 2. Print Exchange -->
-                <div class="tile-group">
+                <div class="tile-group" data-tile-key="exchange">
                 <div class="icon-btn-wrap">
-                    <button class="icon-btn exchange" id="btn-toggle-exchange" onclick="triggerMobilePrint('exchange')">
+                    <button class="icon-btn exchange" id="btn-toggle-exchange" onclick="recordTileUsage('exchange'); triggerMobilePrint('exchange')">
                         <span class="tile-icon">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="m17 2 4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="m7 22-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/>
@@ -2131,11 +2715,29 @@
                     <button type="button" class="qty-btn" onclick="adjustPrintQty('exchange', 1)">+</button>
                 </div>
                 </div>
+<div class="text-input-panel" id="exchangeInputPanel" data-anchor-tile="exchange">
+        <div class="panel-header-row">
+            <span class="panel-title">♻️ Scrap Exchange Receipt</span>
+            <div class="panel-header-actions">
+                <button class="clear-btn" type="button" onclick="addExchangeItem()">➕ Add Item</button>
+                <button class="reset-default-btn" onclick="resetExchangePanel()">↺ Reset to Default</button>
+            </div>
+        </div>
+        <div class="form-group full-width">
+            <label>Items &amp; Rates</label>
+            <div id="exchange-items-container"></div>
+        </div>
+        <div class="form-group full-width" style="margin-top:6px;">
+            <label>Note</label>
+            <input type="text" class="form-control" id="exchange-note-input" value="100 GM deducted for handles." oninput="updateExchangeCardPreview()">
+        </div>
+    </div>
+
 
                 <!-- 3. Store Location -->
-                <div class="tile-group">
+                <div class="tile-group" data-tile-key="location">
                 <div class="icon-btn-wrap">
-                    <button class="icon-btn location" id="btn-toggle-location" onclick="openLocationChoiceModal()">
+                    <button class="icon-btn location" id="btn-toggle-location" onclick="recordTileUsage('location'); openLocationChoiceModal()">
                         <span class="tile-icon">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M12 21s7-6.6 7-11.5a7 7 0 1 0-14 0C5 14.4 12 21 12 21Z"/><circle cx="12" cy="9.5" r="2.5"/>
@@ -2156,11 +2758,75 @@
                     <button type="button" class="qty-btn" onclick="adjustPrintQty('location', 1)">+</button>
                 </div>
                 </div>
+<div class="location-choice-panel" id="locationChoiceModal" data-anchor-tile="location">
+        <div class="panel-header-row">
+            <span class="panel-title">📍 Print Store Location</span>
+        </div>
+        <div class="location-choice-grid">
+            <button type="button" class="location-choice-btn" onclick="printLocationChoice('gajuwaka')">
+                <span class="location-choice-title">Branch 1: Gajuwaka</span>
+                <span class="location-choice-sub">Print this branch only</span>
+            </button>
+            <button type="button" class="location-choice-btn" onclick="printLocationChoice('kurmannapalem')">
+                <span class="location-choice-title">Branch 2: Kurmannapalem</span>
+                <span class="location-choice-sub">Print this branch only</span>
+            </button>
+            <button type="button" class="location-choice-btn location-choice-both" onclick="printLocationChoice('both')">
+                <span class="location-choice-title">Both Branches</span>
+                <span class="location-choice-sub">Print both, one after another</span>
+            </button>
+            <button type="button" class="location-choice-cancel" onclick="hideAllPanelsKeepData()">Cancel</button>
+        </div>
+    </div>
+
+<div class="location-panel" id="locationInputPanel" data-anchor-tile="location">
+        <div class="panel-header-row">
+            <span class="panel-title">📍 Store Location Settings</span>
+            <div class="panel-header-actions">
+                <button class="print-location-btn" onclick="triggerMobilePrint('both-locations')">🖨️ Print Both Branches</button>
+                <button class="reset-default-btn" onclick="resetLocationPanel()">↺ Reset to Default</button>
+            </div>
+        </div>
+        <div class="location-grid">
+            <div class="form-group full-width">
+                <label>Default Branch (pre-selected when the print choice popup opens)</label>
+                <div class="type-selector-btns">
+                    <button class="type-btn active" id="loc-btn-gajuwaka" onclick="setLocationBranch('gajuwaka')">Branch 1: Gajuwaka</button>
+                    <button class="type-btn" id="loc-btn-kurmannapalem" onclick="setLocationBranch('kurmannapalem')">Branch 2: Kurmannapalem</button>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Branch-1 (Gajuwaka) Address</label>
+                <input type="text" class="form-control" id="loc-addr-gajuwaka" value="MIG-20, Near Timpany School Vuda Colony, Gonthinavanipalem, Gajuwaka, Andhra Pradesh 530044" oninput="updateLocationCardPreview()">
+            </div>
+            <div class="form-group">
+                <label>Branch-1 (Gajuwaka) Phone</label>
+                <input type="text" class="form-control" id="loc-phone-gajuwaka" value="9676287766" oninput="updateLocationCardPreview()">
+            </div>
+            <div class="form-group full-width">
+                <label>Branch-1 (Gajuwaka) Google Maps Link (used to generate the QR code)</label>
+                <input type="text" class="form-control" id="loc-maps-gajuwaka" value="https://maps.app.goo.gl/Gzxq2iuM7fijRAQr6" oninput="updateLocationCardPreview()">
+            </div>
+            <div class="form-group">
+                <label>Branch-2 (Kurmannapalem) Address</label>
+                <input type="text" class="form-control" id="loc-addr-kurmannapalem" value="Vuda phase 7, Hig 7, opposite Gloria Vidya Kendram, Vuda Colony, Gajuwaka, Andhra Pradesh 530049" oninput="updateLocationCardPreview()">
+            </div>
+            <div class="form-group">
+                <label>Branch-2 (Kurmannapalem) Phone</label>
+                <input type="text" class="form-control" id="loc-phone-kurmannapalem" value="9676287766" oninput="updateLocationCardPreview()">
+            </div>
+            <div class="form-group full-width">
+                <label>Branch-2 (Kurmannapalem) Google Maps Link (used to generate the QR code)</label>
+                <input type="text" class="form-control" id="loc-maps-kurmannapalem" value="https://maps.app.goo.gl/dpn7MfYHNzjBDrch6" oninput="updateLocationCardPreview()">
+            </div>
+        </div>
+    </div>
+
 
                 <!-- 4. Visiting Card -->
-                <div class="tile-group">
+                <div class="tile-group" data-tile-key="visiting">
                 <div class="icon-btn-wrap">
-                    <button class="icon-btn visiting" id="btn-toggle-visiting" onclick="printVisitingCard()">
+                    <button class="icon-btn visiting" id="btn-toggle-visiting" onclick="recordTileUsage('visiting'); printVisitingCard()">
                         <span class="tile-icon">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="8" cy="12" r="2"/><path d="M14 10h6M14 14h4"/>
@@ -2181,197 +2847,7 @@
                     <button type="button" class="qty-btn" onclick="adjustPrintQty('visiting', 1)">+</button>
                 </div>
                 </div>
-
-            </div>
-        </div>
-
-        <!-- CREATE & PRINT -->
-        <div class="dashboard-section" id="section-create">
-            <div class="section-label"><span class="section-dot" style="background:#ea580c;"></span> Create &amp; Print <span class="section-hint">— tap to fill in fresh details, then print</span></div>
-            <div class="big-buttons-bar">
-
-                <!-- 5. Custom Text -->
-                <div class="icon-btn-wrap">
-                    <button class="icon-btn custom" id="btn-toggle-custom" onclick="toggleCustomTextPanel()">
-                        <span class="tile-icon">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/>
-                            </svg>
-                        </span>
-                        <span class="t1">Custom Text</span>
-                    </button>
-                    <button type="button" class="tile-recent-btn" title="Recent Custom Text Prints" onclick="event.stopPropagation(); openRecentPrints('custom');">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>
-                    </button>
-                </div>
-
-                <!-- 6. Coupon -->
-                <div class="icon-btn-wrap">
-                    <button class="icon-btn coupon" id="btn-toggle-coupon" onclick="toggleCouponPanel()">
-                        <span class="tile-icon">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M13 5v14"/>
-                            </svg>
-                        </span>
-                        <span class="t1">Coupon</span>
-                    </button>
-                    <button type="button" class="tile-recent-btn" title="Recent Coupon Prints" onclick="event.stopPropagation(); openRecentPrints('coupon');">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>
-                    </button>
-                </div>
-
-                <!-- 7. Price Tag -->
-                <div class="icon-btn-wrap">
-                    <button class="icon-btn price" id="btn-toggle-price" onclick="togglePricePanel()">
-                        <span class="tile-icon">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M20.6 12.6 12 21.2 2.8 12 12.8 2h5.8a2 2 0 0 1 2 2Z"/><circle cx="16.5" cy="7.5" r="1.5"/>
-                            </svg>
-                        </span>
-                        <span class="t1">Price Tag</span>
-                    </button>
-                    <button type="button" class="tile-recent-btn" title="Recent Price Tags" onclick="event.stopPropagation(); openRecentPrints('price');">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>
-                    </button>
-                </div>
-
-                <!-- 8. Estimate / Bill Calculator -->
-                <div class="icon-btn-wrap">
-                    <button class="icon-btn estimate" id="btn-toggle-estimate" onclick="toggleEstimatePanel()">
-                        <span class="tile-icon">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <rect x="4" y="2" width="16" height="20" rx="2"/><path d="M8 7h8M8 11h8M8 15h4"/>
-                            </svg>
-                        </span>
-                        <span class="t1">Estimate Bill</span>
-                    </button>
-                    <button type="button" class="tile-recent-btn" title="Recent Estimate Prints" onclick="event.stopPropagation(); openRecentPrints('estimate');">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>
-                    </button>
-                </div>
-
-            </div>
-        </div>
-
-        <!-- COMBINED PRINT -->
-        <div class="dashboard-section" id="section-combined">
-            <div class="section-label"><span class="section-dot" style="background:#ea580c;"></span> Combined Print <span class="section-hint">— mix several items onto one receipt</span></div>
-            <div class="big-buttons-bar">
-
-                <!-- Custom Multi-Select Combined Print Button -->
-                <div class="icon-btn-wrap">
-                    <button class="icon-btn multibutton" id="btn-toggle-multi" onclick="toggleMultiPanel()">
-                        <span class="tile-icon">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/>
-                            </svg>
-                        </span>
-                        <span class="t1">Custom Combined Print</span>
-                    </button>
-                    <button type="button" class="tile-recent-btn" title="Recent Combined Prints" onclick="event.stopPropagation(); openRecentPrints('multi');">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>
-                    </button>
-                </div>
-
-            </div>
-        </div>
-
-        <!-- EXTERNAL TOOLS -->
-        <div class="dashboard-section" id="section-external">
-            <div class="section-label"><span class="section-dot" style="background:#ea580c;"></span> External Tools <span class="section-hint">— opens a different site in a new tab</span></div>
-            <div class="big-buttons-bar">
-
-                <!-- Label Printer Link Button -->
-                <div class="icon-btn-wrap">
-                    <a class="icon-btn labelprinter" href="https://lalithanaturals.github.io/lable-Printer/" target="_blank" rel="noopener noreferrer">
-                        <span class="tile-icon">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
-                                <path d="M6 9V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v5"/>
-                                <rect x="6" y="14" width="12" height="8" rx="1"/>
-                            </svg>
-                        </span>
-                        <span class="t1">Label Printer ↗</span>
-                    </a>
-                    <button type="button" class="tile-share-btn" title="Share Label Printer link" onclick="shareExternalTool(event, 'Label Printer', 'https://lalithanaturals.github.io/lable-Printer/')">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10Z"/>
-                        </svg>
-                    </button>
-                </div>
-
-                <!-- Scrap Calculator Link Button -->
-                <div class="icon-btn-wrap">
-                    <a class="icon-btn calculator" href="https://lalithanaturals.github.io/scrap-calc/" target="_blank" rel="noopener noreferrer">
-                        <span class="tile-icon">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 7h8M8 11h5M8 15h8"/>
-                            </svg>
-                        </span>
-                        <span class="t1">Scrap Calc ↗</span>
-                    </a>
-                    <button type="button" class="tile-share-btn" title="Share Scrap Calc link" onclick="shareExternalTool(event, 'Scrap Calc', 'https://lalithanaturals.github.io/scrap-calc/')">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10Z"/>
-                        </svg>
-                    </button>
-                </div>
-
-                <!-- Stock Transfer Link Button -->
-                <div class="icon-btn-wrap">
-                    <a class="icon-btn transfer" href="https://lalithanaturals.github.io/Stock-transfer/" target="_blank" rel="noopener noreferrer">
-                        <span class="tile-icon"><img src="van logo.png" class="btn-img-icon" alt="Stock Transfer"></span>
-                        <span class="t1">Transfer ↗</span>
-                    </a>
-                    <button type="button" class="tile-share-btn" title="Share Stock Transfer link" onclick="shareExternalTool(event, 'Stock Transfer', 'https://lalithanaturals.github.io/Stock-transfer/')">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10Z"/>
-                        </svg>
-                    </button>
-                </div>
-
-                <!-- Offer Calc Link Button -->
-                <div class="icon-btn-wrap">
-                    <a class="icon-btn offercalc" href="https://lalithanaturals.github.io/Offer-Calc/" target="_blank" rel="noopener noreferrer">
-                        <span class="tile-icon">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M9 17H7A5 5 0 0 1 7 7h2M15 7h2a5 5 0 0 1 0 10h-2M8 12h8"/>
-                            </svg>
-                        </span>
-                        <span class="t1">Offer Calc ↗</span>
-                    </a>
-                    <button type="button" class="tile-share-btn" title="Share Offer Calc link" onclick="shareExternalTool(event, 'Offer Calc', 'https://lalithanaturals.github.io/Offer-Calc/')">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10Z"/>
-                        </svg>
-                    </button>
-                </div>
-
-                <!-- Denomination Link Button -->
-                <div class="icon-btn-wrap">
-                    <a class="icon-btn denomination" href="https://lalithanaturals.github.io/Denomination/" target="_blank" rel="noopener noreferrer">
-                        <span class="tile-icon">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="3"/><path d="M6 6v.01M18 6v.01M6 18v-.01M18 18v-.01"/>
-                            </svg>
-                        </span>
-                        <span class="t1">Denomination ↗</span>
-                    </a>
-                    <button type="button" class="tile-share-btn" title="Share Denomination link" onclick="shareExternalTool(event, 'Denomination', 'https://lalithanaturals.github.io/Denomination/')">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10Z"/>
-                        </svg>
-                    </button>
-                </div>
-
-            </div>
-        </div>
-
-        </div>
-    </div>
-
-    <!-- Visiting Card Settings Panel -->
-    <div class="text-input-panel" id="whatsappInputPanel">
+<div class="text-input-panel" id="whatsappInputPanel" data-anchor-tile="visiting">
         <div class="panel-header-row">
             <span class="panel-title">📇 Visiting Card Settings</span>
             <div class="panel-header-actions">
@@ -2412,70 +2888,56 @@ Millet Groceries & Snacks</textarea>
         </div>
     </div>
 
-    <!-- Scrap Exchange Panel -->
-    <div class="text-input-panel" id="exchangeInputPanel">
-        <div class="panel-header-row">
-            <span class="panel-title">♻️ Scrap Exchange Receipt</span>
-            <div class="panel-header-actions">
-                <button class="clear-btn" type="button" onclick="addExchangeItem()">➕ Add Item</button>
-                <button class="reset-default-btn" onclick="resetExchangePanel()">↺ Reset to Default</button>
-            </div>
-        </div>
-        <div class="form-group full-width">
-            <label>Items &amp; Rates</label>
-            <div id="exchange-items-container"></div>
-        </div>
-        <div class="form-group full-width" style="margin-top:6px;">
-            <label>Note</label>
-            <input type="text" class="form-control" id="exchange-note-input" value="100 GM deducted for handles." oninput="updateExchangeCardPreview()">
-        </div>
-    </div>
 
-    <!-- Custom Multi-Select Panel -->
-    <div class="multi-print-panel" id="multiInputPanel">
-        <div class="panel-header-row">
-            <span class="panel-title">🛠️ Select Items to Combine in Single Print</span>
-            <div class="panel-header-actions">
-                <button class="print-multi-btn" onclick="executeMultiPrint()">🖨️ Print Selected Items</button>
-            </div>
-        </div>
-        <div class="multi-grid">
-            <div class="form-group full-width">
-                <label>Number of Prints</label>
-                <div class="panel-qty-stepper">
-                    <button type="button" class="cnt-btn type-btn" style="flex:0; width:40px;" onclick="adjustPrintQty('multi', -1)">-</button>
-                    <span class="cnt-value qty-value" data-qty-key="multi" style="font-weight:900; font-size:16px;">1</span>
-                    <button type="button" class="cnt-btn type-btn" style="flex:0; width:40px;" onclick="adjustPrintQty('multi', 1)">+</button>
-                </div>
-            </div>
-            <div class="form-group full-width">
-                <label>Check items to include in your exact chosen order:</label>
-                <div class="checkbox-cards-grid" id="multi-checkboxes-container">
-                    <label class="checkbox-card-item"><input type="checkbox" value="exchange" checked onchange="buildMultiPreview()"> Scrap Exchange</label>
-                    <label class="checkbox-card-item"><input type="checkbox" value="custom" onchange="buildMultiPreview()"> Custom Text</label>
-                    <label class="checkbox-card-item"><input type="checkbox" value="coupon" onchange="buildMultiPreview()"> Discount Coupon</label>
-                    <label class="checkbox-card-item"><input type="checkbox" value="loc-gajuwaka" onchange="buildMultiPreview()"> Location: Gajuwaka</label>
-                    <label class="checkbox-card-item"><input type="checkbox" value="loc-kurmannapalem" onchange="buildMultiPreview()"> Location: Kurmannapalem</label>
-                    <label class="checkbox-card-item"><input type="checkbox" value="price" onchange="buildMultiPreview()"> Price Tag</label>
-                    <label class="checkbox-card-item"><input type="checkbox" value="estimate" onchange="buildMultiPreview()"> Estimate Bill</label>
-                    <label class="checkbox-card-item"><input type="checkbox" value="visiting" onchange="buildMultiPreview()"> Visiting Card</label>
-                </div>
-            </div>
-
-            <div class="form-group full-width multi-inline-config">
-                <h4>✍️ Configure Data for Multi-Print Items</h4>
-                <div class="multi-config-row">
-                    <div class="form-group">
-                        <label>Custom Text Message</label>
-                        <input type="text" class="form-control sentence-case-input" id="multi-input-custom-text" placeholder="Type custom text..." oninput="syncMultiInputs('custom')">
+                <!-- Visiting Card: which-branch phone number choice. Sits
+                     right here in the grid, directly below the Visiting
+                     Card tile — not a popup — and spans the full row so it
+                     reads as "opening out of" that tile, with the live
+                     preview still visible in the sidebar while you pick. -->
+                <div class="location-choice-panel location-choice-inline" id="visitingChoiceModal" data-anchor-tile="visiting">
+                    <div class="panel-header-row">
+                        <span class="panel-title">📇 Print Visiting Card — choose a branch</span>
+                    </div>
+                    <div class="location-choice-grid">
+                        <button type="button" class="location-choice-btn" onclick="printVisitingChoice('gajuwaka')">
+                            <span class="location-choice-title">Branch 1: Gajuwaka</span>
+                            <span class="location-choice-sub">Show Gajuwaka number only</span>
+                        </button>
+                        <button type="button" class="location-choice-btn" onclick="printVisitingChoice('kurmannapalem')">
+                            <span class="location-choice-title">Branch 2: Kurmannapalem</span>
+                            <span class="location-choice-sub">Show Kurmannapalem number only</span>
+                        </button>
+                        <button type="button" class="location-choice-btn location-choice-both" onclick="printVisitingChoice('both')">
+                            <span class="location-choice-title">Both Branches</span>
+                            <span class="location-choice-sub">Show both numbers, stacked</span>
+                        </button>
+                        <button type="button" class="location-choice-cancel" onclick="hideAllPanelsKeepData()">Cancel</button>
                     </div>
                 </div>
+
             </div>
         </div>
-    </div>
 
-    <!-- Input Panels -->
-    <div class="text-input-panel" id="customInputPanel">
+        <!-- CREATE & PRINT -->
+        <div class="dashboard-section" id="section-create">
+            <div class="section-label"><span class="section-dot" style="background:#2563eb;"></span> Create &amp; Print <span class="section-hint">— tap to fill in fresh details, then print</span></div>
+            <div class="big-buttons-bar">
+
+                <!-- 5. Custom Text -->
+                <div class="icon-btn-wrap" data-tile-key="custom">
+                    <button class="icon-btn custom" id="btn-toggle-custom" onclick="recordTileUsage('custom'); toggleCustomTextPanel()">
+                        <span class="tile-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/>
+                            </svg>
+                        </span>
+                        <span class="t1">Custom Text</span>
+                    </button>
+                    <button type="button" class="tile-recent-btn" title="Recent Custom Text Prints" onclick="event.stopPropagation(); openRecentPrints('custom');">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>
+                    </button>
+                </div>
+<div class="text-input-panel" id="customInputPanel" data-anchor-tile="custom">
         <div class="panel-header-row">
             <span class="panel-title">✍️ Custom Text Editor</span>
             <div class="panel-header-actions">
@@ -2595,8 +3057,111 @@ Millet Groceries & Snacks</textarea>
         </div>
     </div>
 
-    <!-- Price Tag Input Panel -->
-    <div class="price-panel" id="priceInputPanel">
+
+                <!-- 6. Coupon -->
+                <div class="icon-btn-wrap" data-tile-key="coupon">
+                    <button class="icon-btn coupon" id="btn-toggle-coupon" onclick="recordTileUsage('coupon'); toggleCouponPanel()">
+                        <span class="tile-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M13 5v14"/>
+                            </svg>
+                        </span>
+                        <span class="t1">Coupon</span>
+                    </button>
+                    <button type="button" class="tile-recent-btn" title="Recent Coupon Prints" onclick="event.stopPropagation(); openRecentPrints('coupon');">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>
+                    </button>
+                </div>
+<div class="coupon-panel" id="couponInputPanel" data-anchor-tile="coupon">
+        <div class="panel-header-row">
+            <span class="panel-title">🎟️ Issue Store Discount Coupon</span>
+            <div class="panel-header-actions">
+                <button class="print-coupon-btn" onclick="printCouponAction()">🖨️ Print Coupon</button>
+                <button class="print-coupon-btn" onclick="printBothBranchesCouponAction()">🖨️ Print Both Branches</button>
+                <button class="reset-logo-btn" onclick="regenerateCouponCode()" title="Issue a fresh coupon code for this branch">↺ New Code</button>
+                <button class="reset-default-btn" onclick="resetCouponPanel()">↺ Reset to Default</button>
+            </div>
+        </div>
+        <div class="coupon-grid">
+            <div class="form-group">
+                <label>Customer Name (Optional)</label>
+                <input type="text" class="form-control sentence-case-input" id="coupon-cust-name" placeholder="e.g. John Doe" oninput="updateCouponCardPreview()">
+            </div>
+            <div class="form-group">
+                <label>Customer Number (Optional)</label>
+                <input type="text" class="form-control" id="coupon-cust-phone" placeholder="e.g. 9876543210" oninput="updateCouponCardPreview()">
+            </div>
+            <div class="form-group">
+                <label>Number of Prints</label>
+                <div class="panel-qty-stepper">
+                    <button type="button" class="cnt-btn type-btn" style="flex:0; width:40px;" onclick="adjustPrintQty('coupon', -1)">-</button>
+                    <span class="cnt-value qty-value" data-qty-key="coupon" style="font-weight:900; font-size:16px;">1</span>
+                    <button type="button" class="cnt-btn type-btn" style="flex:0; width:40px;" onclick="adjustPrintQty('coupon', 1)">+</button>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Coupon Type</label>
+                <div class="type-selector-btns">
+                    <button class="type-btn active" id="type-pct-btn" onclick="setCouponType('pct')">Flat % Off</button>
+                    <button class="type-btn" id="type-rs-btn" onclick="setCouponType('rs')">Amount (₹) Off</button>
+                </div>
+            </div>
+            <div class="form-group" id="pct-controls-group">
+                <label>Discount Percentage (Max 10%)</label>
+                <div class="counter-box" style="display: flex; align-items: center; gap: 10px;">
+                    <button class="cnt-btn type-btn" style="flex:0; width:40px;" onclick="adjustPct(-1)">-</button>
+                    <span class="cnt-value" id="pct-val-display" style="font-weight:900; font-size:16px;">5%</span>
+                    <button class="cnt-btn type-btn" style="flex:0; width:40px;" onclick="adjustPct(1)">+</button>
+                </div>
+            </div>
+            <div class="form-group" id="rs-controls-group" style="display: none;">
+                <label>Rupees Amount (₹)</label>
+                <input type="number" class="form-control" id="rs-input-val" value="50" oninput="updateCouponCardPreview()">
+            </div>
+            <div class="form-group">
+                <label>Select Branch Location</label>
+                <div class="type-selector-btns">
+                    <button class="type-btn active" id="coupon-branch-gajuwaka" onclick="setCouponBranch('gajuwaka')">Gajuwaka</button>
+                    <button class="type-btn" id="coupon-branch-kurmannapalem" onclick="setCouponBranch('kurmannapalem')">Kurmannapalem</button>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Coupon From Date</label>
+                <input type="date" class="form-control" id="coupon-from-date" onchange="updateCouponCardPreview()">
+            </div>
+            <div class="form-group full-width">
+                <label>Generated By (Staff Name) <span style="color:#ef4444;">*</span></label>
+                <div class="type-selector-btns" style="margin-bottom: 6px;">
+                    <button class="type-btn staff-option active" id="staff-btn-bhargav" onclick="setStaffOption('Bhargav')">Bhargav</button>
+                    <button class="type-btn staff-option" id="staff-btn-kanthi" onclick="setStaffOption('Kanthi')">Kanthi</button>
+                    <button class="type-btn staff-option" id="staff-btn-vamsi" onclick="setStaffOption('Vamsi')">Vamsi</button>
+                    <button class="type-btn staff-option" id="staff-btn-other" onclick="setStaffOption('Other')">Other</button>
+                </div>
+                <input type="text" class="form-control sentence-case-input" id="coupon-staff-name" placeholder="Enter staff name..." value="Bhargav" oninput="updateCouponCardPreview()" style="display: none;">
+            </div>
+            <div class="form-group full-width">
+                <label>Notes / Terms (Optional)</label>
+                <input type="text" class="form-control sentence-case-input" id="coupon-notes" placeholder="e.g. Valid on minimum purchase of Rs.500" oninput="updateCouponCardPreview()">
+            </div>
+        </div>
+    </div>
+
+
+                <!-- 7. Price Tag -->
+                <div class="icon-btn-wrap" data-tile-key="price">
+                    <button class="icon-btn price" id="btn-toggle-price" onclick="recordTileUsage('price'); togglePricePanel()">
+                        <span class="tile-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M20.6 12.6 12 21.2 2.8 12 12.8 2h5.8a2 2 0 0 1 2 2Z"/><circle cx="16.5" cy="7.5" r="1.5"/>
+                            </svg>
+                        </span>
+                        <span class="t1">Price Tag</span>
+                    </button>
+                    <button type="button" class="tile-recent-btn" title="Recent Price Tags" onclick="event.stopPropagation(); openRecentPrints('price');">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>
+                    </button>
+                </div>
+<div class="price-panel" id="priceInputPanel" data-anchor-tile="price">
         <div class="panel-header-row">
             <span class="panel-title">🏷️ Item Price Tag Creator</span>
             <div class="panel-header-actions">
@@ -2629,7 +3194,7 @@ Millet Groceries & Snacks</textarea>
 
         <div class="price-grid">
             <div class="form-group full-width">
-                <button type="button" class="type-btn" id="price-brand-toggle-btn" onclick="togglePriceBrandInput()" style="background:#f1f5f9; border-style: dashed; padding: 8px;">+ Add Brand Name</button>
+                <button type="button" class="type-btn" id="price-brand-toggle-btn" onclick="togglePriceBrandInput()" style="background:#f1f5f9; border-style: dashed; padding: 7px;">+ Add Brand Name</button>
             </div>
             <div class="form-group full-width" id="price-brand-group" style="display: none;">
                 <label>Brand Name</label>
@@ -2772,8 +3337,86 @@ Millet Groceries & Snacks</textarea>
         </div>
     </div>
 
-    <!-- Estimate Bill Input Panel -->
-    <div class="estimate-panel" id="estimateInputPanel">
+
+                <!-- 7b. Promo Tag (preset attention-grabbing tags) -->
+                <div class="icon-btn-wrap" data-tile-key="promo">
+                    <button class="icon-btn promo" id="btn-toggle-promo" onclick="recordTileUsage('promo'); togglePromoPanel()">
+                        <span class="tile-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M20.59 13.41 11 23l-9-9L11.59.41A2 2 0 0 1 13 0h7a2 2 0 0 1 2 2v7a2 2 0 0 1-.41 1.41Z" transform="translate(0 0.5) scale(0.95)"/><circle cx="16.5" cy="7.5" r="1.5"/>
+                            </svg>
+                        </span>
+                        <span class="t1">Promo Tag</span>
+                    </button>
+                    <button type="button" class="tile-recent-btn" title="Recent Promo Tags" onclick="event.stopPropagation(); openRecentPrints('promo');">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>
+                    </button>
+                </div>
+<div class="text-input-panel" id="promoInputPanel" data-anchor-tile="promo">
+        <div class="panel-header-row">
+            <span class="panel-title">🏷️ Promo / Offer Tag</span>
+            <div class="panel-header-actions">
+                <button class="reset-default-btn" onclick="resetPromoPanel()">↺ Reset to Default</button>
+                <button class="print-now-btn" onclick="triggerMobilePrint('promo')">🖨️ Print Promo Tag</button>
+            </div>
+        </div>
+
+        <div class="custom-options-bar">
+            <span style="font-size:11px; font-weight:800; color:#64748b;">Presets — tap one, then edit the text below if you like:</span>
+            <div class="toolbar-group panel-qty-stepper" style="margin-left:auto;">
+                <span style="font-size:11px; font-weight:800;">Number of Prints:</span>
+                <button type="button" class="cnt-btn type-btn" style="flex:0; width:36px;" onclick="adjustPrintQty('promo', -1)">-</button>
+                <span class="cnt-value qty-value" data-qty-key="promo" style="font-weight:900; font-size:15px;">1</span>
+                <button type="button" class="cnt-btn type-btn" style="flex:0; width:36px;" onclick="adjustPrintQty('promo', 1)">+</button>
+            </div>
+        </div>
+
+        <div class="promo-preset-grid">
+            <button type="button" class="promo-preset-btn" onclick="selectPromoPreset('NEW ARRIVAL')">New Arrival</button>
+            <button type="button" class="promo-preset-btn" onclick="selectPromoPreset('BEST SELLER')">Best Seller</button>
+            <button type="button" class="promo-preset-btn" onclick="selectPromoPreset('RARE ITEM')">Rare Item</button>
+            <button type="button" class="promo-preset-btn" onclick="selectPromoPreset('MUST TRY')">Must Try</button>
+            <button type="button" class="promo-preset-btn" onclick="selectPromoPreset('FLAT 10% OFF')">Flat 10% Off</button>
+            <button type="button" class="promo-preset-btn" onclick="selectPromoPreset('FLAT 20% OFF')">Flat 20% Off</button>
+            <button type="button" class="promo-preset-btn" onclick="selectPromoPreset('FLAT 50% OFF')">Flat 50% Off</button>
+            <button type="button" class="promo-preset-btn" onclick="selectPromoPreset('COMBO OFFER')">Combo Offer</button>
+            <button type="button" class="promo-preset-btn" onclick="selectPromoPreset('LIMITED STOCK')">Limited Stock</button>
+            <button type="button" class="promo-preset-btn" onclick="selectPromoPreset('SALE')">Sale</button>
+        </div>
+
+        <div class="form-group full-width" style="margin-top:12px;">
+            <label>Tag Text (edit after picking a preset, if you like)</label>
+            <input type="text" class="form-control" id="promo-text" value="NEW ARRIVAL" style="text-transform:uppercase; font-weight:900;" oninput="updatePromoCardPreview()">
+        </div>
+        <div class="form-group">
+            <label>Text Size</label>
+            <select class="form-control" id="promo-fontsize" onchange="updatePromoCardPreview()">
+                <option value="28px">28px</option>
+                <option value="32px">32px</option>
+                <option value="36px" selected>36px (Default)</option>
+                <option value="40px">40px</option>
+                <option value="44px">44px</option>
+                <option value="48px">48px</option>
+            </select>
+        </div>
+    </div>
+
+
+                <!-- 8. Estimate / Bill Calculator -->
+                <div class="icon-btn-wrap" data-tile-key="estimate">
+                    <button class="icon-btn estimate" id="btn-toggle-estimate" onclick="recordTileUsage('estimate'); toggleEstimatePanel()">
+                        <span class="tile-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="4" y="2" width="16" height="20" rx="2"/><path d="M8 7h8M8 11h8M8 15h4"/>
+                            </svg>
+                        </span>
+                        <span class="t1">Estimate Bill</span>
+                    </button>
+                    <button type="button" class="tile-recent-btn" title="Recent Estimate Prints" onclick="event.stopPropagation(); openRecentPrints('estimate');">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>
+                    </button>
+                </div>
+<div class="estimate-panel" id="estimateInputPanel" data-anchor-tile="estimate">
         <div class="panel-header-row">
             <span class="panel-title">🧮 Fast Estimate Bill Calculator</span>
             <div class="panel-header-actions">
@@ -2790,6 +3433,10 @@ Millet Groceries & Snacks</textarea>
             <div class="form-group">
                 <label>Phone Number (Optional)</label>
                 <input type="text" class="form-control" id="est-cust-phone" placeholder="e.g. 9876543210" oninput="updateEstimateCardPreview()">
+            </div>
+            <div class="form-group">
+                <label>Payment / Cash Note (Optional)</label>
+                <input type="text" class="form-control sentence-case-input" id="est-payment-note" placeholder="e.g. Paid by cash, ₹500 received" oninput="updateEstimateCardPreview()">
             </div>
             <div class="form-group">
                 <label>Number of Prints</label>
@@ -2872,147 +3519,201 @@ Millet Groceries & Snacks</textarea>
         </div>
     </div>
 
-    <!-- Visiting Card Input Panel -->
-    <!-- Coupon Panel -->
-    <div class="coupon-panel" id="couponInputPanel">
-        <div class="panel-header-row">
-            <span class="panel-title">🎟️ Issue Store Discount Coupon</span>
-            <div class="panel-header-actions">
-                <button class="print-coupon-btn" onclick="printCouponAction()">🖨️ Print Coupon</button>
-                <button class="print-coupon-btn" onclick="printBothBranchesCouponAction()">🖨️ Print Both Branches</button>
-                <button class="reset-logo-btn" onclick="regenerateCouponCode()" title="Issue a fresh coupon code for this branch">↺ New Code</button>
-                <button class="reset-default-btn" onclick="resetCouponPanel()">↺ Reset to Default</button>
+
             </div>
         </div>
-        <div class="coupon-grid">
-            <div class="form-group">
-                <label>Customer Name (Optional)</label>
-                <input type="text" class="form-control sentence-case-input" id="coupon-cust-name" placeholder="e.g. John Doe" oninput="updateCouponCardPreview()">
+
+        <!-- COMBINED PRINT -->
+        <div class="dashboard-section" id="section-combined">
+            <div class="section-label"><span class="section-dot" style="background:#7c3aed;"></span> Combined Print <span class="section-hint">— mix several items onto one receipt</span></div>
+            <div class="big-buttons-bar">
+
+                <!-- Custom Multi-Select Combined Print Button -->
+                <div class="icon-btn-wrap" data-tile-key="multi">
+                    <button class="icon-btn multibutton" id="btn-toggle-multi" onclick="toggleMultiPanel()">
+                        <span class="tile-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/>
+                            </svg>
+                        </span>
+                        <span class="t1">Custom Combined Print</span>
+                    </button>
+                    <button type="button" class="tile-recent-btn" title="Recent Combined Prints" onclick="event.stopPropagation(); openRecentPrints('multi');">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>
+                    </button>
+                </div>
+<div class="multi-print-panel" id="multiInputPanel" data-anchor-tile="multi">
+        <div class="panel-header-row">
+            <span class="panel-title">🛠️ Select Items to Combine in Single Print</span>
+            <div class="panel-header-actions">
+                <button class="print-multi-btn" onclick="executeMultiPrint()">🖨️ Print Selected Items</button>
             </div>
-            <div class="form-group">
-                <label>Customer Number (Optional)</label>
-                <input type="text" class="form-control" id="coupon-cust-phone" placeholder="e.g. 9876543210" oninput="updateCouponCardPreview()">
-            </div>
-            <div class="form-group">
+        </div>
+        <div class="multi-grid">
+            <div class="form-group full-width">
                 <label>Number of Prints</label>
                 <div class="panel-qty-stepper">
-                    <button type="button" class="cnt-btn type-btn" style="flex:0; width:40px;" onclick="adjustPrintQty('coupon', -1)">-</button>
-                    <span class="cnt-value qty-value" data-qty-key="coupon" style="font-weight:900; font-size:16px;">1</span>
-                    <button type="button" class="cnt-btn type-btn" style="flex:0; width:40px;" onclick="adjustPrintQty('coupon', 1)">+</button>
+                    <button type="button" class="cnt-btn type-btn" style="flex:0; width:40px;" onclick="adjustPrintQty('multi', -1)">-</button>
+                    <span class="cnt-value qty-value" data-qty-key="multi" style="font-weight:900; font-size:16px;">1</span>
+                    <button type="button" class="cnt-btn type-btn" style="flex:0; width:40px;" onclick="adjustPrintQty('multi', 1)">+</button>
                 </div>
-            </div>
-            <div class="form-group">
-                <label>Coupon Type</label>
-                <div class="type-selector-btns">
-                    <button class="type-btn active" id="type-pct-btn" onclick="setCouponType('pct')">Flat % Off</button>
-                    <button class="type-btn" id="type-rs-btn" onclick="setCouponType('rs')">Amount (₹) Off</button>
-                </div>
-            </div>
-            <div class="form-group" id="pct-controls-group">
-                <label>Discount Percentage (Max 10%)</label>
-                <div class="counter-box" style="display: flex; align-items: center; gap: 10px;">
-                    <button class="cnt-btn type-btn" style="flex:0; width:40px;" onclick="adjustPct(-1)">-</button>
-                    <span class="cnt-value" id="pct-val-display" style="font-weight:900; font-size:16px;">5%</span>
-                    <button class="cnt-btn type-btn" style="flex:0; width:40px;" onclick="adjustPct(1)">+</button>
-                </div>
-            </div>
-            <div class="form-group" id="rs-controls-group" style="display: none;">
-                <label>Rupees Amount (₹)</label>
-                <input type="number" class="form-control" id="rs-input-val" value="50" oninput="updateCouponCardPreview()">
-            </div>
-            <div class="form-group">
-                <label>Select Branch Location</label>
-                <div class="type-selector-btns">
-                    <button class="type-btn active" id="coupon-branch-gajuwaka" onclick="setCouponBranch('gajuwaka')">Gajuwaka</button>
-                    <button class="type-btn" id="coupon-branch-kurmannapalem" onclick="setCouponBranch('kurmannapalem')">Kurmannapalem</button>
-                </div>
-            </div>
-            <div class="form-group">
-                <label>Coupon From Date</label>
-                <input type="date" class="form-control" id="coupon-from-date" onchange="updateCouponCardPreview()">
             </div>
             <div class="form-group full-width">
-                <label>Generated By (Staff Name) <span style="color:#ef4444;">*</span></label>
-                <div class="type-selector-btns" style="margin-bottom: 6px;">
-                    <button class="type-btn staff-option active" id="staff-btn-bhargav" onclick="setStaffOption('Bhargav')">Bhargav</button>
-                    <button class="type-btn staff-option" id="staff-btn-kanthi" onclick="setStaffOption('Kanthi')">Kanthi</button>
-                    <button class="type-btn staff-option" id="staff-btn-vamsi" onclick="setStaffOption('Vamsi')">Vamsi</button>
-                    <button class="type-btn staff-option" id="staff-btn-other" onclick="setStaffOption('Other')">Other</button>
+                <label>Check items to include in your exact chosen order:</label>
+                <div class="checkbox-cards-grid" id="multi-checkboxes-container">
+                    <label class="checkbox-card-item"><input type="checkbox" value="exchange" checked onchange="buildMultiPreview()"> Scrap Exchange</label>
+                    <label class="checkbox-card-item"><input type="checkbox" value="custom" onchange="buildMultiPreview()"> Custom Text</label>
+                    <label class="checkbox-card-item"><input type="checkbox" value="coupon" onchange="buildMultiPreview()"> Discount Coupon</label>
+                    <label class="checkbox-card-item"><input type="checkbox" value="loc-gajuwaka" onchange="buildMultiPreview()"> Location: Gajuwaka</label>
+                    <label class="checkbox-card-item"><input type="checkbox" value="loc-kurmannapalem" onchange="buildMultiPreview()"> Location: Kurmannapalem</label>
+                    <label class="checkbox-card-item"><input type="checkbox" value="price" onchange="buildMultiPreview()"> Price Tag</label>
+                    <label class="checkbox-card-item"><input type="checkbox" value="estimate" onchange="buildMultiPreview()"> Estimate Bill</label>
+                    <label class="checkbox-card-item"><input type="checkbox" value="visiting" onchange="buildMultiPreview()"> Visiting Card</label>
                 </div>
-                <input type="text" class="form-control sentence-case-input" id="coupon-staff-name" placeholder="Enter staff name..." value="Bhargav" oninput="updateCouponCardPreview()" style="display: none;">
             </div>
-            <div class="form-group full-width">
-                <label>Notes / Terms (Optional)</label>
-                <input type="text" class="form-control sentence-case-input" id="coupon-notes" placeholder="e.g. Valid on minimum purchase of Rs.500" oninput="updateCouponCardPreview()">
+
+            <div class="form-group full-width multi-inline-config">
+                <h4>✍️ Configure Data for Multi-Print Items</h4>
+                <div class="multi-config-row">
+                    <div class="form-group">
+                        <label>Custom Text Message</label>
+                        <input type="text" class="form-control sentence-case-input" id="multi-input-custom-text" placeholder="Type custom text..." oninput="syncMultiInputs('custom')">
+                    </div>
+                </div>
             </div>
         </div>
     </div>
+
+
+            </div>
+        </div>
+
+        <!-- EXTERNAL TOOLS -->
+        <div class="dashboard-section" id="section-external">
+            <div class="section-label"><span class="section-dot" style="background:#0d9488;"></span> External Tools <span class="section-hint">— opens a different site in a new tab</span></div>
+            <div class="big-buttons-bar">
+
+                <!-- Label Printer Link Button -->
+                <div class="icon-btn-wrap">
+                    <a class="icon-btn labelprinter" href="https://lalithanaturals.github.io/lable-Printer/" target="_blank" rel="noopener noreferrer">
+                        <span class="tile-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
+                                <path d="M6 9V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v5"/>
+                                <rect x="6" y="14" width="12" height="8" rx="1"/>
+                            </svg>
+                        </span>
+                        <span class="t1">Label Printer ↗</span>
+                    </a>
+                    <button type="button" class="tile-share-btn" title="Share Label Printer link" onclick="shareExternalTool(event, 'Label Printer', 'https://lalithanaturals.github.io/lable-Printer/')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10Z"/>
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Scrap Calculator Link Button -->
+                <div class="icon-btn-wrap">
+                    <a class="icon-btn calculator" href="https://lalithanaturals.github.io/scrap-calc/" target="_blank" rel="noopener noreferrer">
+                        <span class="tile-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 7h8M8 11h5M8 15h8"/>
+                            </svg>
+                        </span>
+                        <span class="t1">Scrap Calc ↗</span>
+                    </a>
+                    <button type="button" class="tile-share-btn" title="Share Scrap Calc link" onclick="shareExternalTool(event, 'Scrap Calc', 'https://lalithanaturals.github.io/scrap-calc/')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10Z"/>
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Stock Transfer Link Button -->
+                <div class="icon-btn-wrap">
+                    <a class="icon-btn transfer" href="https://lalithanaturals.github.io/Stock-transfer/" target="_blank" rel="noopener noreferrer">
+                        <span class="tile-icon"><img src="van logo.png" class="btn-img-icon" alt="Stock Transfer"></span>
+                        <span class="t1">Transfer ↗</span>
+                    </a>
+                    <button type="button" class="tile-share-btn" title="Share Stock Transfer link" onclick="shareExternalTool(event, 'Stock Transfer', 'https://lalithanaturals.github.io/Stock-transfer/')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10Z"/>
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Offer Calc Link Button -->
+                <div class="icon-btn-wrap">
+                    <a class="icon-btn offercalc" href="https://lalithanaturals.github.io/Offer-Calc/" target="_blank" rel="noopener noreferrer">
+                        <span class="tile-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M9 17H7A5 5 0 0 1 7 7h2M15 7h2a5 5 0 0 1 0 10h-2M8 12h8"/>
+                            </svg>
+                        </span>
+                        <span class="t1">Offer Calc ↗</span>
+                    </a>
+                    <button type="button" class="tile-share-btn" title="Share Offer Calc link" onclick="shareExternalTool(event, 'Offer Calc', 'https://lalithanaturals.github.io/Offer-Calc/')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10Z"/>
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Denomination Link Button -->
+                <div class="icon-btn-wrap">
+                    <a class="icon-btn denomination" href="https://lalithanaturals.github.io/Denomination/" target="_blank" rel="noopener noreferrer">
+                        <span class="tile-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="3"/><path d="M6 6v.01M18 6v.01M6 18v-.01M18 18v-.01"/>
+                            </svg>
+                        </span>
+                        <span class="t1">Denomination ↗</span>
+                    </a>
+                    <button type="button" class="tile-share-btn" title="Share Denomination link" onclick="shareExternalTool(event, 'Denomination', 'https://lalithanaturals.github.io/Denomination/')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10Z"/>
+                        </svg>
+                    </button>
+                </div>
+
+            </div>
+        </div>
+
+        </div>
+    </div>
+
+    <!-- Visiting Card Settings Panel -->
+
+
+    <!-- Scrap Exchange Panel -->
+
+
+    <!-- Custom Multi-Select Panel -->
+
+
+    <!-- Input Panels -->
+
+
+    <!-- Price Tag Input Panel -->
+
+
+    <!-- Promo Tag Input Panel — preset attention-grabbing tags (New
+         Arrival, Best Seller, etc) for the thermal printer: just the logo
+         and one big bold line of text, editable after picking a preset. -->
+
+
+    <!-- Estimate Bill Input Panel -->
+
+
+    <!-- Visiting Card Input Panel -->
+    <!-- Coupon Panel -->
+
 
     <!-- Store Location Panel -->
-    <div class="location-panel" id="locationInputPanel">
-        <div class="panel-header-row">
-            <span class="panel-title">📍 Store Location Settings</span>
-            <div class="panel-header-actions">
-                <button class="print-location-btn" onclick="triggerMobilePrint('both-locations')">🖨️ Print Both Branches</button>
-                <button class="reset-default-btn" onclick="resetLocationPanel()">↺ Reset to Default</button>
-            </div>
-        </div>
-        <div class="location-grid">
-            <div class="form-group full-width">
-                <label>Default Branch (pre-selected when the print choice popup opens)</label>
-                <div class="type-selector-btns">
-                    <button class="type-btn active" id="loc-btn-gajuwaka" onclick="setLocationBranch('gajuwaka')">Branch 1: Gajuwaka</button>
-                    <button class="type-btn" id="loc-btn-kurmannapalem" onclick="setLocationBranch('kurmannapalem')">Branch 2: Kurmannapalem</button>
-                </div>
-            </div>
-            <div class="form-group">
-                <label>Branch-1 (Gajuwaka) Address</label>
-                <input type="text" class="form-control" id="loc-addr-gajuwaka" value="MIG-20, Near Timpany School Vuda Colony, Gonthinavanipalem, Gajuwaka, Andhra Pradesh 530044" oninput="updateLocationCardPreview()">
-            </div>
-            <div class="form-group">
-                <label>Branch-1 (Gajuwaka) Phone</label>
-                <input type="text" class="form-control" id="loc-phone-gajuwaka" value="9676287766" oninput="updateLocationCardPreview()">
-            </div>
-            <div class="form-group full-width">
-                <label>Branch-1 (Gajuwaka) Google Maps Link (used to generate the QR code)</label>
-                <input type="text" class="form-control" id="loc-maps-gajuwaka" value="https://maps.app.goo.gl/Gzxq2iuM7fijRAQr6" oninput="updateLocationCardPreview()">
-            </div>
-            <div class="form-group">
-                <label>Branch-2 (Kurmannapalem) Address</label>
-                <input type="text" class="form-control" id="loc-addr-kurmannapalem" value="Vuda phase 7, Hig 7, opposite Gloria Vidya Kendram, Vuda Colony, Gajuwaka, Andhra Pradesh 530049" oninput="updateLocationCardPreview()">
-            </div>
-            <div class="form-group">
-                <label>Branch-2 (Kurmannapalem) Phone</label>
-                <input type="text" class="form-control" id="loc-phone-kurmannapalem" value="9676287766" oninput="updateLocationCardPreview()">
-            </div>
-            <div class="form-group full-width">
-                <label>Branch-2 (Kurmannapalem) Google Maps Link (used to generate the QR code)</label>
-                <input type="text" class="form-control" id="loc-maps-kurmannapalem" value="https://maps.app.goo.gl/dpn7MfYHNzjBDrch6" oninput="updateLocationCardPreview()">
-            </div>
-        </div>
-    </div>
+
 
     <!-- Store Location: which-branch print choice popup -->
-    <div class="location-choice-panel modal-panel" id="locationChoiceModal">
-        <div class="panel-header-row">
-            <span class="panel-title">📍 Print Store Location</span>
-        </div>
-        <div class="location-choice-grid">
-            <button type="button" class="location-choice-btn" onclick="printLocationChoice('gajuwaka')">
-                <span class="location-choice-title">Branch 1: Gajuwaka</span>
-                <span class="location-choice-sub">Print this branch only</span>
-            </button>
-            <button type="button" class="location-choice-btn" onclick="printLocationChoice('kurmannapalem')">
-                <span class="location-choice-title">Branch 2: Kurmannapalem</span>
-                <span class="location-choice-sub">Print this branch only</span>
-            </button>
-            <button type="button" class="location-choice-btn location-choice-both" onclick="printLocationChoice('both')">
-                <span class="location-choice-title">Both Branches</span>
-                <span class="location-choice-sub">Print both, one after another</span>
-            </button>
-            <button type="button" class="location-choice-cancel" onclick="hideAllPanelsKeepData()">Cancel</button>
-        </div>
-    </div>
+
 
     <!-- Recent Prints: shared popup used by every tile's 🕘 icon -->
     <div class="recent-prints-panel modal-panel" id="recentPrintsModal">
@@ -3023,28 +3724,6 @@ Millet Groceries & Snacks</textarea>
         <div class="recent-prints-footer">
             <button type="button" class="recent-prints-clear-btn" onclick="clearRecentPrints()">Clear All</button>
             <button type="button" class="recent-prints-close-btn" onclick="hideAllPanelsKeepData()">Close</button>
-        </div>
-    </div>
-
-    <!-- Visiting Card: which-branch phone number choice popup -->
-    <div class="location-choice-panel modal-panel" id="visitingChoiceModal">
-        <div class="panel-header-row">
-            <span class="panel-title">📇 Print Visiting Card</span>
-        </div>
-        <div class="location-choice-grid">
-            <button type="button" class="location-choice-btn" onclick="printVisitingChoice('gajuwaka')">
-                <span class="location-choice-title">Branch 1: Gajuwaka</span>
-                <span class="location-choice-sub">Show Gajuwaka number only</span>
-            </button>
-            <button type="button" class="location-choice-btn" onclick="printVisitingChoice('kurmannapalem')">
-                <span class="location-choice-title">Branch 2: Kurmannapalem</span>
-                <span class="location-choice-sub">Show Kurmannapalem number only</span>
-            </button>
-            <button type="button" class="location-choice-btn location-choice-both" onclick="printVisitingChoice('both')">
-                <span class="location-choice-title">Both Branches</span>
-                <span class="location-choice-sub">Show both numbers, stacked</span>
-            </button>
-            <button type="button" class="location-choice-cancel" onclick="hideAllPanelsKeepData()">Cancel</button>
         </div>
     </div>
 
@@ -3061,7 +3740,7 @@ Millet Groceries & Snacks</textarea>
                 <div class="card-label">Scrap Exchange (80mm)</div>
                 <button type="button" class="download-jpeg-btn" onclick="downloadCardAsJpeg('exReceiptCol','Scrap_Exchange',this)">⬇ JPEG</button>
             </div>
-            <div class="preview-box">
+            <div class="preview-box" onclick="openPreviewLightbox(event)">
                 <div class="card exchange-card" id="exchange-card-el">
                     <img src="Black Logo .jpg" class="thermal-logo" alt="Logo">
                     <div class="tagline">Feel the earth</div>
@@ -3087,7 +3766,7 @@ Millet Groceries & Snacks</textarea>
                 <div class="card-label">Price Tag Sticker (80mm)</div>
                 <button type="button" class="download-jpeg-btn" onclick="downloadCardAsJpeg('priceReceiptCol','Price_Tag',this)">⬇ JPEG</button>
             </div>
-            <div class="preview-box">
+            <div class="preview-box" onclick="openPreviewLightbox(event)">
                 <div class="card price-card" id="price-card-el" style="text-align: center;">
                     <img src="Black Logo .jpg" class="thermal-logo" id="price-receipt-logo" alt="Logo" style="display: none;">
                     <div class="tagline" id="price-receipt-tagline" style="display: none;">Feel the earth</div>
@@ -3120,13 +3799,28 @@ Millet Groceries & Snacks</textarea>
             </div>
         </div>
 
+        <!-- Promo / Offer Tag Receipt Column -->
+        <div class="receipt-column promo-receipt-column" id="promoReceiptCol">
+            <div class="card-label-row">
+                <div class="card-label">Promo / Offer Tag (80mm)</div>
+                <button type="button" class="download-jpeg-btn" onclick="downloadCardAsJpeg('promoReceiptCol','Promo_Tag',this)">⬇ JPEG</button>
+            </div>
+            <div class="preview-box" onclick="openPreviewLightbox(event)">
+                <div class="card promo-card" id="promo-card-el" style="text-align: center;">
+                    <img src="Black Logo .jpg" class="thermal-logo" alt="Logo">
+                    <div class="divider"></div>
+                    <div class="promo-big-text" id="promo-card-text" style="font-size:36px;">NEW ARRIVAL</div>
+                </div>
+            </div>
+        </div>
+
         <!-- Estimate Bill Receipt Column -->
         <div class="receipt-column estimate-receipt-column" id="estimateReceiptCol">
             <div class="card-label-row">
                 <div class="card-label">Estimate Bill (80mm)</div>
                 <button type="button" class="download-jpeg-btn" onclick="downloadCardAsJpeg('estimateReceiptCol','Estimate_Bill',this)">⬇ JPEG</button>
             </div>
-            <div class="preview-box">
+            <div class="preview-box" onclick="openPreviewLightbox(event)">
                 <div class="card estimate-card" id="estimate-card-el" style="text-align: center;">
                     <div class="header">ESTIMATE BILL</div>
                     <img src="Black Logo .jpg" class="thermal-logo" alt="Logo">
@@ -3149,6 +3843,7 @@ Millet Groceries & Snacks</textarea>
                         <span>TOTAL ESTIMATE:</span>
                         <span id="est-card-total">₹0.00</span>
                     </div>
+                    <div id="est-card-payment-note" style="font-size: 11px; font-weight: 900; text-align: left; margin-top: 4px; display: none;"></div>
                     <div class="divider"></div>
                     <div class="footer-text">THANK YOU! VISIT AGAIN</div>
                 </div>
@@ -3161,7 +3856,7 @@ Millet Groceries & Snacks</textarea>
                 <div class="card-label">Visiting Card (80mm)</div>
                 <button type="button" class="download-jpeg-btn" onclick="downloadCardAsJpeg('visitingReceiptCol','Visiting_Card',this)">⬇ JPEG</button>
             </div>
-            <div class="preview-box">
+            <div class="preview-box" onclick="openPreviewLightbox(event)">
                 <div class="card visiting-card" id="visiting-card-el">
                     <img src="Black Logo .jpg" class="thermal-logo" alt="Logo">
                     <div class="tagline" style="text-align:center;">Feel the earth</div>
@@ -3212,7 +3907,7 @@ Millet Groceries & Snacks</textarea>
                 <div class="card-label">Custom Text (80mm)</div>
                 <button type="button" class="download-jpeg-btn" onclick="downloadCardAsJpeg('customReceiptCol','Custom_Text',this)">⬇ JPEG</button>
             </div>
-            <div class="preview-box">
+            <div class="preview-box" onclick="openPreviewLightbox(event)">
                 <div class="card custom-card" id="custom-card-el">
                     <img src="Black Logo .jpg" class="thermal-logo" id="custom-receipt-logo" alt="Logo">
                     <div class="tagline" id="custom-receipt-tagline" style="display: none;">Feel the earth</div>
@@ -3228,7 +3923,7 @@ Millet Groceries & Snacks</textarea>
                 <div class="card-label">Store Coupon (80mm)</div>
                 <button type="button" class="download-jpeg-btn" onclick="downloadCardAsJpeg('couponReceiptCol','Coupon',this)">⬇ JPEG</button>
             </div>
-            <div class="preview-box" style="flex-direction: column; align-items: center; gap: 15px;">
+            <div class="preview-box" style="flex-direction: column; align-items: center; gap: 15px;" onclick="openPreviewLightbox(event)">
                 
                 <div class="coupon-branch-wrapper" id="coupon-gajuwaka-section" style="width: 100%;">
                     <div class="card coupon-card" style="text-align: center;">
@@ -3306,7 +4001,7 @@ Millet Groceries & Snacks</textarea>
                 <div class="card-label">Store Location QR (80mm)</div>
                 <button type="button" class="download-jpeg-btn" onclick="downloadCardAsJpeg('locationReceiptCol','Store_Location',this)">⬇ JPEG</button>
             </div>
-            <div class="preview-box" style="flex-direction: column; align-items: center; gap: 15px;">
+            <div class="preview-box" style="flex-direction: column; align-items: center; gap: 15px;" onclick="openPreviewLightbox(event)">
                 <div class="loc-card-wrapper" id="loc-gajuwaka-wrapper" style="width: 100%;">
                     <div class="card location-card" style="text-align: center;">
                         <img src="Black Logo .jpg" class="thermal-logo" alt="Logo">
@@ -3349,8 +4044,39 @@ Millet Groceries & Snacks</textarea>
                 <div class="card-label">Custom Combined Print Preview (80mm)</div>
                 <button type="button" class="download-jpeg-btn" onclick="downloadCardAsJpeg('multiReceiptCol','Combined_Print',this)">⬇ JPEG</button>
             </div>
-            <div class="preview-box">
+            <div class="preview-box" onclick="openPreviewLightbox(event)">
                 <div class="card" id="multi-preview-card-container" style="width: 80mm; padding: 10px 12px; text-align: center;">
+                </div>
+            </div>
+        </div>
+
+        <!-- Test Print / calibration receipt (Settings → Test Print) -->
+        <div class="receipt-column test-receipt-column" id="testReceiptCol">
+            <div class="card-label-row">
+                <div class="card-label">Test Print / Calibration (80mm)</div>
+            </div>
+            <div class="preview-box" onclick="openPreviewLightbox(event)">
+                <div class="card test-card" id="test-card-el" style="text-align:center;">
+                    <div class="tagline" style="font-weight:900;">PRINTER TEST / CALIBRATION</div>
+                    <div class="divider"></div>
+                    <div style="text-align:left; font-size:12px; font-weight:800; line-height:1.5;">
+                        <div>Date: <span id="test-card-date"></span></div>
+                        <div>Paper width: 80mm</div>
+                    </div>
+                    <div class="divider"></div>
+                    <div style="text-align:left; font-size:18px; font-weight:900;">18px — Item name size</div>
+                    <div style="text-align:left; font-size:20px; font-weight:900;">20px — MRP size</div>
+                    <div style="text-align:left; font-size:32px; font-weight:900;">32px — SP size</div>
+                    <div class="divider"></div>
+                    <div style="text-align:left; font-size:11px; font-weight:800;">
+                        ABCDEFGHIJKLM abcdefghijklm 0123456789<br>
+                        NOPQRSTUVWXYZ nopqrstuvwxyz !@#₹%&amp;
+                    </div>
+                    <div class="divider"></div>
+                    <div style="font-size:11px; font-weight:800;">########################</div>
+                    <div style="font-size:11px; font-weight:800;">------------------------</div>
+                    <div class="divider"></div>
+                    <div style="font-size:11px; font-weight:900;">If you can read every line above clearly, and this card is cut cleanly at its edges, the printer and paper are set up correctly.</div>
                 </div>
             </div>
         </div>
@@ -3362,11 +4088,52 @@ Millet Groceries & Snacks</textarea>
 
     <div class="modal-backdrop" id="modalBackdrop" onclick="hideAllPanelsKeepData()"></div>
 
+    <!-- Brief confirmation shown after every print, so a fast tap on the
+         counter still gets a clear "yes, that went to the printer" signal. -->
+    <div class="app-toast" id="appToast"></div>
+
+    <!-- Tap-to-enlarge: tapping any live preview clones its current card
+         markup in here, full-size, so small text (like a Price Tag's MRP)
+         can be double-checked before committing paper to it. -->
+    <div class="preview-lightbox" id="previewLightbox" onclick="closePreviewLightbox()">
+        <div class="preview-lightbox-inner" id="previewLightboxInner" onclick="event.stopPropagation()"></div>
+    </div>
+
+    <!-- ===================== SHOP FLOOR MODE =====================
+         An optional, toggleable alternate layout (Settings → Shop Floor
+         Mode) built for one-handed use at the counter: bigger tap targets
+         everywhere, and the two things used most — switching sections and
+         repeating the last print — live in a fixed bar and button down in
+         the thumb zone, instead of needing a stretch up to the top bar.
+         Nothing about the existing panels/flows changes; this is a layer
+         on top, and switching it off returns to the classic layout
+         exactly as it was. -->
+    <div class="shopfloor-tabbar" id="shopfloorTabbar">
+        <button type="button" class="shopfloor-tab" data-section="section-quick" onclick="shopfloorJump('section-quick')">
+            <span class="shopfloor-tab-icon">🖨️</span><span>Quick</span>
+        </button>
+        <button type="button" class="shopfloor-tab" data-section="section-create" onclick="shopfloorJump('section-create')">
+            <span class="shopfloor-tab-icon">✍️</span><span>Create</span>
+        </button>
+        <button type="button" class="shopfloor-tab" data-section="section-combined" onclick="shopfloorJump('section-combined')">
+            <span class="shopfloor-tab-icon">🛠️</span><span>Combined</span>
+        </button>
+        <button type="button" class="shopfloor-tab" data-section="section-external" onclick="shopfloorJump('section-external')">
+            <span class="shopfloor-tab-icon">↗️</span><span>Tools</span>
+        </button>
+        <button type="button" class="shopfloor-tab" onclick="toggleSettingsMenu()">
+            <span class="shopfloor-tab-icon">⚙️</span><span>More</span>
+        </button>
+    </div>
+    <button type="button" class="shopfloor-fab" id="shopfloorFab" title="Repeat the last thing you printed" onclick="repeatLastPrint()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+    </button>
+
     <script>
         // ---- App version ----
         // Bump this (and add a line to the version-log comment at the very
         // top of this file) every time the file is updated and re-uploaded.
-        const APP_VERSION = 'v1.1.0';
+        const APP_VERSION = 'v1.6.3';
 
         // ---- Number of Prints ----
         // One count per print type, shown as a +/- stepper on the Quick
@@ -3383,8 +4150,137 @@ Millet Groceries & Snacks</textarea>
             coupon: 1,
             price: 1,
             estimate: 1,
-            multi: 1
+            multi: 1,
+            promo: 1
         };
+
+        // ---- Most-used tile ordering ----
+        // Counts taps per tile (Quick Print + Create & Print only — not
+        // External Tools, which stays in its curated order) and, on load,
+        // sorts each section's tiles most-used first. Nothing reorders
+        // mid-session — only on the next reload — so tiles don't visibly
+        // jump around under your thumb while you're using the app.
+        function recordTileUsage(key) {
+            try {
+                const usage = JSON.parse(localStorage.getItem('lp_tileUsage') || '{}');
+                usage[key] = (usage[key] || 0) + 1;
+                localStorage.setItem('lp_tileUsage', JSON.stringify(usage));
+            } catch (e) {}
+        }
+
+        function applyMostUsedOrdering() {
+            let usage = {};
+            try { usage = JSON.parse(localStorage.getItem('lp_tileUsage') || '{}'); } catch (e) {}
+            ['#section-quick .big-buttons-bar', '#section-create .big-buttons-bar'].forEach(sel => {
+                const bar = document.querySelector(sel);
+                if (!bar) return;
+                const items = Array.from(bar.children)
+                    .filter(el => el.hasAttribute('data-tile-key'))
+                    .map((el, idx) => ({ el, idx, count: usage[el.getAttribute('data-tile-key')] || 0 }));
+                if (!items.every(item => item.count === 0)) {
+                    items.sort((a, b) => b.count - a.count || a.idx - b.idx);
+                    items.forEach(item => bar.appendChild(item.el));
+                }
+                // Any inline panel that "belongs" to a tile (like Visiting
+                // Card's branch choice) must stay directly after that tile
+                // even after reordering above moved tiles around — appendChild
+                // would otherwise leave it stranded at the front of the grid.
+                Array.from(bar.children).filter(el => el.hasAttribute('data-anchor-tile')).forEach(panel => {
+                    const anchor = bar.querySelector('[data-tile-key="' + panel.getAttribute('data-anchor-tile') + '"]');
+                    if (anchor) anchor.after(panel);
+                });
+            });
+        }
+
+        // Places an inline settings panel directly below the LAST tile in
+        // the same visual row as the tile that was tapped, instead of right
+        // after that exact tile — so tiles that happen to share a row with
+        // it (to its right) never jump down to a new row underneath it.
+        // Only the rows that come after the tapped tile's row shift down
+        // (unavoidable — the panel needs the space), and they shift as a
+        // block, keeping their own left-to-right order unchanged. Grid
+        // column count is responsive (auto-fill), so the row is detected by
+        // comparing each tile's actual offsetTop rather than assuming a
+        // fixed number of columns.
+        function anchorPanelBelowTileRow(panel, tileBtnId) {
+            try {
+                const tileBtn = document.getElementById(tileBtnId);
+                const bar = tileBtn && tileBtn.closest('.big-buttons-bar');
+                if (!tileBtn || !bar) return;
+                // Walk up from the tapped button to whichever ancestor is a
+                // DIRECT child of the bar — this is the tile's full "row
+                // item", whatever its internal structure (some tiles are a
+                // plain .icon-btn-wrap, others wrap an .icon-btn-wrap plus a
+                // qty-stepper inside an outer .tile-group).
+                let tileItem = tileBtn;
+                while (tileItem && tileItem.parentElement !== bar) tileItem = tileItem.parentElement;
+                if (!tileItem) return;
+                // All direct children of the bar that are actual tiles (skip
+                // any inline panels already anchored there).
+                const tiles = Array.from(bar.children).filter(el => !el.hasAttribute('data-anchor-tile'));
+                const tileTop = tileItem.offsetTop;
+                const sameRow = tiles.filter(t => Math.abs(t.offsetTop - tileTop) < 4);
+                const lastInRow = sameRow.length ? sameRow[sameRow.length - 1] : tileItem;
+                if (lastInRow.nextElementSibling !== panel) {
+                    lastInRow.after(panel);
+                }
+            } catch (e) {}
+        }
+
+        // ---- Shop Floor Mode (optional alternate layout) ----
+        // A one-handed-friendly mode: bigger tiles, a bottom thumb-zone tab
+        // bar for jumping between sections, and a floating button that
+        // repeats whatever was printed last across every category. Purely
+        // additive — toggling it off returns to the classic layout exactly
+        // as it was, nothing underneath changes.
+        function applyShopFloorMode(on) {
+            document.body.classList.toggle('shopfloor-mode', on);
+            const label = document.getElementById('shopfloorModeMenuLabel');
+            const btn = document.getElementById('shopfloorModeMenuBtn');
+            if (label) label.textContent = 'Shop Floor Mode: ' + (on ? 'On' : 'Off');
+            if (btn) btn.classList.toggle('on', on);
+        }
+
+        function toggleShopFloorMode() {
+            const on = !document.body.classList.contains('shopfloor-mode');
+            applyShopFloorMode(on);
+            try { localStorage.setItem('lp_shopFloorMode', on ? '1' : '0'); } catch (e) {}
+            toggleSettingsMenu();
+            if (on) showToast('Shop Floor Mode on — bigger buttons, bottom nav', 2200);
+        }
+
+        function loadShopFloorMode() {
+            let on = false;
+            try { on = localStorage.getItem('lp_shopFloorMode') === '1'; } catch (e) {}
+            applyShopFloorMode(on);
+        }
+
+        // Jumping via the bottom tab bar also highlights which section is
+        // active, since there's no longer a visible chip row to show it.
+        function shopfloorJump(sectionId) {
+            jumpToSection(sectionId);
+            document.querySelectorAll('.shopfloor-tab').forEach(tab => {
+                tab.classList.toggle('active', tab.getAttribute('data-section') === sectionId);
+            });
+        }
+
+        // Finds whichever Recent Prints entry (any category) has the most
+        // recent timestamp and reprints it — the fastest possible "do that
+        // again" for a repeat customer, without hunting for which tile it
+        // was under.
+        function repeatLastPrint() {
+            let latest = null;
+            Object.keys(recentPrintsStore).forEach(category => {
+                (recentPrintsStore[category] || []).forEach(entry => {
+                    if (!latest || entry.ts > latest.entry.ts) latest = { category, entry };
+                });
+            });
+            if (!latest) {
+                showToast('No recent prints yet', 1800);
+                return;
+            }
+            reprintRecent(latest.category, latest.entry.id);
+        }
 
         function adjustPrintQty(key, delta) {
             const current = printQty[key] || 1;
@@ -3392,9 +4288,40 @@ Millet Groceries & Snacks</textarea>
             if (next < PRINT_QTY_MIN) next = PRINT_QTY_MIN;
             if (next > PRINT_QTY_MAX) next = PRINT_QTY_MAX;
             printQty[key] = next;
+            refreshPrintQtyDisplay(key);
+            savePrintQty();
+        }
+
+        // Updates every on-screen stepper for this key (a tile's and/or a
+        // panel's) to match printQty[key], and lights up its container once
+        // the count is away from the default of 1.
+        function refreshPrintQtyDisplay(key) {
+            const next = printQty[key] || 1;
             document.querySelectorAll('.qty-value[data-qty-key="' + key + '"]').forEach(el => {
                 el.textContent = next;
+                const stepper = el.closest('.tile-qty-stepper, .panel-qty-stepper');
+                if (stepper) stepper.classList.toggle('qty-active', next !== 1);
             });
+        }
+
+        // ---- Number of Prints — remembered across reloads ----
+        // Whatever quantity you last set for a print type (e.g. always
+        // printing 2 Price Tags) stays as the default next time, instead of
+        // silently resetting to 1 every time the app is reopened.
+        function savePrintQty() {
+            try { localStorage.setItem('lp_printQty', JSON.stringify(printQty)); } catch (e) {}
+        }
+
+        function loadPrintQty() {
+            try {
+                const saved = JSON.parse(localStorage.getItem('lp_printQty') || '{}');
+                Object.keys(printQty).forEach(key => {
+                    if (typeof saved[key] === 'number' && saved[key] >= PRINT_QTY_MIN && saved[key] <= PRINT_QTY_MAX) {
+                        printQty[key] = saved[key];
+                    }
+                });
+            } catch (e) {}
+            Object.keys(printQty).forEach(refreshPrintQtyDisplay);
         }
 
         let currentPct = 5;
@@ -3578,6 +4505,11 @@ Millet Groceries & Snacks</textarea>
             const versionTag = document.getElementById('app-version-tag');
             if (versionTag) versionTag.textContent = APP_VERSION;
 
+            loadPrintQty();
+            applyMostUsedOrdering();
+            updatePrintStatsBadge();
+            loadShopFloorMode();
+
             const todayStr = getLocalDateStr();
             const dateInput = document.getElementById('coupon-from-date');
             if (dateInput) dateInput.value = todayStr;
@@ -3632,6 +4564,33 @@ Millet Groceries & Snacks</textarea>
             });
         }
 
+        function jumpToSection(sectionId) {
+            const section = document.getElementById(sectionId);
+            if (section) section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        // Pressing Enter in the search box, when it narrows things down to
+        // exactly one tile, taps that tile for you — same as if you'd
+        // scrolled to it and tapped it by hand.
+        function handleSearchKeydown(evt) {
+            if (evt.key !== 'Enter') return;
+            evt.preventDefault();
+            const q = document.getElementById('toolSearchInput').value.trim().toLowerCase();
+            if (!q) return;
+            const matches = [];
+            document.querySelectorAll('.big-buttons-bar > .icon-btn, .big-buttons-bar > .icon-btn-wrap, .big-buttons-bar > .tile-group').forEach(el => {
+                const btn = el.classList.contains('icon-btn') ? el : (el.querySelector('.icon-btn') || el);
+                const label = (btn.querySelector('.t1')?.textContent || '').toLowerCase();
+                if (label.includes(q)) matches.push(btn);
+            });
+            if (matches.length === 1) {
+                matches[0].click();
+                document.getElementById('toolSearchInput').value = '';
+                filterTools();
+                togglePosSearch();
+            }
+        }
+
         function togglePosSearch() {
             const row = document.getElementById('posSearchRow');
             row.classList.toggle('open');
@@ -3639,6 +4598,19 @@ Millet Groceries & Snacks</textarea>
                 focusFieldSoon('toolSearchInput');
             }
         }
+
+        function toggleSettingsMenu(evt) {
+            if (evt) evt.stopPropagation();
+            const panel = document.getElementById('settingsMenuPanel');
+            panel.classList.toggle('show');
+        }
+        document.addEventListener('click', function(evt) {
+            const panel = document.getElementById('settingsMenuPanel');
+            const wrap = document.querySelector('.settings-menu-wrap');
+            if (panel && panel.classList.contains('show') && wrap && !wrap.contains(evt.target)) {
+                panel.classList.remove('show');
+            }
+        });
 
         function shareAppUrl() {
             const shareData = {
@@ -4154,6 +5126,15 @@ Millet Groceries & Snacks</textarea>
             });
 
             document.getElementById('est-card-total').textContent = `₹${grandTotal.toFixed(2)}`;
+
+            const paymentNote = document.getElementById('est-payment-note').value.trim();
+            const paymentNoteEl = document.getElementById('est-card-payment-note');
+            if (paymentNote) {
+                paymentNoteEl.style.display = 'block';
+                paymentNoteEl.textContent = paymentNote;
+            } else {
+                paymentNoteEl.style.display = 'none';
+            }
         }
 
         function setTextAlignment(align) {
@@ -4482,17 +5463,17 @@ Millet Groceries & Snacks</textarea>
         }
 
         function hideAllPanelsKeepData() {
-            ['customInputPanel', 'couponInputPanel', 'locationInputPanel', 'priceInputPanel', 'estimateInputPanel', 'visitingInputPanel', 'multiInputPanel', 'whatsappInputPanel', 'exchangeInputPanel', 'locationChoiceModal', 'visitingChoiceModal', 'recentPrintsModal'].forEach(id => {
+            ['customInputPanel', 'couponInputPanel', 'locationInputPanel', 'priceInputPanel', 'promoInputPanel', 'estimateInputPanel', 'visitingInputPanel', 'multiInputPanel', 'whatsappInputPanel', 'exchangeInputPanel', 'locationChoiceModal', 'visitingChoiceModal', 'recentPrintsModal'].forEach(id => {
                 const el = document.getElementById(id);
                 if(el) el.style.display = 'none';
             });
-            ['customReceiptCol', 'couponReceiptCol', 'locationReceiptCol', 'priceReceiptCol', 'estimateReceiptCol', 'visitingReceiptCol', 'multiReceiptCol'].forEach(id => {
+            ['customReceiptCol', 'couponReceiptCol', 'locationReceiptCol', 'priceReceiptCol', 'promoReceiptCol', 'estimateReceiptCol', 'visitingReceiptCol', 'multiReceiptCol', 'testReceiptCol'].forEach(id => {
                 const el = document.getElementById(id);
                 if(el) el.style.display = 'none';
             });
             document.getElementById('exReceiptCol').style.display = 'flex';
 
-            ['btn-toggle-custom', 'btn-toggle-coupon', 'btn-toggle-location', 'btn-toggle-price', 'btn-toggle-estimate', 'btn-toggle-visiting', 'btn-toggle-multi', 'btn-toggle-exchange'].forEach(id => {
+            ['btn-toggle-custom', 'btn-toggle-coupon', 'btn-toggle-location', 'btn-toggle-price', 'btn-toggle-promo', 'btn-toggle-estimate', 'btn-toggle-visiting', 'btn-toggle-multi', 'btn-toggle-exchange'].forEach(id => {
                 const btn = document.getElementById(id);
                 if(btn) btn.classList.remove('active-toggle');
             });
@@ -4524,6 +5505,7 @@ Millet Groceries & Snacks</textarea>
             if (panel.style.display === 'block') { hideAllPanelsKeepData(); }
             else {
                 hideAllPanelsKeepData();
+                anchorPanelBelowTileRow(panel, 'btn-toggle-custom');
                 panel.style.display = 'block';
                 document.getElementById('customReceiptCol').style.display = 'flex';
                 document.getElementById('exReceiptCol').style.display = 'none';
@@ -4537,6 +5519,7 @@ Millet Groceries & Snacks</textarea>
             if (panel.style.display === 'block') { hideAllPanelsKeepData(); }
             else {
                 hideAllPanelsKeepData();
+                anchorPanelBelowTileRow(panel, 'btn-toggle-coupon');
                 panel.style.display = 'block';
                 document.getElementById('couponReceiptCol').style.display = 'flex';
                 document.getElementById('exReceiptCol').style.display = 'none';
@@ -4551,6 +5534,7 @@ Millet Groceries & Snacks</textarea>
             if (panel.style.display === 'block') { hideAllPanelsKeepData(); }
             else {
                 hideAllPanelsKeepData();
+                anchorPanelBelowTileRow(panel, 'btn-toggle-location');
                 panel.style.display = 'block';
                 document.getElementById('locationReceiptCol').style.display = 'flex';
                 document.getElementById('exReceiptCol').style.display = 'none';
@@ -4566,6 +5550,7 @@ Millet Groceries & Snacks</textarea>
             const modal = document.getElementById('locationChoiceModal');
             if (modal.style.display === 'block') { hideAllPanelsKeepData(); return; }
             hideAllPanelsKeepData();
+            anchorPanelBelowTileRow(modal, 'btn-toggle-location');
             modal.style.display = 'block';
             document.getElementById('btn-toggle-location').classList.add('active-toggle');
         }
@@ -4585,6 +5570,7 @@ Millet Groceries & Snacks</textarea>
             if (panel.style.display === 'block') { hideAllPanelsKeepData(); }
             else {
                 hideAllPanelsKeepData();
+                anchorPanelBelowTileRow(panel, 'btn-toggle-price');
                 panel.style.display = 'block';
                 document.getElementById('priceReceiptCol').style.display = 'flex';
                 document.getElementById('exReceiptCol').style.display = 'none';
@@ -4594,11 +5580,44 @@ Millet Groceries & Snacks</textarea>
             }
         }
 
+        function togglePromoPanel() {
+            const panel = document.getElementById('promoInputPanel');
+            if (panel.style.display === 'block') { hideAllPanelsKeepData(); }
+            else {
+                hideAllPanelsKeepData();
+                anchorPanelBelowTileRow(panel, 'btn-toggle-promo');
+                panel.style.display = 'block';
+                document.getElementById('promoReceiptCol').style.display = 'flex';
+                document.getElementById('exReceiptCol').style.display = 'none';
+                document.getElementById('btn-toggle-promo').classList.add('active-toggle');
+                updatePromoCardPreview();
+            }
+        }
+
+        function selectPromoPreset(text) {
+            document.getElementById('promo-text').value = text;
+            updatePromoCardPreview();
+        }
+
+        function updatePromoCardPreview() {
+            const text = document.getElementById('promo-text').value.trim() || 'NEW ARRIVAL';
+            const size = document.getElementById('promo-fontsize').value;
+            const el = document.getElementById('promo-card-text');
+            el.textContent = text;
+            el.style.fontSize = size;
+        }
+
+        function resetPromoPanel() {
+            resetPanelFields('promoInputPanel');
+            updatePromoCardPreview();
+        }
+
         function toggleEstimatePanel() {
             const panel = document.getElementById('estimateInputPanel');
             if (panel.style.display === 'block') { hideAllPanelsKeepData(); }
             else {
                 hideAllPanelsKeepData();
+                anchorPanelBelowTileRow(panel, 'btn-toggle-estimate');
                 panel.style.display = 'block';
                 document.getElementById('estimateReceiptCol').style.display = 'flex';
                 document.getElementById('exReceiptCol').style.display = 'none';
@@ -4618,7 +5637,7 @@ Millet Groceries & Snacks</textarea>
         // the exact details (items, customer name, branch, text, etc.) and
         // reprints — so a repeat customer doesn't need retyping everything.
         // Stored in localStorage so it survives closing the browser/app.
-        const RECENT_PRINTS_MAX = 8;
+        const RECENT_PRINTS_MAX = 10;
         const RECENT_TYPE_LABELS = {
             exchange: 'Scrap Exchange',
             custom: 'Custom Text',
@@ -4627,7 +5646,8 @@ Millet Groceries & Snacks</textarea>
             price: 'Price Tag',
             estimate: 'Estimate Bill',
             visiting: 'Visiting Card',
-            multi: 'Combined Print'
+            multi: 'Combined Print',
+            promo: 'Promo Tag'
         };
 
         function loadRecentPrintsStore() {
@@ -4641,15 +5661,34 @@ Millet Groceries & Snacks</textarea>
             catch (e) { /* storage full or unavailable — recent prints just won't persist */ }
         }
 
+        // A print is treated as "the same design" as an existing history
+        // entry when its label and data match exactly (same items, same
+        // text, same branch, etc). Instead of adding a duplicate entry,
+        // that existing entry is bumped to the top with a fresh timestamp
+        // and its own repeat count — so re-printing a regular's usual
+        // order doesn't flood the last-10 list with copies of one design.
         function addRecentPrint(category, label, data) {
             if (!recentPrintsStore[category]) recentPrintsStore[category] = [];
-            recentPrintsStore[category].unshift({
-                id: 'r' + Date.now() + Math.random().toString(36).slice(2, 7),
-                ts: Date.now(),
-                label: label || RECENT_TYPE_LABELS[category] || 'Print',
-                data: data
-            });
-            recentPrintsStore[category] = recentPrintsStore[category].slice(0, RECENT_PRINTS_MAX);
+            const list = recentPrintsStore[category];
+            const finalLabel = label || RECENT_TYPE_LABELS[category] || 'Print';
+            const dataStr = JSON.stringify(data);
+            const dupIndex = list.findIndex(entry => entry.label === finalLabel && JSON.stringify(entry.data) === dataStr);
+
+            if (dupIndex !== -1) {
+                const existing = list.splice(dupIndex, 1)[0];
+                existing.ts = Date.now();
+                existing.printCount = (existing.printCount || 1) + 1;
+                list.unshift(existing);
+            } else {
+                list.unshift({
+                    id: 'r' + Date.now() + Math.random().toString(36).slice(2, 7),
+                    ts: Date.now(),
+                    label: finalLabel,
+                    data: data,
+                    printCount: 1
+                });
+            }
+            recentPrintsStore[category] = list.slice(0, RECENT_PRINTS_MAX);
             saveRecentPrintsStore();
         }
 
@@ -4733,6 +5772,12 @@ Millet Groceries & Snacks</textarea>
                 } else if (type === 'visiting') {
                     const label = visitingCardBranch === 'both' ? 'Both Branches' : (visitingCardBranch === 'gajuwaka' ? 'Gajuwaka' : 'Kurmannapalem');
                     addRecentPrint('visiting', label, { branch: visitingCardBranch });
+                } else if (type === 'promo') {
+                    const text = document.getElementById('promo-text').value.trim();
+                    addRecentPrint('promo', text || 'Promo Tag', {
+                        text: text,
+                        fontSize: document.getElementById('promo-fontsize').value
+                    });
                 }
             } catch (e) {
                 console.error('Recent print capture failed:', e);
@@ -4762,13 +5807,13 @@ Millet Groceries & Snacks</textarea>
             const listEl = document.getElementById('recentPrintsList');
             const entries = recentPrintsStore[category] || [];
             if (!entries.length) {
-                listEl.innerHTML = '<div class="recent-prints-empty">No recent prints yet. Once you print, it shows up here so you can print it again.</div>';
+                listEl.innerHTML = '<div class="recent-prints-empty"><div class="recent-prints-empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="22" height="22"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div><div class="recent-prints-empty-title">Nothing printed here yet</div><div class="recent-prints-empty-sub">Your first print from this tile will show up here,<br>ready to print again in one tap.</div></div>';
                 return;
             }
             listEl.innerHTML = entries.map(e => `
                 <div class="recent-print-item">
                     <div class="recent-print-info">
-                        <div class="recent-print-label">${escapeHtml(e.label || 'Print')}</div>
+                        <div class="recent-print-label">${escapeHtml(e.label || 'Print')}${e.printCount > 1 ? ` <span class="recent-print-count">×${e.printCount}</span>` : ''}</div>
                         <div class="recent-print-time">${formatRecentTime(e.ts)}</div>
                     </div>
                     <div class="recent-print-actions">
@@ -4876,6 +5921,14 @@ Millet Groceries & Snacks</textarea>
                 updateWhatsappCardPreview();
                 triggerMobilePrint('visiting');
 
+            } else if (category === 'promo') {
+                document.getElementById('promo-text').value = data.text || 'NEW ARRIVAL';
+                if (data.fontSize) document.getElementById('promo-fontsize').value = data.fontSize;
+                updatePromoCardPreview();
+                document.getElementById('promoReceiptCol').style.display = 'flex';
+                document.getElementById('btn-toggle-promo').classList.add('active-toggle');
+                triggerMobilePrint('promo');
+
             } else if (category === 'multi') {
                 document.querySelectorAll('#multiInputPanel input[type=checkbox]').forEach(cb => {
                     cb.checked = (data.selectedValues || []).includes(cb.value);
@@ -4896,6 +5949,7 @@ Millet Groceries & Snacks</textarea>
             const modal = document.getElementById('visitingChoiceModal');
             if (modal.style.display === 'block') { hideAllPanelsKeepData(); return; }
             hideAllPanelsKeepData();
+            anchorPanelBelowTileRow(modal, 'btn-toggle-visiting');
             document.getElementById('visitingReceiptCol').style.display = 'flex';
             document.getElementById('exReceiptCol').style.display = 'none';
             modal.style.display = 'block';
@@ -4919,6 +5973,7 @@ Millet Groceries & Snacks</textarea>
             if (panel.style.display === 'block') { hideAllPanelsKeepData(); }
             else {
                 hideAllPanelsKeepData();
+                anchorPanelBelowTileRow(panel, 'btn-toggle-visiting');
                 panel.style.display = 'block';
                 document.getElementById('visitingReceiptCol').style.display = 'flex';
                 document.getElementById('exReceiptCol').style.display = 'none';
@@ -4934,6 +5989,7 @@ Millet Groceries & Snacks</textarea>
             if (panel.style.display === 'block') { hideAllPanelsKeepData(); }
             else {
                 hideAllPanelsKeepData();
+                anchorPanelBelowTileRow(panel, 'btn-toggle-exchange');
                 panel.style.display = 'block';
                 document.getElementById('exReceiptCol').style.display = 'flex';
                 document.getElementById('btn-toggle-exchange').classList.add('active-toggle');
@@ -4948,6 +6004,7 @@ Millet Groceries & Snacks</textarea>
             if (panel.style.display === 'block') { hideAllPanelsKeepData(); } 
             else {
                 hideAllPanelsKeepData();
+                anchorPanelBelowTileRow(panel, 'btn-toggle-multi');
                 panel.style.display = 'block';
                 document.getElementById('multiReceiptCol').style.display = 'flex';
                 document.getElementById('exReceiptCol').style.display = 'none';
@@ -5730,10 +6787,12 @@ Millet Groceries & Snacks</textarea>
         // after window.print() returns — window.print() is synchronous and
         // blocks until the print dialog is dismissed, so nothing else in
         // the app can observe the duplicated markup in between.
-        function printWithCopies(columnId, qty) {
+        function printWithCopies(columnId, qty, label) {
             const col = columnId ? document.getElementById(columnId) : null;
             if (!col || !qty || qty <= 1) {
                 window.print();
+                showPrintToast(label, 1);
+                recordPrintStat(1);
                 return;
             }
             const original = col.innerHTML;
@@ -5744,6 +6803,206 @@ Millet Groceries & Snacks</textarea>
             col.innerHTML = html;
             window.print();
             col.innerHTML = original;
+            showPrintToast(label, qty);
+            recordPrintStat(qty);
+        }
+
+        // Clears only the body's print-X targeting classes before setting
+        // new ones, instead of wiping the whole className — a plain
+        // `className = ''` would also strip unrelated state classes like
+        // shopfloor-mode, turning Shop Floor Mode's bottom bar off after
+        // every single print.
+        function resetPrintBodyClasses() {
+            document.body.className = Array.from(document.body.classList)
+                .filter(c => !c.startsWith('print-'))
+                .join(' ');
+        }
+
+        // ---- Test Print / calibration (Settings menu) ----
+        // Prints a fixed calibration card (font-size samples + a full
+        // character set) so a new printer, driver or paper roll can be
+        // checked without touching any real receipt data. Always 1 copy.
+        function printTestCalibration() {
+            const dateEl = document.getElementById('test-card-date');
+            if (dateEl) dateEl.textContent = new Date().toLocaleString();
+            resetPrintBodyClasses();
+            document.body.classList.add('print-test');
+            window.print();
+            showPrintToast('Test Print', 1);
+            recordPrintStat(1);
+        }
+
+        // ---- Toast (generic) ----
+        let appToastTimer = null;
+        function showToast(message, duration) {
+            const toast = document.getElementById('appToast');
+            if (!toast) return;
+            toast.textContent = message;
+            toast.classList.add('show');
+            if (appToastTimer) clearTimeout(appToastTimer);
+            appToastTimer = setTimeout(() => {
+                toast.classList.remove('show');
+            }, duration || 2200);
+        }
+
+        // ---- Print confirmation toast ----
+        // A brief "✅ X sent to printer" message, shown after every print
+        // fires so a fast tap at the counter still gets a clear signal that
+        // it actually went through — especially useful now that a tap can
+        // mean more than one copy.
+        function showPrintToast(label, qty) {
+            const name = label || 'Receipt';
+            showToast(qty > 1 ? `✅ ${name} sent to printer (${qty} copies)` : `✅ ${name} sent to printer`);
+        }
+
+        // ---- Export / Import Settings (backup & restore) ----
+        // Everything that only lives in this one phone's browser storage —
+        // Recent Prints history, uploaded logos, remembered print
+        // quantities, tile usage — and would otherwise be lost for good if
+        // the phone were ever reset, replaced, or had its browser data
+        // cleared. Exports to one small JSON file; importing it (on this
+        // phone or a new one) restores everything from that file.
+        const LP_BACKUP_KEYS = ['lp_recentPrints', 'lp_printQty', 'lalitha_custom_text_logo', 'lalitha_price_tag_logo', 'lp_tileUsage', 'lp_printStats'];
+
+        function exportAppSettings() {
+            const data = {};
+            LP_BACKUP_KEYS.forEach(k => {
+                const v = localStorage.getItem(k);
+                if (v !== null) data[k] = v;
+            });
+            const payload = {
+                app: 'Lalitha Print Studio',
+                version: APP_VERSION,
+                exportedAt: new Date().toISOString(),
+                data: data
+            };
+            const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'lalitha-print-studio-backup-' + getLocalDateStr() + '.json';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            showToast('💾 Settings backup downloaded');
+        }
+
+        function importAppSettingsFile(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = () => {
+                try {
+                    const payload = JSON.parse(reader.result);
+                    const data = payload.data || payload;
+                    let count = 0;
+                    LP_BACKUP_KEYS.forEach(k => {
+                        if (typeof data[k] === 'string') {
+                            localStorage.setItem(k, data[k]);
+                            count++;
+                        }
+                    });
+                    if (count === 0) {
+                        alert('That file does not look like a Lalitha Print Studio backup.');
+                        return;
+                    }
+                    showToast(`✅ Settings restored (${count} items). Reloading…`, 2500);
+                    setTimeout(() => location.reload(), 1200);
+                } catch (e) {
+                    alert('That file could not be read as a Lalitha Print Studio backup.');
+                }
+            };
+            reader.readAsText(file);
+            event.target.value = '';
+        }
+
+        // ---- Tap-to-enlarge preview ----
+        function openPreviewLightbox(evt) {
+            const box = evt.currentTarget;
+            const card = box.querySelector('.card');
+            if (!card) return;
+            const inner = document.getElementById('previewLightboxInner');
+            inner.innerHTML = '';
+            inner.appendChild(card.cloneNode(true));
+            document.getElementById('previewLightbox').classList.add('active');
+        }
+
+        function closePreviewLightbox() {
+            document.getElementById('previewLightbox').classList.remove('active');
+        }
+
+        // ---- Daily print count ----
+        // A running per-day counter, separate from Recent Prints (which
+        // only keeps the 8 most recent per category and would undercount a
+        // busy day). Kept for the last 30 days so "7-day" detail always has
+        // something to show, then pruned automatically.
+        function recordPrintStat(qty) {
+            try {
+                const stats = JSON.parse(localStorage.getItem('lp_printStats') || '{}');
+                const today = getLocalDateStr();
+                stats[today] = (stats[today] || 0) + (qty || 1);
+                const cutoff = new Date();
+                cutoff.setDate(cutoff.getDate() - 30);
+                Object.keys(stats).forEach(d => {
+                    if (new Date(d) < cutoff) delete stats[d];
+                });
+                localStorage.setItem('lp_printStats', JSON.stringify(stats));
+            } catch (e) {}
+            updatePrintStatsBadge();
+        }
+
+        function getPrintStats() {
+            try { return JSON.parse(localStorage.getItem('lp_printStats') || '{}'); } catch (e) { return {}; }
+        }
+
+        function updatePrintStatsBadge() {
+            const el = document.getElementById('printStatsToday');
+            if (!el) return;
+            const stats = getPrintStats();
+            const today = getLocalDateStr();
+            const count = stats[today] || 0;
+            el.textContent = `🖨️ Today: ${count} print${count === 1 ? '' : 's'}`;
+        }
+
+        function togglePrintStatsDetail() {
+            const bar = document.getElementById('printStatsBar');
+            const detail = document.getElementById('printStatsDetail');
+            const opening = !detail.classList.contains('show');
+            bar.classList.toggle('open', opening);
+            detail.classList.toggle('show', opening);
+            if (opening) renderPrintStatsDetail();
+        }
+
+        function renderPrintStatsDetail() {
+            const detail = document.getElementById('printStatsDetail');
+            const stats = getPrintStats();
+            const days = [];
+            for (let i = 0; i < 7; i++) {
+                const d = new Date();
+                d.setDate(d.getDate() - i);
+                const key = getLocalDateStr(d);
+                days.push({ key, label: i === 0 ? 'Today' : d.toLocaleDateString('en-IN', { weekday: 'short', day: '2-digit', month: 'short' }), count: stats[key] || 0 });
+            }
+            const weekTotal = days.reduce((sum, d) => sum + d.count, 0);
+            detail.innerHTML = days.map(d =>
+                `<div class="print-stats-detail-row"><span>${d.label}</span><span>${d.count}</span></div>`
+            ).join('') + `<div class="print-stats-detail-row" style="font-weight:900; color:#0f172a;"><span>Last 7 days</span><span>${weekTotal}</span></div>`;
+        }
+
+        function printLabelForType(type) {
+            if (type === 'exchange') return 'Scrap Exchange';
+            if (type === 'custom') return 'Custom Text';
+            if (type === 'coupon-gajuwaka') return 'Coupon (Gajuwaka)';
+            if (type === 'coupon-kurmannapalem') return 'Coupon (Kurmannapalem)';
+            if (type === 'coupon-both') return 'Coupon (Both Branches)';
+            if (type === 'location') return 'Store Location';
+            if (type === 'both-locations') return 'Store Location (Both Branches)';
+            if (type === 'price') return 'Price Tag';
+            if (type === 'estimate') return 'Estimate Bill';
+            if (type === 'visiting') return 'Visiting Card';
+            if (type === 'promo') return 'Promo Tag';
+            return 'Receipt';
         }
 
         function printQtyKeyForType(type) {
@@ -5754,6 +7013,7 @@ Millet Groceries & Snacks</textarea>
             if (type === 'price') return 'price';
             if (type === 'estimate') return 'estimate';
             if (type === 'visiting') return 'visiting';
+            if (type === 'promo') return 'promo';
             return type;
         }
 
@@ -5765,6 +7025,7 @@ Millet Groceries & Snacks</textarea>
             if (type === 'price') return 'priceReceiptCol';
             if (type === 'estimate') return 'estimateReceiptCol';
             if (type === 'visiting') return 'visitingReceiptCol';
+            if (type === 'promo') return 'promoReceiptCol';
             return null;
         }
 
@@ -5772,9 +7033,9 @@ Millet Groceries & Snacks</textarea>
             buildMultiPreview();
             const selectedValues = Array.from(document.querySelectorAll('#multiInputPanel input[type=checkbox]:checked')).map(cb => cb.value);
             captureRecentMultiPrint(selectedValues);
-            document.body.className = '';
+            resetPrintBodyClasses();
             document.body.classList.add('print-multi');
-            printWithCopies('multiReceiptCol', printQty.multi);
+            printWithCopies('multiReceiptCol', printQty.multi, 'Combined Print');
         }
 
         function triggerMobilePrint(type) {
@@ -5795,10 +7056,17 @@ Millet Groceries & Snacks</textarea>
                     return;
                 }
             }
+            if (type === 'promo') {
+                if (!document.getElementById('promo-text').value.trim()) {
+                    alert('Please enter the tag text before printing.');
+                    document.getElementById('promo-text').focus();
+                    return;
+                }
+            }
 
             captureRecentPrint(type);
 
-            document.body.className = '';
+            resetPrintBodyClasses();
             if (type === 'exchange') document.body.classList.add('print-exchange');
             else if (type === 'custom') document.body.classList.add('print-custom');
             else if (type === 'coupon-gajuwaka') document.body.classList.add('print-coupon', 'print-coupon-gajuwaka');
@@ -5809,9 +7077,10 @@ Millet Groceries & Snacks</textarea>
             else if (type === 'price') document.body.classList.add('print-price');
             else if (type === 'estimate') document.body.classList.add('print-estimate');
             else if (type === 'visiting') document.body.classList.add('print-visiting');
+            else if (type === 'promo') document.body.classList.add('print-promo');
 
             const qtyKey = printQtyKeyForType(type);
-            printWithCopies(printColumnIdForType(type), printQty[qtyKey]);
+            printWithCopies(printColumnIdForType(type), printQty[qtyKey], printLabelForType(type));
         }
     </script>
 </body>
