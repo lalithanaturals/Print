@@ -74,6 +74,52 @@
       of the app (not needed).
     v1.6.4 (2026-10-04) — Updated the Label Printer tool link to
       https://bhargavramya.github.io/lable-printer/.
+    v1.7.0 (2026-10-08) — Added an optional Barcode Number field to Price
+      Tag. Leave it blank and the tag prints exactly as before, at the
+      same size; fill it in and a compact scannable barcode (CODE128)
+      appears under the item/MRP details, in the existing dashed-border
+      print style. Every other Price Tag option (logo, brand name, item
+      name, weight/qty, MRP, discount type, notes, You Save line, number
+      of prints, font sizes) is unchanged.
+    v1.7.1 (2026-10-08) — Fixed: the barcode didn't actually appear even
+      with a number entered, because the barcode library's link was
+      typed with the wrong capitalization and silently failed to load.
+    v1.8.0 (2026-10-08) — Redesigned the Price Tag card to a two-column
+      shelf-label layout: item name/weight on the left, barcode below
+      them, MRP badge + price on the right. The badge always says "MRP"
+      (never a colored "SALE" badge — thermal prints black only). With
+      no discount it sits next to the MRP itself; enter a discount and
+      the real MRP moves up small and struck-through while the badge
+      sits next to the discounted price, with the "You Save" line below
+      it. Every existing field and option still works the same way.
+    v1.8.1 (2026-10-08) — Price Tag: when a discount is entered, the
+      barcode now moves up into the left column (left of the MRP block)
+      on its own thin dashed line right under the UOM/qty text, instead
+      of sitting in a full extra row below everything — keeps the tag
+      compact. With no discount it stays exactly where it was.
+    v1.8.2 (2026-10-08) — Price Tag: barcode prints noticeably bigger and
+      bolder. The price badge now reads "MRP" when there's no discount
+      and "SP" once a discount is entered, so it always correctly names
+      the big price next to it (MRP itself vs. the discounted selling
+      price) instead of always saying "MRP". Also narrowed the printed
+      sticker a touch and centered it so its dashed border no longer
+      gets cut off at the right edge on the thermal printer.
+    v1.8.3 (2026-10-08) — Price Tag: the struck-through price now shows
+      an "MRP" label beside it (not just the bare number), so it reads
+      clearly as the MRP.
+    v1.8.4 (2026-10-08) — Price Tag: the printed sticker is now the exact
+      same length whether a discount is entered or not. The barcode now
+      always sits in the same spot (left of the MRP/price block, under
+      the UOM/qty text) instead of moving depending on discount, and the
+      MRP/"You Save" lines reserve their space at all times (just
+      invisible when not needed) instead of removing it — together these
+      kept the paper length changing between the two states before.
+    v1.8.5 (2026-10-08) — Price Tag: a roughly 12-character item name now
+      always stays on one line instead of wrapping to a second line, by
+      shrinking just enough to fit (never below a legible floor) — a
+      longer name still wraps as before once it hits that floor. The
+      sizing is fixed regardless of discount, so it doesn't change the
+      sticker's length either.
 -->
 
 
@@ -97,6 +143,11 @@
          from reading it back out — a locally drawn QR code has no such
          restriction. -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+    <!-- Draws the Price Tag barcode locally as real SVG shapes (not a
+         canvas bitmap or a remote image), so it survives being cloned as
+         an HTML string for multi-copy printing and renders crisply in
+         "Download as JPEG" too. -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsbarcode/3.11.5/JsBarcode.all.min.js"></script>
 
     <style>
         /* CRITICAL THERMAL PRINTER FIX: Force EXACT 80mm width & strip all browser margins/padding */
@@ -2153,74 +2204,24 @@
             margin: 3px 0;
         }
 
-        .price-tag-sp-row {
-            display: flex;
-            align-items: baseline;
-            justify-content: center;
-            gap: 6px;
-            margin-bottom: 1px;
-        }
-
-        .price-tag-sp-label {
-            font-size: 16px;
-            font-weight: 900;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .price-tag-sp-value {
-            font-size: 32px;
-            font-weight: 900;
-            letter-spacing: 0.5px;
-        }
-
-        .price-tag-save-line {
-            font-size: 12px;
-            font-weight: 900;
-            text-transform: uppercase;
-            margin-bottom: 3px;
-        }
-
-        .price-tag-hr {
-            border-top: 3px solid #000;
-            margin: 4px 0 5px;
-        }
-
-        .price-tag-footer-row {
+        /* Two-column layout: product info on the left, price block on the
+           right — the MRP badge sits where a colored "SALE" badge would on
+           a printed shelf label, except always black-on-white (thermal
+           printers are black-only) and it always says "MRP". With no
+           discount, the big price under it IS the MRP. With a discount,
+           the actual MRP moves up small and struck-through, and the big
+           price becomes the discounted one. */
+        .price-tag-main-row {
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
+            gap: 10px;
+        }
+
+        .price-tag-info-col {
             text-align: left;
-            gap: 8px;
-        }
-
-        .price-tag-footer-row.centered {
-            justify-content: center;
-            text-align: center;
-        }
-
-        .price-tag-mrp-col {
-            flex-shrink: 0;
-        }
-
-        .price-tag-mrp-label {
-            font-size: 13px;
-            font-weight: 900;
-            text-transform: uppercase;
-        }
-
-        .price-tag-mrp-value {
-            font-size: 20px;
-            font-weight: 900;
-        }
-
-        .price-tag-brand-col {
-            text-align: right;
             min-width: 0;
-        }
-
-        .price-tag-footer-row.centered .price-tag-brand-col {
-            text-align: center;
+            flex: 1 1 auto;
         }
 
         .price-tag-brand-name {
@@ -2242,6 +2243,85 @@
             font-size: 13px;
             font-weight: 700;
             text-transform: uppercase;
+        }
+
+        .price-tag-price-col {
+            flex-shrink: 0;
+            text-align: right;
+        }
+
+        .price-tag-mrp-badge {
+            display: inline-block;
+            background: #000;
+            color: #fff !important;
+            font-size: 12px;
+            font-weight: 900;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            padding: 2px 7px;
+            border-radius: 2px;
+            vertical-align: middle;
+        }
+
+        /* Only shown once a discount is entered — the real MRP sitting
+           above the discounted price, labeled "MRP" so it's never
+           mistaken for the selling price below it (no strike-through). */
+        .price-tag-mrp-strike-row {
+            font-size: 13px;
+            font-weight: 800;
+            margin-bottom: 2px;
+            text-align: right;
+        }
+
+        .price-tag-mrp-label {
+            font-size: 10px;
+            font-weight: 900;
+            letter-spacing: 0.5px;
+            margin-right: 3px;
+        }
+
+        .price-tag-price-badge-row {
+            display: flex;
+            align-items: baseline;
+            justify-content: flex-end;
+            gap: 6px;
+        }
+
+        .price-tag-sp-value {
+            font-size: 32px;
+            font-weight: 900;
+            letter-spacing: 0.5px;
+        }
+
+        .price-tag-save-line {
+            font-size: 11px;
+            font-weight: 900;
+            text-transform: uppercase;
+            margin-top: 2px;
+        }
+
+        .price-tag-hr {
+            border-top: 3px solid #000;
+            margin: 6px 0 5px;
+        }
+
+        /* Lives inside the info column, left of the MRP/price block, under
+           the UOM/qty text — in the same spot whether or not a discount is
+           entered, so the printed sticker is always the same length. The
+           dashed line above it divides it from the UOM/qty line right
+           above. It only adds height when a barcode number is actually
+           entered — with none entered, the row is hidden entirely. */
+        .price-tag-barcode-row {
+            margin-top: 5px;
+            padding-top: 4px;
+            border-top: 1px dashed #000;
+            display: flex;
+            justify-content: flex-start;
+        }
+
+        .price-tag-barcode-row svg {
+            max-width: 100%;
+            height: 40px;
         }
 
         .price-tag-notes {
@@ -2560,6 +2640,16 @@
             }
 
             .price-card {
+                /* Thermal printers can't actually print right up to the
+                   80mm physical edge — there's a small unprintable strip,
+                   which was cutting off the dashed border's right (and
+                   sometimes left) edge. Printing the card a little narrower
+                   than the page and centering it leaves a safe gap on both
+                   sides so the full border always comes out. */
+                width: 76mm !important;
+                max-width: 76mm !important;
+                min-width: 0 !important;
+                margin: 0 auto !important;
                 padding: 6px 8px 2mm !important;
                 /* The dashed line is the sticker's cut/tear line, so unlike
                    every other card it must survive printing — restore it
@@ -3231,6 +3321,10 @@ Millet Groceries & Snacks</textarea>
                 <input type="text" class="form-control sentence-case-input" id="price-notes" placeholder="" value="" oninput="updatePriceCardPreview()">
             </div>
             <div class="form-group full-width">
+                <label>Barcode Number (Optional)</label>
+                <input type="text" class="form-control" id="price-barcode-number" placeholder="e.g. 8901234567890" value="" oninput="updatePriceCardPreview()">
+            </div>
+            <div class="form-group full-width">
                 <label class="custom-checkbox-label">
                     <input type="checkbox" id="price-show-save-line" checked onchange="updatePriceCardPreview()"> Show "You Save ₹X (Y% OFF)" line
                 </label>
@@ -3774,24 +3868,29 @@ Millet Groceries & Snacks</textarea>
                     <div class="tagline" id="price-receipt-tagline" style="display: none;">Feel the earth</div>
                     <div class="divider" id="price-receipt-divider" style="display: none;"></div>
 
-                    <div class="price-tag-sp-row">
-                        <span class="price-tag-sp-label" id="p-card-sp-label">SP</span>
-                        <span class="price-tag-sp-value" id="p-card-sp-value">₹0.00</span>
-                    </div>
-                    <div class="price-tag-save-line" id="p-card-save-line" style="display: none;"></div>
-
-                    <div class="price-tag-hr"></div>
-
-                    <div class="price-tag-footer-row" id="p-card-footer-row">
-                        <div class="price-tag-mrp-col" id="p-card-mrp-col">
-                            <div class="price-tag-mrp-label">MRP</div>
-                            <div class="price-tag-mrp-value" id="p-card-mrp-value">₹0.00</div>
-                        </div>
-                        <div class="price-tag-brand-col">
+                    <div class="price-tag-main-row" id="p-card-footer-row">
+                        <div class="price-tag-info-col">
                             <div class="price-tag-brand-name" id="p-card-brand-name" style="display: none;"></div>
                             <div class="price-tag-item-name-v2" id="p-card-item-name">Item Name</div>
                             <div class="price-tag-item-qty-v2" id="p-card-item-qty" style="display: none;"></div>
                         </div>
+                        <div class="price-tag-price-col">
+                            <div class="price-tag-mrp-strike-row" id="p-card-mrp-col" style="visibility: hidden;">
+                                <span class="price-tag-mrp-label">MRP</span>
+                                <span id="p-card-mrp-value">₹0.00</span>
+                            </div>
+                            <div class="price-tag-price-badge-row">
+                                <span class="price-tag-mrp-badge" id="p-card-price-badge">MRP</span>
+                                <span class="price-tag-sp-value" id="p-card-sp-value">₹0.00</span>
+                            </div>
+                            <div class="price-tag-save-line" id="p-card-save-line" style="visibility: hidden;">You Save ₹0.00 (0% OFF)</div>
+                        </div>
+                    </div>
+
+                    <div class="price-tag-hr" id="p-card-hr-main"></div>
+
+                    <div class="price-tag-barcode-row" id="p-card-barcode-row" style="display: none;">
+                        <svg id="p-card-barcode"></svg>
                     </div>
 
                     <div id="p-card-notes-wrapper" style="display: none;">
@@ -4135,7 +4234,7 @@ Millet Groceries & Snacks</textarea>
         // ---- App version ----
         // Bump this (and add a line to the version-log comment at the very
         // top of this file) every time the file is updated and re-uploaded.
-        const APP_VERSION = 'v1.6.4';
+        const APP_VERSION = 'v1.8.5';
 
         // ---- Number of Prints ----
         // One count per print type, shown as a +/- stepper on the Quick
@@ -6108,46 +6207,52 @@ Millet Groceries & Snacks</textarea>
                 qtyEl.style.display = 'none';
             }
 
-            const spLabelEl = document.getElementById('p-card-sp-label');
             const spValueEl = document.getElementById('p-card-sp-value');
             const saveLineEl = document.getElementById('p-card-save-line');
             const mrpColEl = document.getElementById('p-card-mrp-col');
             const mrpValueEl = document.getElementById('p-card-mrp-value');
-            const footerRowEl = document.getElementById('p-card-footer-row');
+            const priceBadgeEl = document.getElementById('p-card-price-badge');
 
             spValueEl.style.fontSize = fPrice;
             mrpValueEl.style.fontSize = fMrp;
 
+            // The badge next to the big price always names what that price
+            // actually is: with no discount, that price IS the MRP, so it
+            // reads "MRP". Once a discount is entered, the real MRP moves up
+            // small and struck-through, and the big number next to the badge
+            // becomes the discounted selling price — so the badge switches
+            // to "SP" to match it, instead of mislabeling it "MRP".
             if (itemVal > 0 && discVal > 0) {
-                // A discount is set: SP is the main price, MRP shows
-                // alongside it (not struck through — kept big and legible
-                // for a thermal print), plus a "You Save" line.
                 const finalPrice = computePriceTagFinal(itemVal, discVal, priceDiscType);
                 const saved = Math.max(0, itemVal - finalPrice);
                 const savedPct = itemVal > 0 ? Math.round((saved / itemVal) * 100) : 0;
 
-                spLabelEl.textContent = 'SP';
+                priceBadgeEl.textContent = 'SP';
                 spValueEl.textContent = `₹${finalPrice.toFixed(2)}`;
 
+                // Use visibility (not display) to show/hide these two rows —
+                // that keeps the space they take up reserved at all times,
+                // so the printed sticker is the exact same length whether a
+                // discount is entered or not.
                 if (saved > 0 && showSaveLine) {
-                    saveLineEl.style.display = 'block';
+                    saveLineEl.style.visibility = 'visible';
                     saveLineEl.textContent = `You Save ₹${saved.toFixed(2)} (${savedPct}% OFF)`;
                 } else {
-                    saveLineEl.style.display = 'none';
+                    saveLineEl.style.visibility = 'hidden';
                 }
 
-                mrpColEl.style.display = '';
+                mrpColEl.style.visibility = 'visible';
                 mrpValueEl.textContent = `₹${itemVal.toFixed(2)}`;
-                footerRowEl.classList.remove('centered');
             } else {
-                // No discount set: there's only one price, so it becomes the
-                // big main price under the "MRP" label instead — no second,
-                // smaller price squeezed in next to it.
-                spLabelEl.textContent = 'MRP';
+                // No discount set: there's only one price, so the badge
+                // sits right next to the MRP value itself and reads "MRP" —
+                // the struck-MRP line and "You Save" line stay in the
+                // layout (same height) but invisible, so the tag prints at
+                // the same length either way.
+                priceBadgeEl.textContent = 'MRP';
                 spValueEl.textContent = `₹${itemVal.toFixed(2)}`;
-                saveLineEl.style.display = 'none';
-                mrpColEl.style.display = 'none';
-                footerRowEl.classList.add('centered');
+                saveLineEl.style.visibility = 'hidden';
+                mrpColEl.style.visibility = 'hidden';
             }
 
             const notesWrapper = document.getElementById('p-card-notes-wrapper');
@@ -6158,6 +6263,101 @@ Millet Groceries & Snacks</textarea>
                 notesEl.style.fontSize = fNotes;
             } else {
                 notesWrapper.style.display = 'none';
+            }
+
+            updatePriceTagBarcode(itemVal > 0 && discVal > 0);
+            fitPriceTagItemName();
+        }
+
+        // Keeps a short item name (about 12 characters) on a single line
+        // instead of wrapping, even though the MRP/price block on the
+        // right can take up a lot of the card's width. Starts at the
+        // chosen name font size and only steps down (never below a legible
+        // floor) if the name would actually overflow onto a second line —
+        // a short name always prints at full size, a long one still wraps
+        // normally once it hits the floor.
+        function fitPriceTagItemName() {
+            const nameEl = document.getElementById('p-card-item-name');
+            const infoCol = document.querySelector('.price-tag-info-col');
+            if (!nameEl || !infoCol) return;
+
+            const baseSize = parseFloat(document.getElementById('p-font-name').value) || 18;
+            const minSize = 10;
+
+            // The MRP/price column's own width shifts a little depending on
+            // its content (e.g. "MRP" vs "SP", or a longer "You Save" line),
+            // which would otherwise make the same item name size differently
+            // depending on whether a discount is entered — breaking the
+            // "same paper length either way" fix. Using a fixed, conservative
+            // width budget here (instead of the column's live width) keeps a
+            // given name's size — and so the sticker's length — the same
+            // regardless of discount.
+            const SAFE_INFO_COL_WIDTH = 95;
+            const availableWidth = Math.min(infoCol.clientWidth, SAFE_INFO_COL_WIDTH);
+
+            // nameEl is a block element that normally stretches to fill the
+            // column, so its scrollWidth is only accurate once it's shrunk
+            // to its actual text width (width: max-content) — otherwise a
+            // SHORT name would read back the column's width instead of its
+            // own, and get shrunk for no reason.
+            nameEl.style.whiteSpace = 'nowrap';
+            nameEl.style.width = 'max-content';
+            let size = baseSize;
+            nameEl.style.fontSize = size + 'px';
+            while (size > minSize && nameEl.scrollWidth > availableWidth) {
+                size -= 1;
+                nameEl.style.fontSize = size + 'px';
+            }
+            nameEl.style.whiteSpace = '';
+            nameEl.style.width = '';
+        }
+
+        // Draws the optional Price Tag barcode as real SVG bars (via the
+        // JsBarcode library loaded in <head>) — only when a barcode number
+        // is actually entered, so the tag prints at its normal size by
+        // default and only grows when it's used. It always sits in the
+        // info column, left of the MRP/price block, under the UOM/qty
+        // text — the same spot whether or not a discount is entered, so
+        // the printed sticker comes out the same length either way.
+        function updatePriceTagBarcode(hasDiscount) {
+            const barcodeVal = document.getElementById('price-barcode-number').value.trim();
+            const barcodeRow = document.getElementById('p-card-barcode-row');
+            const barcodeSvg = document.getElementById('p-card-barcode');
+            const infoCol = document.querySelector('.price-tag-info-col');
+
+            // Always sits in the same spot — left of the MRP/price column,
+            // under the UOM/qty text — whether or not a discount is
+            // entered. Keeping its position fixed (rather than moving it
+            // depending on discount) is what keeps the printed sticker the
+            // exact same length either way.
+            if (infoCol && barcodeRow.parentElement !== infoCol) {
+                infoCol.appendChild(barcodeRow);
+            }
+
+            if (!barcodeVal) {
+                barcodeRow.style.display = 'none';
+                return;
+            }
+            try {
+                if (typeof JsBarcode === 'function') {
+                    JsBarcode(barcodeSvg, barcodeVal, {
+                        format: 'CODE128',
+                        width: 1.1,
+                        height: 40,
+                        fontSize: 10,
+                        margin: 0,
+                        textMargin: 2,
+                        displayValue: true
+                    });
+                    barcodeRow.style.display = 'flex';
+                } else {
+                    // Library hasn't loaded (e.g. no internet on first visit) —
+                    // hide the row rather than show a broken/empty barcode.
+                    barcodeRow.style.display = 'none';
+                }
+            } catch (e) {
+                // Characters CODE128 can't encode, etc. — fail quietly.
+                barcodeRow.style.display = 'none';
             }
         }
 
