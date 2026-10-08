@@ -120,6 +120,18 @@
       longer name still wraps as before once it hits that floor. The
       sizing is fixed regardless of discount, so it doesn't change the
       sticker's length either.
+    v1.8.6 (2026-10-08) — Price Tag: moved the Barcode Number field above
+      Notes in the form. Barcode digits print bigger and bolder so they
+      read clearly on a thermal printer, and the SVG no longer clips the
+      bottom of the text off. The bottom divider line now only prints
+      when a note is entered — no note means no line, trimming the
+      sticker's length. Also narrowed the printed card further (70mm,
+      flush to the left edge) after the right border was still getting
+      cut off on one printer even after the last narrowing.
+    v1.8.7 (2026-10-08) — Price Tag: shortened the barcode bars so adding
+      a barcode no longer makes the sticker any taller than it is without
+      one — the number underneath stays bold and readable, just the bars
+      themselves are more compact.
 -->
 
 
@@ -2312,16 +2324,20 @@
            above. It only adds height when a barcode number is actually
            entered — with none entered, the row is hidden entirely. */
         .price-tag-barcode-row {
-            margin-top: 5px;
-            padding-top: 4px;
+            margin-top: 3px;
+            padding-top: 2px;
             border-top: 1px dashed #000;
             display: flex;
             justify-content: flex-start;
         }
 
         .price-tag-barcode-row svg {
+            /* No fixed height here on purpose — JsBarcode sizes the SVG to
+               exactly fit the bars plus the number text beneath them, and
+               forcing a shorter CSS height clips that text off instead of
+               shrinking it (SVGs don't have a viewBox here, so they don't
+               scale to a smaller box, they just get cropped). */
             max-width: 100%;
-            height: 40px;
         }
 
         .price-tag-notes {
@@ -2641,15 +2657,17 @@
 
             .price-card {
                 /* Thermal printers can't actually print right up to the
-                   80mm physical edge — there's a small unprintable strip,
-                   which was cutting off the dashed border's right (and
-                   sometimes left) edge. Printing the card a little narrower
-                   than the page and centering it leaves a safe gap on both
-                   sides so the full border always comes out. */
-                width: 76mm !important;
-                max-width: 76mm !important;
+                   80mm physical edge — the real printable strip is often
+                   quite a bit narrower than the 80mm label itself, and
+                   centering a 76mm card still ran off the right edge on
+                   this printer. Printing well narrower and flush against
+                   the LEFT edge (where it reliably prints fine, per the
+                   photo) keeps the whole dashed border — including the
+                   right side — safely inside the printable area. */
+                width: 70mm !important;
+                max-width: 70mm !important;
                 min-width: 0 !important;
-                margin: 0 auto !important;
+                margin: 0 !important;
                 padding: 6px 8px 2mm !important;
                 /* The dashed line is the sticker's cut/tear line, so unlike
                    every other card it must survive printing — restore it
@@ -3317,12 +3335,12 @@ Millet Groceries & Snacks</textarea>
                 <input type="number" class="form-control" id="price-disc-val" placeholder="" value="" oninput="updatePriceCardPreview()">
             </div>
             <div class="form-group full-width">
-                <label>Notes (Optional)</label>
-                <input type="text" class="form-control sentence-case-input" id="price-notes" placeholder="" value="" oninput="updatePriceCardPreview()">
-            </div>
-            <div class="form-group full-width">
                 <label>Barcode Number (Optional)</label>
                 <input type="text" class="form-control" id="price-barcode-number" placeholder="e.g. 8901234567890" value="" oninput="updatePriceCardPreview()">
+            </div>
+            <div class="form-group full-width">
+                <label>Notes (Optional)</label>
+                <input type="text" class="form-control sentence-case-input" id="price-notes" placeholder="" value="" oninput="updatePriceCardPreview()">
             </div>
             <div class="form-group full-width">
                 <label class="custom-checkbox-label">
@@ -4234,7 +4252,7 @@ Millet Groceries & Snacks</textarea>
         // ---- App version ----
         // Bump this (and add a line to the version-log comment at the very
         // top of this file) every time the file is updated and re-uploaded.
-        const APP_VERSION = 'v1.8.5';
+        const APP_VERSION = 'v1.8.7';
 
         // ---- Number of Prints ----
         // One count per print type, shown as a +/- stepper on the Quick
@@ -6257,12 +6275,18 @@ Millet Groceries & Snacks</textarea>
 
             const notesWrapper = document.getElementById('p-card-notes-wrapper');
             const notesEl = document.getElementById('p-card-notes');
+            const hrMainEl = document.getElementById('p-card-hr-main');
             if (notesVal) {
                 notesWrapper.style.display = 'block';
                 notesEl.textContent = `NOTE: ${notesVal}`;
                 notesEl.style.fontSize = fNotes;
+                // The bottom divider only earns its space when there's a
+                // note sitting under it — with nothing below it, it's just
+                // wasted length on the label.
+                hrMainEl.style.display = 'block';
             } else {
                 notesWrapper.style.display = 'none';
+                hrMainEl.style.display = 'none';
             }
 
             updatePriceTagBarcode(itemVal > 0 && discVal > 0);
@@ -6342,11 +6366,12 @@ Millet Groceries & Snacks</textarea>
                 if (typeof JsBarcode === 'function') {
                     JsBarcode(barcodeSvg, barcodeVal, {
                         format: 'CODE128',
-                        width: 1.1,
-                        height: 40,
-                        fontSize: 10,
+                        width: 1.2,
+                        height: 18,
+                        fontSize: 13,
+                        fontOptions: 'bold',
                         margin: 0,
-                        textMargin: 2,
+                        textMargin: 1,
                         displayValue: true
                     });
                     barcodeRow.style.display = 'flex';
