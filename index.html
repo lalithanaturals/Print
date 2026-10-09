@@ -173,6 +173,11 @@
       Printer/Label Size selection (and its preview) on whatever was
       chosen last instead of resetting it to Thermal along with
       everything else.
+    v1.10.1 (2026-10-09) — Price Tag: fixed the Thermal sticker's dashed
+      border looking uneven/crooked — its padding was 6px on top but
+      ~7.6px on the bottom, which pushed the barcode number right up
+      against the bottom edge. Padding is now a uniform 7px on all four
+      sides.
 -->
 
 
@@ -4704,7 +4709,7 @@ Millet Groceries & Snacks</textarea>
         // ---- App version ----
         // Bump this (and add a line to the version-log comment at the very
         // top of this file) every time the file is updated and re-uploaded.
-        const APP_VERSION = 'v1.10.0';
+        const APP_VERSION = 'v1.10.1';
 
         // ---- Number of Prints ----
         // One count per print type, shown as a +/- stepper on the Quick
