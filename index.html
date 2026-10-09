@@ -184,6 +184,22 @@
       strip of blank paper past the right edge of the dashed border, so
       the MRP/price block now sits further right and the Item Name
       column has noticeably more room before it needs to shrink.
+    v1.10.3 (2026-10-09) — Price Tag: widened the Thermal sticker again,
+      76mm to 79mm (still flush-left, 1mm safety buffer) — another photo
+      showed there was still blank paper past the right edge of the
+      border, so the MRP/price block moves further right still and Item
+      Name gets even more room before shrinking.
+    v1.10.4 (2026-10-09) — Price Tag: fixed Item Name wrapping onto a
+      second line in the preview (e.g. "BHARGAV" → "BHARGA"/"V") even
+      though it fit fine in the small card. Two causes: (1) the
+      tap-to-enlarge preview clones the card into its own, differently-
+      sized box without re-running the sizing logic, so a name sized for
+      the small preview could overflow the enlarged one — it's now re-fit
+      for its own width when the lightbox opens; (2) the sizing
+      calculation was cutting it exactly as close as this browser's font
+      metrics allow, which a different device can render a few px wider —
+      added a small safety margin so that can't flip a name from one line
+      to two.
 -->
 
 
@@ -2955,14 +2971,16 @@
                    this printer. Printing flush against the LEFT edge
                    (where it reliably prints fine, per the photo) keeps
                    the whole dashed border — including the right side —
-                   safely inside the printable area. 70mm left a visible
-                   strip of blank paper beyond the right edge of the
-                   border on this printer (per a follow-up photo) — widened
-                   to 76mm, still flush-left, to reclaim most of that
-                   margin for the Item Name column while keeping a small
-                   safety buffer on the right. */
-                width: 76mm !important;
-                max-width: 76mm !important;
+                   safely inside the printable area. 70mm, then 76mm,
+                   both still left a visible strip of blank paper beyond
+                   the right edge of the border on this printer (per two
+                   follow-up photos) — widened again to 79mm, still
+                   flush-left, to reclaim nearly all of that margin for
+                   the Item Name column while keeping a thin 1mm safety
+                   buffer on the right so the border doesn't risk getting
+                   cut off. */
+                width: 79mm !important;
+                max-width: 79mm !important;
                 min-width: 0 !important;
                 margin: 0 !important;
                 /* Equal padding on all four sides — was 6px top vs ~7.6px
@@ -4720,7 +4738,7 @@ Millet Groceries & Snacks</textarea>
         // ---- App version ----
         // Bump this (and add a line to the version-log comment at the very
         // top of this file) every time the file is updated and re-uploaded.
-        const APP_VERSION = 'v1.10.2';
+        const APP_VERSION = 'v1.10.4';
 
         // ---- Number of Prints ----
         // One count per print type, shown as a +/- stepper on the Quick
@@ -7081,9 +7099,23 @@ Millet Groceries & Snacks</textarea>
         // name would actually overflow onto a second line — a short name
         // always prints at full size, a long one still wraps normally once it
         // hits the floor.
-        function fitPriceTagItemName() {
-            const nameEl = document.getElementById('p-card-item-name');
-            const infoCol = document.querySelector('.price-tag-info-col');
+        function fitPriceTagItemName(scope) {
+            // Accepts an optional root to search within instead of the
+            // whole document — needed for the tap-to-enlarge preview
+            // lightbox (see openPreviewLightbox()), which clones the card
+            // into a DIFFERENTLY-SIZED container (its own CSS caps it at
+            // min(90mm, 92vw), which can be narrower than the live 80mm
+            // preview on a small screen). The clone keeps the same ids as
+            // the original, so a plain getElementById()/querySelector()
+            // call here would always find the ORIGINAL (hidden) card's
+            // elements, not the clone's — silently re-fitting the wrong
+            // copy and leaving the visible one with whatever font-size fit
+            // its old, different-width container, which is exactly what
+            // made a short name like "BHARGAV" wrap into two lines in the
+            // enlarged preview even though it fit fine in the small one.
+            const root = scope || document;
+            const nameEl = root.querySelector('#p-card-item-name');
+            const infoCol = root.querySelector('.price-tag-info-col');
             if (!nameEl || !infoCol) return;
 
             const baseSize = parseFloat(document.getElementById('p-font-name').value) || 18;
@@ -7095,8 +7127,17 @@ Millet Groceries & Snacks</textarea>
             // little depending on its content). Scaled up along with the
             // 70mm → 76mm card widening, so Item Name actually gets to use
             // the reclaimed space instead of it sitting blank next to MRP.
-            const SAFE_INFO_COL_WIDTH = 118;
-            const availableWidth = Math.min(infoCol.clientWidth, SAFE_INFO_COL_WIDTH);
+            const SAFE_INFO_COL_WIDTH = 123;
+            // A small safety margin: widening the live column's cap from
+            // 95 to 123 (above) meant, on screens where the live column is
+            // narrower than 123, the algorithm started cutting it exactly
+            // as close as the measured width allows — fine in this
+            // browser's font metrics, but a different device/browser can
+            // render the same text a couple of px wider and tip it into
+            // wrapping (which is what happened with "BHARGAV"). This
+            // buffer keeps a few px of headroom so that kind of
+            // measurement drift can't flip a name from one line to two.
+            const availableWidth = Math.min(infoCol.clientWidth, SAFE_INFO_COL_WIDTH) - 4;
 
             nameEl.style.whiteSpace = 'nowrap';
             nameEl.style.width = 'max-content';
@@ -8345,8 +8386,24 @@ Millet Groceries & Snacks</textarea>
             if (!card) return;
             const inner = document.getElementById('previewLightboxInner');
             inner.innerHTML = '';
-            inner.appendChild(card.cloneNode(true));
+            const clone = card.cloneNode(true);
+            inner.appendChild(clone);
             document.getElementById('previewLightbox').classList.add('active');
+
+            // The clone above keeps whatever inline font-size the Price
+            // Tag's Item Name was already sized to for the small, fixed-
+            // width (80mm) live preview — but this lightbox resizes the
+            // card to its own, DIFFERENT width (min(90mm, 92vw), which can
+            // be narrower than 80mm on a small screen). Without re-running
+            // the fit here, a name that fit fine in the small preview can
+            // wrap into two lines once squeezed into the lightbox's own
+            // width. Re-fit it now, scoped to the clone (it shares ids
+            // with the original, hidden card, so a plain
+            // document.getElementById() call would silently re-fit the
+            // wrong copy instead of this visible one).
+            if (clone.classList.contains('price-card')) {
+                fitPriceTagItemName(clone);
+            }
         }
 
         function closePreviewLightbox() {
