@@ -178,6 +178,12 @@
       ~7.6px on the bottom, which pushed the barcode number right up
       against the bottom edge. Padding is now a uniform 7px on all four
       sides.
+    v1.10.2 (2026-10-09) — Price Tag: widened the Thermal sticker from
+      70mm to 76mm (still flush against the left edge, where this
+      printer reliably prints cleanly) — a follow-up photo showed a
+      strip of blank paper past the right edge of the dashed border, so
+      the MRP/price block now sits further right and the Item Name
+      column has noticeably more room before it needs to shrink.
 -->
 
 
@@ -2946,12 +2952,17 @@
                    80mm physical edge — the real printable strip is often
                    quite a bit narrower than the 80mm label itself, and
                    centering a 76mm card still ran off the right edge on
-                   this printer. Printing well narrower and flush against
-                   the LEFT edge (where it reliably prints fine, per the
-                   photo) keeps the whole dashed border — including the
-                   right side — safely inside the printable area. */
-                width: 70mm !important;
-                max-width: 70mm !important;
+                   this printer. Printing flush against the LEFT edge
+                   (where it reliably prints fine, per the photo) keeps
+                   the whole dashed border — including the right side —
+                   safely inside the printable area. 70mm left a visible
+                   strip of blank paper beyond the right edge of the
+                   border on this printer (per a follow-up photo) — widened
+                   to 76mm, still flush-left, to reclaim most of that
+                   margin for the Item Name column while keeping a small
+                   safety buffer on the right. */
+                width: 76mm !important;
+                max-width: 76mm !important;
                 min-width: 0 !important;
                 margin: 0 !important;
                 /* Equal padding on all four sides — was 6px top vs ~7.6px
@@ -4709,7 +4720,7 @@ Millet Groceries & Snacks</textarea>
         // ---- App version ----
         // Bump this (and add a line to the version-log comment at the very
         // top of this file) every time the file is updated and re-uploaded.
-        const APP_VERSION = 'v1.10.1';
+        const APP_VERSION = 'v1.10.2';
 
         // ---- Number of Prints ----
         // One count per print type, shown as a +/- stepper on the Quick
@@ -7081,8 +7092,10 @@ Millet Groceries & Snacks</textarea>
             // Fixed, conservative width budget (not the column's live width) —
             // keeps a given name's size, and so the sticker's length, the same
             // regardless of discount (the price column's own width shifts a
-            // little depending on its content).
-            const SAFE_INFO_COL_WIDTH = 95;
+            // little depending on its content). Scaled up along with the
+            // 70mm → 76mm card widening, so Item Name actually gets to use
+            // the reclaimed space instead of it sitting blank next to MRP.
+            const SAFE_INFO_COL_WIDTH = 118;
             const availableWidth = Math.min(infoCol.clientWidth, SAFE_INFO_COL_WIDTH);
 
             nameEl.style.whiteSpace = 'nowrap';
