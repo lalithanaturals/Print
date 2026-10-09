@@ -2949,7 +2949,12 @@
                 max-width: 70mm !important;
                 min-width: 0 !important;
                 margin: 0 !important;
-                padding: 6px 8px 2mm !important;
+                /* Equal padding on all four sides — was 6px top vs ~7.6px
+                   (2mm) bottom, which (combined with the barcode number
+                   sitting right at the bottom edge) made the dashed
+                   border read as uneven/crooked around the content even
+                   though the rectangle itself was perfectly square. */
+                padding: 7px !important;
                 /* The dashed line is the sticker's cut/tear line, so unlike
                    every other card it must survive printing — restore it
                    here since the generic ".card { border:none }" rule above
