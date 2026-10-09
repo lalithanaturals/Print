@@ -132,7 +132,49 @@
       a barcode no longer makes the sticker any taller than it is without
       one — the number underneath stays bold and readable, just the bars
       themselves are more compact.
+    v1.8.8 (2026-10-08) — Price Tag: fixed barcodes not scanning with a
+      phone scanner — v1.8.7's size cut had removed the blank "quiet
+      zone" margin around the bars that scanners need to lock onto the
+      barcode, and shrunk the bars shorter than is reliably scannable.
+      Restored a proper quiet zone and a taller bar height; the sticker
+      grows by about 6px (~1.6mm) versus v1.8.7 to make that possible —
+      a barcode that doesn't scan isn't worth the space saved.
+    v1.9.0 (2026-10-08) — Price Tag: added a batch of requested features.
+      "🔢 Generate" button next to the Barcode Number field assigns your
+      own sequence number (1001, 1002, …) when an item has no barcode of
+      its own. New optional Shelf Code field and "Show price per kg/L"
+      checkbox add a small shelf-location line and a per-unit price line
+      (uses the real selling price when a discount is set, not the MRP) —
+      both stay off/blank by default so they don't affect existing tags.
+      New Compact Mode checkbox shrinks text/spacing for low-cost items
+      that don't need a full-size sticker. "💾 Save to My Items" / "📂 My
+      Items" let you save an item's full set of fields and recall it later
+      without retyping (separate from the existing Recent Prints history,
+      and recalling one fills the form without auto-printing). "📋 Batch
+      Print" opens a list where you can add several different items
+      (name/qty/MRP/discount/barcode) and print all of their tags in a
+      single print job, one after another with a cut line between each.
+    v1.10.0 (2026-10-09) — Price Tag: added label printer support — pick
+      "Thermal" (the usual 80mm roll) or one of two 2-up label sizes
+      (50×25mm or 50×50mm) from a new Printer/Label Size selector; a
+      label prints as a stacked Name → Price → Barcode card, two per
+      physical row, with its own font-size handling so nothing clips.
+      Replaced Compact Mode and the old barcode-sequence generator with
+      a one-tap "🏷️ Minimal Design" mode that strips the tag down to
+      just Item Name, MRP and Barcode. Batch Print now respects whichever
+      label size is selected (each row becomes a 2-up pair) instead of
+      always printing Thermal, and gained a live "N items ready → N tags
+      will print" count line plus a "⎘ Duplicate for Batch" button that
+      copies the item currently on the form into a new Batch Print row.
+      Item Name now autocompletes from My Items, and recalling a My Items
+      entry shows a note if the MRP on the form has since drifted from
+      what was saved. Fixed: the "⚙️ Detailed Font Sizes" drawer's choices
+      weren't actually being applied. Fixed: "Reset to Default" left the
+      Printer/Label Size selection (and its preview) on whatever was
+      chosen last instead of resetting it to Thermal along with
+      everything else.
 -->
+
 
 
 <!DOCTYPE html>
@@ -1833,6 +1875,73 @@
             background: #e2e8f0;
         }
 
+        /* Pressed/open state for toolbar toggle buttons sharing this class —
+           "+ Add Brand Name" and "🏷️ Minimal Design" (both toggled via
+           classList in togglePriceBrandInput() / updatePriceCardPreview()). */
+        .upload-logo-action-btn.active {
+            background: #8b5cf6;
+            border-color: #8b5cf6;
+            color: #ffffff;
+        }
+
+        /* "⋯ More" overflow menu — a plain positioned dropdown, intentionally
+           small/custom rather than a shared app-wide component since it's
+           only used in the Price Tag panel's header right now. */
+        .more-menu-wrap {
+            position: relative;
+            display: inline-flex;
+        }
+        .more-menu-list {
+            display: none;
+            position: absolute;
+            top: calc(100% + 6px);
+            left: 0;
+            z-index: 50;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            box-shadow: var(--card-shadow-hover);
+            padding: 6px;
+            min-width: 180px;
+            flex-direction: column;
+            gap: 2px;
+        }
+        .more-menu-list.open {
+            display: flex;
+        }
+        .more-menu-list button {
+            border: none;
+            background: none;
+            text-align: left;
+            padding: 8px 10px;
+            border-radius: 7px;
+            font-size: 12.5px;
+            font-weight: 700;
+            color: #334155;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+        .more-menu-list button:hover {
+            background: #f1f5f9;
+        }
+        .more-menu-select-label {
+            display: block;
+            font-size: 10px;
+            font-weight: 800;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            padding: 6px 10px 2px;
+            margin-top: 4px;
+            border-top: 1px solid #f1f5f9;
+        }
+        .more-menu-list select {
+            width: 100%;
+            margin: 2px 0 2px;
+            font-size: 12px;
+            padding: 6px 8px;
+        }
+
         .reset-logo-btn {
             background: #fee2e2;
             border: 1.5px solid #fca5a5;
@@ -2312,6 +2421,25 @@
             margin-top: 2px;
         }
 
+        /* Optional short internal code (shelf location, SKU, etc.) — purely
+           for staff to find/re-print a tag by code, never required. */
+        .price-tag-shelf-code {
+            font-size: 9.5px;
+            font-weight: 800;
+            color: #64748b;
+            margin-top: 1px;
+        }
+
+        /* Optional "₹X / kg" (or /L, /g, /ml) line, auto-computed from MRP
+           and the qty field when it parses as a weight or volume. Off by
+           default — only shows when the checkbox is on AND qty parses. */
+        .price-tag-per-unit-line {
+            font-size: 10.5px;
+            font-weight: 800;
+            color: #475569;
+            margin-top: 2px;
+        }
+
         .price-tag-hr {
             border-top: 3px solid #000;
             margin: 6px 0 5px;
@@ -2346,6 +2474,159 @@
             text-transform: uppercase;
             margin-top: 4px;
             text-align: left;
+        }
+
+        /* ---- Label printing (2-up, 50mm-wide die-cut labels) ----
+           Fixed font sizes tuned to FILL a 50mm-wide label edge-to-edge, not
+           just fit on it — the Font Sizes drawer's dropdowns (tuned for the
+           much wider 80mm thermal card) are bypassed entirely here. These
+           !important rules apply whenever a label size is active, on screen
+           AND in print (the card-el itself gets the label-2550 / label-5050
+           class — see applyPriceLabelModeUI()). The card itself becomes a
+           centered flex column with a fixed (not min-) height, so Name/
+           Price/Barcode spread out and use the full label instead of
+           clustering at the top with dead space below — bigger fonts + even
+           vertical spacing is what "fills" it. 50x50 gets noticeably bigger
+           type than 50x25 since it has double the vertical room to spend. */
+        .price-card.label-2550,
+        .price-card.label-5050 {
+            width: 50mm !important;
+            max-width: 50mm !important;
+            min-width: 0 !important;
+            margin: 0 auto !important;
+            padding: 2mm !important;
+            border: 1.5px dashed #000 !important;
+            box-sizing: border-box !important;
+            display: flex !important;
+            flex-direction: column !important;
+            justify-content: center !important;
+            align-items: center !important;
+        }
+        .price-card.label-2550 { height: 25mm; gap: 0.5mm; padding: 1.3mm 2mm !important; }
+        .price-card.label-5050 { height: 50mm; gap: 3mm; }
+
+        /* The thermal design puts Name on the left and Price on the right,
+           side-by-side — that works on an 80mm-wide sticker but leaves
+           almost no width for either one on a 50mm label (and 2-up halves
+           that again in practice). Label mode restructures it into a
+           genuinely different, label-appropriate design: Name, then Price,
+           then Barcode, stacked and centered — same data, same Full/Minimal
+           content choice, different layout. (updatePriceTagBarcode() also
+           stops moving the barcode row up into the name column in this
+           mode, so it stays in its natural spot at the bottom, below the
+           hr — see that function.) */
+        .price-card.label-2550 .price-tag-main-row,
+        .price-card.label-5050 .price-tag-main-row {
+            flex-direction: column !important;
+            align-items: center !important;
+            gap: 1px !important;
+        }
+        .price-card.label-2550 .price-tag-info-col,
+        .price-card.label-5050 .price-tag-info-col,
+        .price-card.label-2550 .price-tag-price-col,
+        .price-card.label-5050 .price-tag-price-col {
+            width: 100% !important;
+            text-align: center !important;
+            flex: 0 0 auto !important;
+        }
+        .price-card.label-2550 .price-tag-price-badge-row,
+        .price-card.label-5050 .price-tag-price-badge-row {
+            justify-content: center !important;
+            /* No wrapping here — a wide MRP (4+ digits) or the longer "MRP"
+               badge (vs "SP") fits by SHRINKING instead, same idea as the
+               thermal design's item-name auto-fit: see
+               fitPriceTagLabelFonts(), called from updatePriceCardPreview()
+               whenever a label size is active. */
+            flex-wrap: nowrap !important;
+            max-width: 100%;
+        }
+        .price-card.label-2550 .price-tag-mrp-strike-row,
+        .price-card.label-5050 .price-tag-mrp-strike-row {
+            /* Not a flex container like the rows above it — it's plain text
+               with its own text-align:right, which the generic
+               .price-tag-price-col rule above can't reach through since
+               this overrides it directly. */
+            text-align: center !important;
+        }
+        .price-card.label-2550 .price-tag-barcode-row,
+        .price-card.label-5050 .price-tag-barcode-row {
+            justify-content: center !important;
+        }
+
+        /* Item name is the headline of the card — on labels it gets
+           priority over everything else: the biggest font budget
+           (fitPriceTagLabelFonts() now shrinks the PRICE first and only
+           touches the name as a last resort), bold black text, slightly
+           larger than everything else on the card. */
+        .price-card.label-2550 .price-tag-item-name-v2,
+        .price-card.label-5050 .price-tag-item-name-v2 {
+            font-size: 16px !important;
+            line-height: 1.15;
+            font-weight: 900 !important;
+            color: #000 !important;
+            display: block;
+            width: 100%;
+            box-sizing: border-box;
+            letter-spacing: 0.2px;
+        }
+
+        .price-card.label-5050 .price-tag-item-name-v2 { font-size: 32px !important; }
+
+        .price-card.label-2550 .price-tag-sp-value,
+        .price-card.label-5050 .price-tag-sp-value { font-size: 20px !important; }
+
+        .price-card.label-5050 .price-tag-sp-value { font-size: 38px !important; }
+
+        .price-card.label-2550 .price-tag-mrp-strike-row,
+        .price-card.label-5050 .price-tag-mrp-strike-row,
+        .price-card.label-2550 #p-card-mrp-value,
+        .price-card.label-5050 #p-card-mrp-value { font-size: 8px !important; }
+
+        .price-card.label-5050 .price-tag-mrp-strike-row,
+        .price-card.label-5050 #p-card-mrp-value { font-size: 13px !important; }
+
+        .price-card.label-2550 .price-tag-mrp-badge,
+        .price-card.label-5050 .price-tag-mrp-badge { font-size: 7px; padding: 1px 3px; }
+
+        .price-card.label-5050 .price-tag-mrp-badge { font-size: 11px; padding: 2px 6px; }
+
+        .price-card.label-2550 .price-tag-save-line,
+        .price-card.label-5050 .price-tag-save-line { font-size: 7px !important; font-weight: 800; }
+
+        .price-card.label-5050 .price-tag-save-line { font-size: 10px !important; }
+
+        .price-card.label-2550 .price-tag-shelf-code,
+        .price-card.label-5050 .price-tag-shelf-code,
+        .price-card.label-2550 .price-tag-per-unit-line,
+        .price-card.label-5050 .price-tag-per-unit-line,
+        .price-card.label-2550 .price-tag-item-qty-v2,
+        .price-card.label-5050 .price-tag-item-qty-v2 { font-size: 7px !important; }
+
+        .price-card.label-5050 .price-tag-shelf-code,
+        .price-card.label-5050 .price-tag-per-unit-line,
+        .price-card.label-5050 .price-tag-item-qty-v2 { font-size: 10px !important; }
+
+        .price-card.label-2550 .price-tag-notes,
+        .price-card.label-5050 .price-tag-notes { font-size: 7px !important; margin-top: 0; }
+
+        .price-card.label-5050 .price-tag-notes { font-size: 10px !important; }
+
+        .price-card.label-2550 .price-tag-hr,
+        .price-card.label-5050 .price-tag-hr { width: 100%; margin: 0; }
+
+        .price-card.label-2550 .price-tag-barcode-row,
+        .price-card.label-5050 .price-tag-barcode-row { margin-top: 0; padding-top: 1mm; width: 100%; }
+
+        /* A pair of 2-up label cards, side-by-side, built by
+           printLabelWithCopies() right before printing (and never
+           otherwise in the DOM, so this only needs to look reasonable —
+           exact print sizing comes from the body.print-label-mode rules
+           inside @media print). */
+        .label-2up-row {
+            display: flex;
+            gap: 2mm;
+            justify-content: center;
+            align-items: flex-start;
         }
 
         .visiting-card {
@@ -2709,8 +2990,53 @@
 
             body.print-location.print-gajuwaka #loc-kurmannapalem-wrapper { display: none !important; }
             body.print-location.print-kurmannapalem #loc-gajuwaka-wrapper { display: none !important; }
+
+            /* ---- Label printing (2-up, 50mm-wide die-cut labels) ----
+               Same job as the thermal 80mm rules above, but for the
+               100mm-wide 2-up label media. More specific (body + 2 classes)
+               than the plain .card / .price-card rules above, so these
+               naturally win over them for a label print without needing to
+               touch the thermal rules at all. Only print-price ever gets
+               this class combination — see triggerMobilePrint(). */
+            body.print-price.print-label-mode .app-layout,
+            body.print-price.print-label-mode .preview-sidebar,
+            body.print-price.print-label-mode .receipts-wrapper,
+            body.print-price.print-label-mode .receipt-column {
+                width: 100mm !important;
+                max-width: 100mm !important;
+            }
+            body.print-price.print-label-mode .label-2up-row {
+                display: flex !important;
+                width: 100mm !important;
+                gap: 0 !important;
+                margin: 0 !important;
+            }
+            body.print-price.print-label-mode .price-card {
+                width: 50mm !important;
+                max-width: 50mm !important;
+                min-width: 0 !important;
+                margin: 0 !important;
+                border: 1px dashed #000 !important;
+                border-radius: 0 !important;
+                display: block !important;
+                box-sizing: border-box !important;
+            }
+            body.print-price.print-label-2550-mode .price-card {
+                height: 25mm !important;
+                padding: 1.5mm 2.5mm !important;
+            }
+            body.print-price.print-label-5050-mode .price-card {
+                height: 50mm !important;
+                padding: 2.5mm 3mm !important;
+            }
         }
     </style>
+    <!-- Rewritten by setDynamicPageSize() right before every Price Tag
+         print, so the physical @page size can switch between the 80mm
+         thermal roll and the 100mm-wide (2 x 50mm, "2-up") label media —
+         placed AFTER the main stylesheet so it always wins over the static
+         @page rule above for whichever property it sets. -->
+    <style id="price-dynamic-page-size"></style>
 </head>
 <body>
 
@@ -3275,22 +3601,71 @@ Millet Groceries & Snacks</textarea>
         <div class="panel-header-row">
             <span class="panel-title">🏷️ Item Price Tag Creator</span>
             <div class="panel-header-actions">
+                <!-- Save/My Items/Batch Print are used far less often than
+                     Reset/Print, so they're tucked into one overflow menu
+                     instead of sitting in the header as 3 separate
+                     buttons every time — keeps the header to 3 buttons
+                     on a phone instead of 5. -->
+                <div class="more-menu-wrap" id="priceMoreMenuWrap">
+                    <button type="button" class="upload-logo-action-btn" onclick="toggleMoreMenu(event)">⋯ More</button>
+                    <div class="more-menu-list" id="priceMoreMenuList">
+                        <button type="button" onclick="closeMoreMenu(); saveCurrentPriceToMyItems()">💾 Save to My Items</button>
+                        <button type="button" onclick="closeMoreMenu(); openMyItemsModal()">📂 My Items</button>
+                        <button type="button" onclick="closeMoreMenu(); openBatchPrintModal()">📋 Batch Print</button>
+                        <button type="button" onclick="closeMoreMenu(); duplicateCurrentItemToBatch()" title="Copy this item into Batch Print so you can tweak the weight/price for a near-identical item">⎘ Duplicate for Batch</button>
+                        <!-- Rarely changed — most prints stay on
+                             Thermal — so it lives down here in the
+                             overflow menu instead of taking up a row
+                             in the main form every time. Still just a
+                             plain <select>; clicking it inside the
+                             menu doesn't close the menu (its own
+                             "change" fires setPriceLabelMode(), not
+                             closeMoreMenu()), so you can see it take
+                             effect on the preview before dismissing. -->
+                        <label class="more-menu-select-label" for="price-printer-type-select">🖨️ Printer / Label Size</label>
+                        <select class="form-control" id="price-printer-type-select" onchange="setPriceLabelMode(this.value)" onclick="event.stopPropagation()">
+                            <option value="thermal" selected>🧾 Thermal (80mm)</option>
+                            <option value="label2550">🏷️ Label 50×25mm (2-up)</option>
+                            <option value="label5050">🏷️ Label 50×50mm (2-up)</option>
+                        </select>
+                    </div>
+                </div>
                 <button class="reset-default-btn" onclick="resetPricePanel()">↺ Reset to Default</button>
                 <button class="print-price-btn" onclick="triggerMobilePrint('price')">🖨️ Print Price Tag</button>
             </div>
         </div>
 
+        <div id="printTallyLine" style="font-size: 11px; font-weight: 700; color: #94a3b8; margin: 2px 0 8px;">Printed 0 tags today</div>
+
         <div class="custom-options-bar">
             <label class="custom-checkbox-label">
                 <input type="checkbox" id="price-show-logo" onchange="togglePriceLogoControls()"> Include Logo
             </label>
+            <!-- A second tag "design" rather than just a size tweak —
+                 strips the tag down to only Item Name, MRP, and the
+                 barcode (no discount/SP math, qty, shelf code, per-unit
+                 line or notes), for items where that's all the shelf
+                 really needs. Lives up here as a one-tap toggle (not a
+                 checkbox buried in a drawer) since switching designs is
+                 a bigger deal than any one field, and because turning
+                 it on also hides every field below that it doesn't use
+                 — see the minimalMode block in updatePriceCardPreview().
+                 Placed BEFORE "+ Add Brand Name" on purpose: that
+                 button is the only sibling in this row that gets
+                 display:none'd (when Minimal Design is on), and a
+                 hidden sibling AFTER this button doesn't reflow
+                 anything before it — so this button's own position
+                 never shifts when it's pressed. -->
+            <button type="button" class="upload-logo-action-btn" id="price-minimal-toggle-btn" onclick="togglePriceMinimalMode()">🏷️ Minimal Design</button>
+            <input type="checkbox" id="price-minimal-mode" style="display: none;">
+            <button type="button" class="upload-logo-action-btn" id="price-brand-toggle-btn" onclick="togglePriceBrandInput()">+ Add Brand Name</button>
             <label class="custom-checkbox-label price-logo-opt" id="price-tagline-opt-wrap" style="display: none;">
                 <input type="checkbox" id="price-show-tagline" onchange="updatePriceCardPreview()"> Include Tagline
             </label>
             <button class="upload-logo-action-btn price-logo-opt" id="price-upload-btn-wrap" style="display: none;" onclick="document.getElementById('priceLogoUploadInput').click()">📁 Upload Logo</button>
             <button class="reset-logo-btn price-logo-opt" id="price-reset-btn-wrap" style="display: none;" onclick="resetPriceLogo()" title="Restore default logo for price tag">↺ Default Logo</button>
             <input type="file" id="priceLogoUploadInput" accept="image/jpeg,image/png,image/svg+xml" style="display: none;" onchange="handlePriceLogoUpload(event)">
-            
+
             <div class="toolbar-group price-logo-opt" id="price-size-select-wrap" style="display: none; margin-left: auto;">
                 <span style="font-size: 11px;">Logo Size:</span>
                 <select class="tool-select" id="price-logo-size-select" onchange="updatePriceCardPreview()">
@@ -3303,26 +3678,27 @@ Millet Groceries & Snacks</textarea>
         </div>
 
         <div class="price-grid">
-            <div class="form-group full-width">
-                <button type="button" class="type-btn" id="price-brand-toggle-btn" onclick="togglePriceBrandInput()" style="background:#f1f5f9; border-style: dashed; padding: 7px;">+ Add Brand Name</button>
-            </div>
             <div class="form-group full-width" id="price-brand-group" style="display: none;">
                 <label>Brand Name</label>
                 <input type="text" class="form-control sentence-case-input" id="price-brand-name" placeholder="" value="" oninput="updatePriceCardPreview()">
             </div>
             <div class="form-group">
                 <label>Item Name <span style="color:#ef4444;">*</span></label>
-                <input type="text" class="form-control sentence-case-input" id="price-item-name" placeholder="" value="" oninput="updatePriceCardPreview()">
+                <input type="text" class="form-control sentence-case-input" id="price-item-name" placeholder="" value="" list="priceItemNameSuggestions" oninput="updatePriceCardPreview()">
+                <datalist id="priceItemNameSuggestions"></datalist>
             </div>
-            <div class="form-group">
+            <div class="form-group" id="price-qty-group">
                 <label>Net Weight / Quantity</label>
                 <input type="text" class="form-control sentence-case-input" id="price-item-qty" placeholder="" value="" oninput="updatePriceCardPreview()">
             </div>
             <div class="form-group">
                 <label>MRP (₹) <span style="color:#ef4444;">*</span></label>
-                <input type="number" class="form-control" id="price-item-value" placeholder="" value="" oninput="updatePriceCardPreview()">
+                <input type="number" class="form-control" id="price-item-value" placeholder="" value="" oninput="updatePriceCardPreview(); checkMrpBaselineChanged()">
+                <!-- Shows "was ₹X" when you've "Use"d a saved item and
+                     then edited its MRP here, so the change isn't silent. -->
+                <div id="price-mrp-was-note" style="display:none; font-size:11px; font-weight:800; color:#d97706; margin-top:3px;"></div>
             </div>
-            <div class="form-group">
+            <div class="form-group" id="price-disctype-group">
                 <label>Discount Type</label>
                 <div class="type-selector-btns">
                     <button class="type-btn" id="price-disc-pct-btn" onclick="setPriceDiscType('pct')">Discount %</button>
@@ -3334,19 +3710,51 @@ Millet Groceries & Snacks</textarea>
                 <label id="price-disc-label">Discount Percentage (%)</label>
                 <input type="number" class="form-control" id="price-disc-val" placeholder="" value="" oninput="updatePriceCardPreview()">
             </div>
-            <div class="form-group full-width">
+            <!-- Used often enough to live right next to Discount in the
+                 main form, rather than behind the Extras drawer like
+                 the less-frequent shelf code / per-unit options below. -->
+            <div class="form-group" id="price-barcode-group">
                 <label>Barcode Number (Optional)</label>
                 <input type="text" class="form-control" id="price-barcode-number" placeholder="e.g. 8901234567890" value="" oninput="updatePriceCardPreview()">
             </div>
-            <div class="form-group full-width">
+            <div class="form-group full-width" id="price-notes-group">
                 <label>Notes (Optional)</label>
                 <input type="text" class="form-control sentence-case-input" id="price-notes" placeholder="" value="" oninput="updatePriceCardPreview()">
             </div>
-            <div class="form-group full-width">
+            <div class="form-group full-width" id="price-saveline-group">
                 <label class="custom-checkbox-label">
                     <input type="checkbox" id="price-show-save-line" checked onchange="updatePriceCardPreview()"> Show "You Save ₹X (Y% OFF)" line
                 </label>
             </div>
+
+            <!-- Shelf Code / Per-unit —
+                 optional extras most prints don't need, grouped into
+                 one collapsed drawer (same pattern as the font-size
+                 drawer below) instead of taking up space in the main
+                 form every time. The header shows how many are
+                 currently in use so it's not a mystery what's inside
+                 when it's collapsed. (Barcode lives up in the main
+                 form now, next to Discount, since it's used too often
+                 to bury in here. Minimal Design moved up to the top
+                 toggle row — see price-top-toggle-row above.) -->
+            <div class="form-group full-width collapsible-section" id="price-extras-section">
+                <div class="collapsible-toggle-header" onclick="toggleExtrasDrawer()">
+                    <span id="extras-drawer-label">🏷️ Shelf Code &amp; Per-Unit (Optional)</span>
+                    <span id="extras-drawer-arrow">▼ Show</span>
+                </div>
+                <div class="collapsible-content" id="extrasDrawerContent">
+                    <div class="form-group">
+                        <label>Shelf Code</label>
+                        <input type="text" class="form-control" id="price-shelf-code" placeholder="e.g. A-108" value="" oninput="updatePriceCardPreview()">
+                    </div>
+                    <div class="form-group">
+                        <label class="custom-checkbox-label" style="margin-top: 26px;">
+                            <input type="checkbox" id="price-show-per-unit" onchange="updatePriceCardPreview()"> Show price per kg/L (when possible)
+                        </label>
+                    </div>
+                </div>
+            </div>
+
             <div class="form-group full-width">
                 <label>Number of Prints</label>
                 <div class="panel-qty-stepper">
@@ -3354,6 +3762,12 @@ Millet Groceries & Snacks</textarea>
                     <span class="cnt-value qty-value" data-qty-key="price" style="font-weight:900; font-size:16px;">1</span>
                     <button type="button" class="cnt-btn type-btn" style="flex:0; width:40px;" onclick="adjustPrintQty('price', 1)">+</button>
                 </div>
+                <!-- Only shown when a Label size is picked (⋯ More ▸
+                     Printer / Label Size) — that media is 2 labels
+                     wide, so a "print" always outputs the item twice,
+                     and this count is rows of that pair, not single
+                     labels. See applyPriceLabelModeUI(). -->
+                <div id="price-label-mode-note" style="display: none; font-size: 10.5px; font-weight: 700; color: #7c3aed; margin-top: 3px;"></div>
             </div>
 
             <div class="form-group full-width collapsible-section">
@@ -3367,10 +3781,10 @@ Millet Groceries & Snacks</textarea>
                         <select class="form-control" id="p-font-name" onchange="updatePriceCardPreview()">
                             <option value="12px">12px</option>
                             <option value="14px">14px</option>
-                            <option value="16px">16px (Small)</option>
-                            <option value="18px" selected>18px (Default)</option>
+                            <option value="16px">16px</option>
+                            <option value="18px">18px (Old Default)</option>
                             <option value="20px">20px</option>
-                            <option value="22px">22px</option>
+                            <option value="22px" selected>22px (Default)</option>
                             <option value="24px">24px</option>
                             <option value="26px">26px (Big)</option>
                             <option value="28px">28px</option>
@@ -3841,6 +4255,37 @@ Millet Groceries & Snacks</textarea>
         </div>
     </div>
 
+    <!-- My Items: Price Tag's own saved-item catalog (deliberately saved by
+         the person, unlike Recent Prints which tracks every print automatically) -->
+    <div class="recent-prints-panel modal-panel" id="myItemsModal">
+        <div class="panel-header-row">
+            <span class="panel-title">📂 My Items</span>
+        </div>
+        <div class="recent-prints-list" id="myItemsList"></div>
+        <div class="recent-prints-footer">
+            <button type="button" class="recent-prints-clear-btn" onclick="clearMyItems()">Clear All</button>
+            <button type="button" class="recent-prints-close-btn" onclick="hideAllPanelsKeepData()">Close</button>
+        </div>
+    </div>
+
+    <!-- Batch Print: print several different items' Price Tags in one go -->
+    <div class="recent-prints-panel modal-panel" id="batchPrintModal" style="max-width: 460px;">
+        <div class="panel-header-row">
+            <span class="panel-title">📋 Batch Print Price Tags</span>
+        </div>
+        <div style="font-size: 11.5px; color: #64748b; margin-top: 4px; line-height: 1.5;">Add each item's name, qty and MRP. Every row prints as its own Price Tag, one after another, in a single print job.</div>
+        <div id="batchPrintRows" style="display: flex; flex-direction: column; gap: 8px; margin-top: 12px;" oninput="updateBatchPrintCount()" onkeydown="handleBatchRowKeydown(event)"></div>
+        <button type="button" class="upload-logo-action-btn" style="margin-top: 10px;" onclick="addBatchPrintRow()">+ Add Item</button>
+        <div id="batchPrintCountLine" style="font-size: 11.5px; font-weight: 800; color: #0ea5e9; margin-top: 8px;">0 items ready → 0 tags will print</div>
+        <div class="recent-prints-footer">
+            <button type="button" class="recent-prints-clear-btn" onclick="clearBatchPrintRows()">Clear All</button>
+            <div style="display:flex; gap:8px;">
+                <button type="button" class="recent-prints-close-btn" onclick="hideAllPanelsKeepData()">Close</button>
+                <button type="button" class="print-price-btn" style="padding: 8px 14px;" onclick="runBatchPrint()">🖨️ Print All</button>
+            </div>
+        </div>
+    </div>
+
     </div><!-- /app-main -->
 
     <div class="preview-sidebar" id="previewSidebar">
@@ -3877,7 +4322,7 @@ Millet Groceries & Snacks</textarea>
         <!-- Price Tag Receipt Column -->
         <div class="receipt-column price-receipt-column" id="priceReceiptCol">
             <div class="card-label-row">
-                <div class="card-label">Price Tag Sticker (80mm)</div>
+                <div class="card-label" id="priceCardLabelText">Price Tag Sticker (80mm)</div>
                 <button type="button" class="download-jpeg-btn" onclick="downloadCardAsJpeg('priceReceiptCol','Price_Tag',this)">⬇ JPEG</button>
             </div>
             <div class="preview-box" onclick="openPreviewLightbox(event)">
@@ -3891,6 +4336,7 @@ Millet Groceries & Snacks</textarea>
                             <div class="price-tag-brand-name" id="p-card-brand-name" style="display: none;"></div>
                             <div class="price-tag-item-name-v2" id="p-card-item-name">Item Name</div>
                             <div class="price-tag-item-qty-v2" id="p-card-item-qty" style="display: none;"></div>
+                            <div class="price-tag-shelf-code" id="p-card-shelf-code" style="display: none;"></div>
                         </div>
                         <div class="price-tag-price-col">
                             <div class="price-tag-mrp-strike-row" id="p-card-mrp-col" style="visibility: hidden;">
@@ -3902,6 +4348,7 @@ Millet Groceries & Snacks</textarea>
                                 <span class="price-tag-sp-value" id="p-card-sp-value">₹0.00</span>
                             </div>
                             <div class="price-tag-save-line" id="p-card-save-line" style="visibility: hidden;">You Save ₹0.00 (0% OFF)</div>
+                            <div class="price-tag-per-unit-line" id="p-card-per-unit-line" style="display: none;"></div>
                         </div>
                     </div>
 
@@ -4252,7 +4699,7 @@ Millet Groceries & Snacks</textarea>
         // ---- App version ----
         // Bump this (and add a line to the version-log comment at the very
         // top of this file) every time the file is updated and re-uploaded.
-        const APP_VERSION = 'v1.8.7';
+        const APP_VERSION = 'v1.10.0';
 
         // ---- Number of Prints ----
         // One count per print type, shown as a +/- stepper on the Quick
@@ -4450,6 +4897,14 @@ Millet Groceries & Snacks</textarea>
         let selectedStaff = 'Bhargav';
         let priceDiscType = 'pct';
         let priceLayoutOption = 1;
+        // Which physical output a Price Tag is headed for: 'thermal' (the
+        // existing 80mm roll) or a 2-up label size ('label2550' = 50x25mm,
+        // 'label5050' = 50x50mm). Remembered across visits.
+        let priceLabelMode = localStorage.getItem('lp_labelMode') || 'thermal';
+        // Set by useMyItem() to the MRP a saved Price Tag item was last
+        // saved at; null means "not tracking" (nothing saved was just
+        // recalled).
+        let priceMrpBaseline = null;
         let editingIndex = null;
 
         let quickEstimateItems = [];
@@ -4526,8 +4981,94 @@ Millet Groceries & Snacks</textarea>
             document.getElementById('price-brand-toggle-btn').classList.remove('active');
             setPriceLayout(1);
             setPriceDiscType('pct');
+            // Print layout (Thermal vs a 2-up label size) is a print-setup
+            // choice, not per-item data — "Reset to Default" should put it
+            // back to Thermal (the actual default) along with everything
+            // else, instead of leaving whatever printer was last selected
+            // in place.
+            setPriceLabelMode('thermal');
             togglePriceLogoControls();
+            priceMrpBaseline = null;
             updatePriceCardPreview();
+        }
+
+        // ---- Printer / Label Size (Thermal 80mm vs 2-up label media) ----
+        function setPriceLabelMode(mode) {
+            priceLabelMode = mode;
+            localStorage.setItem('lp_labelMode', mode);
+            applyPriceLabelModeUI();
+            updatePriceCardPreview();
+        }
+        // Drives every bit of UI that depends on the chosen printer/label
+        // size: the dropdown's selected value, which size class the
+        // preview card wears (this is what actually re-renders the
+        // preview into the label-specific stacked layout — see the
+        // CSS/updatePriceCardPreview notes near .price-card.label-2550),
+        // the preview sidebar's caption, and the little note under the
+        // Number of Prints stepper reminding you it means ROWS (2 labels
+        // each), not individual labels, when a label size is picked.
+        // Called once on boot too, so a remembered choice is reflected
+        // immediately.
+        function applyPriceLabelModeUI() {
+            const select = document.getElementById('price-printer-type-select');
+            if (select) select.value = priceLabelMode;
+
+            const card = document.getElementById('price-card-el');
+            card.classList.remove('label-2550', 'label-5050');
+            if (priceLabelMode === 'label2550') card.classList.add('label-2550');
+            if (priceLabelMode === 'label5050') card.classList.add('label-5050');
+
+            const labelText = document.getElementById('priceCardLabelText');
+            if (labelText) {
+                labelText.textContent =
+                    priceLabelMode === 'label2550' ? 'Label Preview (50×25mm, 2-up)' :
+                    priceLabelMode === 'label5050' ? 'Label Preview (50×50mm, 2-up)' :
+                    'Price Tag Sticker (80mm)';
+            }
+
+            const note = document.getElementById('price-label-mode-note');
+            if (note) {
+                if (priceLabelMode === 'thermal') {
+                    note.style.display = 'none';
+                } else {
+                    note.style.display = 'block';
+                    note.textContent = '⚠ This label media prints 2-up — "Number of Prints" below counts ROWS, each row = 2 copies of this item side-by-side.';
+                }
+            }
+        }
+        // Rewrites the dynamic @page style tag right before printing a
+        // Price Tag — the only reliable way to change the physical page
+        // size at runtime, since @page doesn't take a CSS custom property
+        // for `size` in every browser. Thermal stays 80mm (one column);
+        // both label sizes print at 100mm (2 x 50mm labels side-by-side,
+        // "2-up").
+        function setDynamicPageSize(sizeStr) {
+            const styleEl = document.getElementById('price-dynamic-page-size');
+            if (styleEl) styleEl.textContent = `@page { size: ${sizeStr}; margin: 0mm; }`;
+        }
+        // Builds and prints N rows of 2-up labels (the current item, twice,
+        // side-by-side per row) — mirrors printWithCopies()'s "duplicate
+        // the column's HTML with page-break dividers" approach, but each
+        // unit here is a 2-label row instead of a single card, because the
+        // label media itself is 2 labels wide and there's no way to print
+        // just one.
+        function printLabelWithCopies(columnId, rows, label) {
+            const col = columnId ? document.getElementById(columnId) : null;
+            const cardEl = document.getElementById('price-card-el');
+            if (!col || !cardEl || !rows || rows < 1) { window.print(); return; }
+
+            const original = col.innerHTML;
+            const cardHtml = cardEl.outerHTML;
+            let html = '';
+            for (let i = 0; i < rows; i++) {
+                if (i > 0) html += '<div class="print-cut-break"></div>';
+                html += `<div class="label-2up-row">${cardHtml}${cardHtml}</div>`;
+            }
+            col.innerHTML = html;
+            window.print();
+            col.innerHTML = original;
+            showPrintToast(label, rows * 2);
+            recordPrintStat(rows * 2);
         }
 
         function resetEstimatePanel() {
@@ -4636,6 +5177,9 @@ Millet Groceries & Snacks</textarea>
 
             loadSavedCustomLogo();
             loadSavedPriceLogo();
+            refreshItemNameSuggestions();
+            refreshPrintTally();
+            applyPriceLabelModeUI();
             const couponQrGajuwaka = document.getElementById('coupon-qr-gajuwaka');
             if (couponQrGajuwaka) couponQrGajuwaka.src = makeQrDataUrl('https://maps.app.goo.gl/Gzxq2iuM7fijRAQr6', couponQrGajuwaka.src);
             const couponQrKurmannapalem = document.getElementById('coupon-qr-kurmannapalem');
@@ -4784,6 +5328,32 @@ Millet Groceries & Snacks</textarea>
             }
         }
 
+        function toggleExtrasDrawer() {
+            const content = document.getElementById('extrasDrawerContent');
+            const arrow = document.getElementById('extras-drawer-arrow');
+            if (content.style.display === 'grid') {
+                content.style.display = 'none';
+                arrow.textContent = '▼ Show';
+            } else {
+                content.style.display = 'grid';
+                arrow.textContent = '▲ Hide';
+            }
+        }
+
+        // ---- "⋯ More" overflow menu (Price Tag panel header) ----
+        function toggleMoreMenu(evt) {
+            if (evt) evt.stopPropagation();
+            document.getElementById('priceMoreMenuList').classList.toggle('open');
+        }
+        function closeMoreMenu() {
+            const list = document.getElementById('priceMoreMenuList');
+            if (list) list.classList.remove('open');
+        }
+        document.addEventListener('click', (evt) => {
+            const wrap = document.getElementById('priceMoreMenuWrap');
+            if (wrap && !wrap.contains(evt.target)) closeMoreMenu();
+        });
+
         function loadSavedCustomLogo() {
             const savedLogo = localStorage.getItem('lalitha_custom_text_logo');
             if (savedLogo) {
@@ -4885,15 +5455,26 @@ Millet Groceries & Snacks</textarea>
             if (group.style.display === 'none') {
                 group.style.display = 'flex';
                 btn.textContent = '✕ Remove Brand Name';
-                btn.style.background = '#e2e8f0';
+                btn.classList.add('active');
                 document.getElementById('price-brand-name').focus();
             } else {
                 group.style.display = 'none';
                 btn.textContent = '+ Add Brand Name';
-                btn.style.background = '#f1f5f9';
+                btn.classList.remove('active');
                 document.getElementById('price-brand-name').value = '';
                 updatePriceCardPreview();
             }
+        }
+
+        // Minimal Design is driven by a hidden checkbox (kept so the rest
+        // of the code can just read .checked like any other option) behind
+        // this one-tap button. updatePriceCardPreview() does the actual
+        // showing/hiding of every other field based on that checkbox's
+        // state.
+        function togglePriceMinimalMode() {
+            const box = document.getElementById('price-minimal-mode');
+            box.checked = !box.checked;
+            updatePriceCardPreview();
         }
 
         // The old "Layout 1 / Layout 2" switcher is gone now that the Price
@@ -5582,7 +6163,7 @@ Millet Groceries & Snacks</textarea>
         }
 
         function hideAllPanelsKeepData() {
-            ['customInputPanel', 'couponInputPanel', 'locationInputPanel', 'priceInputPanel', 'promoInputPanel', 'estimateInputPanel', 'visitingInputPanel', 'multiInputPanel', 'whatsappInputPanel', 'exchangeInputPanel', 'locationChoiceModal', 'visitingChoiceModal', 'recentPrintsModal'].forEach(id => {
+            ['customInputPanel', 'couponInputPanel', 'locationInputPanel', 'priceInputPanel', 'promoInputPanel', 'estimateInputPanel', 'visitingInputPanel', 'multiInputPanel', 'whatsappInputPanel', 'exchangeInputPanel', 'locationChoiceModal', 'visitingChoiceModal', 'recentPrintsModal', 'myItemsModal', 'batchPrintModal'].forEach(id => {
                 const el = document.getElementById(id);
                 if(el) el.style.display = 'none';
             });
@@ -6179,12 +6760,7 @@ Millet Groceries & Snacks</textarea>
             logoEl.style.display = showLogo ? 'block' : 'none';
             logoEl.style.width = logoSizeVal;
             taglineEl.style.display = showTagline ? 'block' : 'none';
-
-            if (!showLogo && !showTagline) {
-                dividerEl.style.display = 'none';
-            } else {
-                dividerEl.style.display = 'block';
-            }
+            dividerEl.style.display = (!showLogo && !showTagline) ? 'none' : 'block';
 
             const brandGroup = document.getElementById('price-brand-group');
             const brandName = document.getElementById('price-brand-name').value.trim();
@@ -6193,6 +6769,9 @@ Millet Groceries & Snacks</textarea>
             const itemVal = parseFloat(document.getElementById('price-item-value').value) || 0;
             const discVal = parseFloat(document.getElementById('price-disc-val').value) || 0;
             const notesVal = document.getElementById('price-notes').value.trim();
+            const shelfCodeVal = document.getElementById('price-shelf-code').value.trim();
+            const showPerUnit = document.getElementById('price-show-per-unit').checked;
+            const minimalMode = document.getElementById('price-minimal-mode').checked;
 
             const fName = document.getElementById('p-font-name').value;
             const fPrice = document.getElementById('p-font-price').value;
@@ -6202,8 +6781,6 @@ Millet Groceries & Snacks</textarea>
             const fNotes = document.getElementById('p-font-notes').value;
             const showSaveLine = document.getElementById('price-show-save-line').checked;
 
-            // Brand name + item name/qty always sit in the footer's right
-            // column now (next to MRP), rather than as a separate block up top.
             const brandEl = document.getElementById('p-card-brand-name');
             if (brandGroup.style.display !== 'none' && brandName) {
                 brandEl.style.display = 'block';
@@ -6234,23 +6811,23 @@ Millet Groceries & Snacks</textarea>
             spValueEl.style.fontSize = fPrice;
             mrpValueEl.style.fontSize = fMrp;
 
-            // The badge next to the big price always names what that price
-            // actually is: with no discount, that price IS the MRP, so it
-            // reads "MRP". Once a discount is entered, the real MRP moves up
-            // small and struck-through, and the big number next to the badge
-            // becomes the discounted selling price — so the badge switches
-            // to "SP" to match it, instead of mislabeling it "MRP".
+            // Tracks whichever price is actually being charged right now — the
+            // discounted selling price when one's entered, otherwise the plain
+            // MRP — so the per-unit-price line below always divides the real
+            // price, not always the MRP.
+            let activePrice = itemVal;
+
             if (itemVal > 0 && discVal > 0) {
                 const finalPrice = computePriceTagFinal(itemVal, discVal, priceDiscType);
+                activePrice = finalPrice;
                 const saved = Math.max(0, itemVal - finalPrice);
                 const savedPct = itemVal > 0 ? Math.round((saved / itemVal) * 100) : 0;
 
                 priceBadgeEl.textContent = 'SP';
                 spValueEl.textContent = `₹${finalPrice.toFixed(2)}`;
 
-                // Use visibility (not display) to show/hide these two rows —
-                // that keeps the space they take up reserved at all times,
-                // so the printed sticker is the exact same length whether a
+                // visibility (not display) keeps this space reserved at all
+                // times, so the printed sticker is the same length whether a
                 // discount is entered or not.
                 if (saved > 0 && showSaveLine) {
                     saveLineEl.style.visibility = 'visible';
@@ -6262,15 +6839,75 @@ Millet Groceries & Snacks</textarea>
                 mrpColEl.style.visibility = 'visible';
                 mrpValueEl.textContent = `₹${itemVal.toFixed(2)}`;
             } else {
-                // No discount set: there's only one price, so the badge
-                // sits right next to the MRP value itself and reads "MRP" —
-                // the struck-MRP line and "You Save" line stay in the
-                // layout (same height) but invisible, so the tag prints at
-                // the same length either way.
                 priceBadgeEl.textContent = 'MRP';
                 spValueEl.textContent = `₹${itemVal.toFixed(2)}`;
                 saveLineEl.style.visibility = 'hidden';
                 mrpColEl.style.visibility = 'hidden';
+            }
+
+            // Minimal Design — a different tag altogether, not just a size
+            // tweak: always show the plain MRP (never the SP/discount math),
+            // and hide everything else below except the barcode. The actual
+            // hiding of qty/shelf-code/per-unit/notes/brand is done in CSS
+            // (.price-card.minimal ...) so it can't be re-shown by their own
+            // checkboxes while this is on.
+            if (minimalMode) {
+                priceBadgeEl.textContent = 'MRP';
+                spValueEl.textContent = `₹${itemVal.toFixed(2)}`;
+                saveLineEl.style.visibility = 'hidden';
+                mrpColEl.style.visibility = 'hidden';
+            }
+            document.getElementById('price-card-el').classList.toggle('minimal', minimalMode);
+
+            // Minimal Design also declutters the FORM itself, not just the
+            // printed card — hide every field it doesn't use so only Item
+            // Name, MRP, Barcode and Number of Prints remain. Each hidden
+            // group keeps its own value in the DOM (nothing is cleared), so
+            // switching back off restores whatever was already typed in.
+            document.getElementById('price-minimal-toggle-btn').classList.toggle('active', minimalMode);
+            const minimalHiddenGroupIds = [
+                'price-brand-toggle-btn', 'price-qty-group',
+                'price-disctype-group', 'price-disc-val-group', 'price-notes-group',
+                'price-saveline-group', 'price-extras-section'
+            ];
+            minimalHiddenGroupIds.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.style.display = minimalMode ? 'none' : '';
+            });
+            // price-brand-group is handled separately from the list above: its
+            // own open/closed state is owned by togglePriceBrandInput(), so
+            // this only ever forces it closed for Minimal Design — it never
+            // forces it back OPEN when Minimal Design turns off (that would
+            // pop the Brand Name field open on every keystroke even when the
+            // person never asked for it).
+            if (minimalMode) {
+                document.getElementById('price-brand-group').style.display = 'none';
+            }
+            // Barcode's row-mates (Discount Type/Value) are gone in Minimal
+            // Design, so let it take the full row instead of sitting half-empty.
+            document.getElementById('price-barcode-group').classList.toggle('full-width', minimalMode);
+
+            // Shelf Code — optional small line under the item name.
+            const shelfCodeEl = document.getElementById('p-card-shelf-code');
+            if (shelfCodeVal) {
+                shelfCodeEl.style.display = 'block';
+                shelfCodeEl.textContent = 'Shelf: ' + shelfCodeVal;
+            } else {
+                shelfCodeEl.style.display = 'none';
+            }
+
+            // Price-per-unit — only shown when the checkbox is on AND the
+            // Qty/UOM text actually parses as a kg/g/L/ml amount, computed off
+            // whatever price is really being charged (SP when discounted,
+            // otherwise MRP).
+            const perUnitEl = document.getElementById('p-card-per-unit-line');
+            const unitInfo = showPerUnit ? parsePriceTagUnit(itemQty) : null;
+            if (unitInfo && activePrice > 0) {
+                const perUnitPrice = activePrice / unitInfo.baseAmount;
+                perUnitEl.style.display = 'block';
+                perUnitEl.textContent = `₹${perUnitPrice.toFixed(2)} / ${unitInfo.baseLabel}`;
+            } else {
+                perUnitEl.style.display = 'none';
             }
 
             const notesWrapper = document.getElementById('p-card-notes-wrapper');
@@ -6280,9 +6917,6 @@ Millet Groceries & Snacks</textarea>
                 notesWrapper.style.display = 'block';
                 notesEl.textContent = `NOTE: ${notesVal}`;
                 notesEl.style.fontSize = fNotes;
-                // The bottom divider only earns its space when there's a
-                // note sitting under it — with nothing below it, it's just
-                // wasted length on the label.
                 hrMainEl.style.display = 'block';
             } else {
                 notesWrapper.style.display = 'none';
@@ -6291,15 +6925,141 @@ Millet Groceries & Snacks</textarea>
 
             updatePriceTagBarcode(itemVal > 0 && discVal > 0);
             fitPriceTagItemName();
+            fitPriceTagLabelFonts();
+            updateExtrasDrawerLabel();
+            checkMrpBaselineChanged();
+        }
+
+        // ---- Label mode: shrink the price first, and the item name only as
+        // a genuine last resort, to fit a 50mm label — instead of guessing one
+        // fixed size that works for every digit count and badge width. Same
+        // idea as fitPriceTagItemName()'s thermal shrink-to-fit, but using the
+        // card's real on-screen size (fitPriceTagItemName() deliberately does
+        // NOT do that — it uses a fixed width budget so a thermal sticker's
+        // length never changes with/without a discount — that invariant
+        // doesn't apply here since label mode has a fixed physical size
+        // regardless). The name is the thing a shopper actually reads, so it
+        // gets first claim on the label's space and the biggest font budget;
+        // the price only gives up room once it's already at its own floor.
+        // Uses setProperty(..., 'important') so it can override the CSS
+        // !important baseline sizes below — a plain inline style wouldn't win
+        // against those.
+        function fitPriceTagLabelFonts() {
+            const card = document.getElementById('price-card-el');
+            const spEl = document.getElementById('p-card-sp-value');
+            const nameEl = document.getElementById('p-card-item-name');
+            if (!card || !spEl || !nameEl) return;
+
+            // This function only ever SETS font-size via setProperty(...,
+            // 'important') — never a plain assignment — specifically so this
+            // cleanup can tell "a previous label-mode run set this" apart from
+            // "the Font Sizes drawer (or the rest of updatePriceCardPreview())
+            // set this for Thermal". Clearing unconditionally here used to wipe
+            // out the drawer's Item Name / Price / MRP / Qty / Notes choices
+            // every single time this ran, even in Thermal mode — this check is
+            // the fix.
+            function clearIfOwnedByLabelFit(el) {
+                if (el && el.style.getPropertyPriority('font-size') === 'important') {
+                    el.style.removeProperty('font-size');
+                }
+            }
+
+            const isLabel = priceLabelMode === 'label2550' || priceLabelMode === 'label5050';
+            const barcodeRowEl = document.getElementById('p-card-barcode-row');
+            const mrpValueEl = document.getElementById('p-card-mrp-value');
+            const mrpLabelEl = document.querySelector('.price-tag-mrp-label');
+            const saveLineEl = document.getElementById('p-card-save-line');
+            const shelfCodeEl = document.getElementById('p-card-shelf-code');
+            const perUnitEl = document.getElementById('p-card-per-unit-line');
+            const qtyEl = document.getElementById('p-card-item-qty');
+            const notesEl = document.getElementById('p-card-notes');
+            if (!isLabel) {
+                // Back to Thermal — clear any shrink a previous label render
+                // left behind so it doesn't fight with the Font Sizes drawer
+                // or fitPriceTagItemName()'s own thermal sizing.
+                clearIfOwnedByLabelFit(spEl);
+                clearIfOwnedByLabelFit(nameEl);
+                [barcodeRowEl, mrpValueEl, mrpLabelEl, saveLineEl, shelfCodeEl, perUnitEl, qtyEl, notesEl].filter(Boolean).forEach(el => {
+                    clearIfOwnedByLabelFit(el);
+                    el.style.removeProperty('padding-top');
+                    el.style.removeProperty('margin-top');
+                });
+                return;
+            }
+
+            const spBase = priceLabelMode === 'label2550' ? 20 : 36;
+            const spMin = priceLabelMode === 'label2550' ? 11 : 17;
+            const nameBase = priceLabelMode === 'label2550' ? 16 : 30;
+            const nameMin = priceLabelMode === 'label2550' ? 8 : 13;
+            const badgeRow = document.querySelector('.price-tag-price-badge-row');
+
+            // 1) Shrink the big price so "BADGE ₹price" fits on one line —
+            // a 4-digit MRP or the wider "MRP" badge (vs "SP") can otherwise
+            // run past a 50mm-wide card at the full baseline size.
+            let spSize = spBase;
+            spEl.style.setProperty('font-size', spSize + 'px', 'important');
+            const innerWidth = card.clientWidth - 4; // small safety margin
+            while (badgeRow && badgeRow.scrollWidth > innerWidth && spSize > spMin) {
+                spSize -= 1;
+                spEl.style.setProperty('font-size', spSize + 'px', 'important');
+            }
+
+            // 2) The name is set to its full baseline size and left alone for
+            // now — if the card overflows vertically, the PRICE gives up room
+            // first (step 3), since the name is what the shopper is meant to
+            // notice.
+            let nameSize = nameBase;
+            nameEl.style.setProperty('font-size', nameSize + 'px', 'important');
+
+            // 3) Shrink the price further, down to its own floor, before the
+            // name loses anything.
+            while (card.scrollHeight > card.clientHeight && spSize > spMin) {
+                spSize -= 1;
+                spEl.style.setProperty('font-size', spSize + 'px', 'important');
+            }
+
+            // 4) Only an unusually long name with the price already at its
+            // floor shrinks the name — last resort, so nothing ever clips.
+            while (card.scrollHeight > card.clientHeight && nameSize > nameMin) {
+                nameSize -= 1;
+                nameEl.style.setProperty('font-size', nameSize + 'px', 'important');
+            }
+
+            // 5) Extreme combos (long name + discount + barcode + shelf code +
+            // per-unit, all at once) can still be a few px over even with the
+            // name and price both at their floors. Rather than let anything
+            // clip, claim that last sliver back from the least important bits:
+            // the barcode row's own breathing room, then the MRP strike-through
+            // and Save line text (already small, and secondary to the name).
+            const secondaryEls = [mrpValueEl, mrpLabelEl, saveLineEl, shelfCodeEl, perUnitEl, qtyEl, notesEl].filter(Boolean);
+            if (card.scrollHeight > card.clientHeight && barcodeRowEl) {
+                barcodeRowEl.style.setProperty('padding-top', '0px', 'important');
+                barcodeRowEl.style.setProperty('margin-top', '0px', 'important');
+            } else if (barcodeRowEl) {
+                barcodeRowEl.style.removeProperty('padding-top');
+                barcodeRowEl.style.removeProperty('margin-top');
+            }
+            const secondaryBase = priceLabelMode === 'label2550' ? 8 : 13;
+            const secondaryMin = priceLabelMode === 'label2550' ? 4 : 8;
+            let secondarySize = secondaryBase;
+            while (card.scrollHeight > card.clientHeight && secondarySize > secondaryMin) {
+                secondarySize -= 1;
+                secondaryEls.forEach(el => el.style.setProperty('font-size', secondarySize + 'px', 'important'));
+            }
+            if (secondarySize === secondaryBase) {
+                // Nothing needed shrinking — clear any leftover inline override
+                // from a previous, tighter render.
+                secondaryEls.forEach(el => el.style.removeProperty('font-size'));
+            }
         }
 
         // Keeps a short item name (about 12 characters) on a single line
-        // instead of wrapping, even though the MRP/price block on the
-        // right can take up a lot of the card's width. Starts at the
-        // chosen name font size and only steps down (never below a legible
-        // floor) if the name would actually overflow onto a second line —
-        // a short name always prints at full size, a long one still wraps
-        // normally once it hits the floor.
+        // instead of wrapping, even though the MRP/price block on the right
+        // can take up a lot of the card's width. Starts at the chosen name
+        // font size and only steps down (never below a legible floor) if the
+        // name would actually overflow onto a second line — a short name
+        // always prints at full size, a long one still wraps normally once it
+        // hits the floor.
         function fitPriceTagItemName() {
             const nameEl = document.getElementById('p-card-item-name');
             const infoCol = document.querySelector('.price-tag-info-col');
@@ -6308,22 +7068,13 @@ Millet Groceries & Snacks</textarea>
             const baseSize = parseFloat(document.getElementById('p-font-name').value) || 18;
             const minSize = 10;
 
-            // The MRP/price column's own width shifts a little depending on
-            // its content (e.g. "MRP" vs "SP", or a longer "You Save" line),
-            // which would otherwise make the same item name size differently
-            // depending on whether a discount is entered — breaking the
-            // "same paper length either way" fix. Using a fixed, conservative
-            // width budget here (instead of the column's live width) keeps a
-            // given name's size — and so the sticker's length — the same
-            // regardless of discount.
+            // Fixed, conservative width budget (not the column's live width) —
+            // keeps a given name's size, and so the sticker's length, the same
+            // regardless of discount (the price column's own width shifts a
+            // little depending on its content).
             const SAFE_INFO_COL_WIDTH = 95;
             const availableWidth = Math.min(infoCol.clientWidth, SAFE_INFO_COL_WIDTH);
 
-            // nameEl is a block element that normally stretches to fill the
-            // column, so its scrollWidth is only accurate once it's shrunk
-            // to its actual text width (width: max-content) — otherwise a
-            // SHORT name would read back the column's width instead of its
-            // own, and get shrunk for no reason.
             nameEl.style.whiteSpace = 'nowrap';
             nameEl.style.width = 'max-content';
             let size = baseSize;
@@ -6336,25 +7087,28 @@ Millet Groceries & Snacks</textarea>
             nameEl.style.width = '';
         }
 
-        // Draws the optional Price Tag barcode as real SVG bars (via the
-        // JsBarcode library loaded in <head>) — only when a barcode number
-        // is actually entered, so the tag prints at its normal size by
-        // default and only grows when it's used. It always sits in the
-        // info column, left of the MRP/price block, under the UOM/qty
-        // text — the same spot whether or not a discount is entered, so
-        // the printed sticker comes out the same length either way.
+        // Draws the optional barcode via JsBarcode — only when a barcode
+        // number is actually entered. Always sits in the info column, left of
+        // the MRP/price block, regardless of discount, so the sticker's length
+        // doesn't change either way.
         function updatePriceTagBarcode(hasDiscount) {
             const barcodeVal = document.getElementById('price-barcode-number').value.trim();
             const barcodeRow = document.getElementById('p-card-barcode-row');
             const barcodeSvg = document.getElementById('p-card-barcode');
             const infoCol = document.querySelector('.price-tag-info-col');
+            const isLabelMode = priceLabelMode === 'label2550' || priceLabelMode === 'label5050';
 
-            // Always sits in the same spot — left of the MRP/price column,
-            // under the UOM/qty text — whether or not a discount is
-            // entered. Keeping its position fixed (rather than moving it
-            // depending on discount) is what keeps the printed sticker the
-            // exact same length either way.
-            if (infoCol && barcodeRow.parentElement !== infoCol) {
+            if (isLabelMode) {
+                // Label's stacked design wants the barcode in its natural
+                // bottom-of-card spot (below the hr, after Name+Price), not
+                // tucked into the name column the way the thermal side-by-side
+                // design uses it — move it back if a prior thermal render had
+                // relocated it in.
+                const hrEl = document.getElementById('p-card-hr-main');
+                if (hrEl && hrEl.parentElement && barcodeRow.previousElementSibling !== hrEl) {
+                    hrEl.parentElement.insertBefore(barcodeRow, hrEl.nextSibling);
+                }
+            } else if (infoCol && barcodeRow.parentElement !== infoCol) {
                 infoCol.appendChild(barcodeRow);
             }
 
@@ -6364,13 +7118,25 @@ Millet Groceries & Snacks</textarea>
             }
             try {
                 if (typeof JsBarcode === 'function') {
+                    // Label mode fills the whole card, so the barcode gets a
+                    // real size here too — not the thermal default, but not
+                    // shrunk to a sliver either. 50x50 has the room to go
+                    // close to full size; 50x25 stays a bit smaller since the
+                    // name+price above it already use most of that height.
+                    // Keeping some margin (never 0) matters more than usual
+                    // here since a scaled-down quiet zone is the first thing
+                    // that makes a barcode unscannable.
+                    const isLabel = priceLabelMode === 'label2550' || priceLabelMode === 'label5050';
                     JsBarcode(barcodeSvg, barcodeVal, {
                         format: 'CODE128',
-                        width: 1.2,
-                        height: 18,
-                        fontSize: 13,
+                        width: isLabel ? (priceLabelMode === 'label2550' ? 0.85 : 1.4) : 1.3,
+                        height: isLabel ? (priceLabelMode === 'label2550' ? 12 : 36) : 28,
+                        fontSize: isLabel ? (priceLabelMode === 'label2550' ? 7 : 13) : 12,
                         fontOptions: 'bold',
-                        margin: 0,
+                        // Barcodes need a blank "quiet zone" on either side for
+                        // a scanner to find where they start/stop — don't set
+                        // this to 0 (broke phone scanning once already).
+                        margin: isLabel ? (priceLabelMode === 'label2550' ? 3 : 4) : 6,
                         textMargin: 1,
                         displayValue: true
                     });
@@ -6384,6 +7150,411 @@ Millet Groceries & Snacks</textarea>
                 // Characters CODE128 can't encode, etc. — fail quietly.
                 barcodeRow.style.display = 'none';
             }
+        }
+
+        // Reads a Qty/UOM string like "500g", "1kg", "1 L", "500ml" and
+        // returns how many of the base unit (kg or L) it represents, so a
+        // price can be divided down to a per-kg/per-L figure. Returns null for
+        // anything that doesn't look like a weight/volume (piece counts,
+        // "2 pcs", blank, etc.) — those just don't get a per-unit line rather
+        // than showing a nonsense number.
+        function parsePriceTagUnit(qtyStr) {
+            if (!qtyStr) return null;
+            const m = qtyStr.trim().match(/^([\d.]+)\s*(kg|g|ltr|litre|liter|l|ml)\b/i);
+            if (!m) return null;
+            const amount = parseFloat(m[1]);
+            if (!amount || amount <= 0) return null;
+            let unit = m[2].toLowerCase();
+            if (unit === 'ltr' || unit === 'litre' || unit === 'liter') unit = 'l';
+
+            let baseAmount, baseLabel;
+            if (unit === 'kg') { baseAmount = amount; baseLabel = 'kg'; }
+            else if (unit === 'g') { baseAmount = amount / 1000; baseLabel = 'kg'; }
+            else if (unit === 'l') { baseAmount = amount; baseLabel = 'L'; }
+            else if (unit === 'ml') { baseAmount = amount / 1000; baseLabel = 'L'; }
+            else return null;
+
+            if (baseAmount <= 0) return null;
+            return { baseAmount, baseLabel };
+        }
+
+        // ---- Price Tag: My Items (a deliberately-saved catalog, separate
+        // from Recent Prints, which tracks every print automatically) ----
+        let savedPriceItemsStore = [];
+        function loadSavedPriceItemsStore() {
+            try {
+                const raw = localStorage.getItem('lp_savedPriceItems');
+                savedPriceItemsStore = raw ? JSON.parse(raw) : [];
+            } catch (e) { savedPriceItemsStore = []; }
+        }
+        function saveSavedPriceItemsStore() {
+            try { localStorage.setItem('lp_savedPriceItems', JSON.stringify(savedPriceItemsStore)); }
+            catch (e) { /* storage full/unavailable — saved items just won't persist */ }
+        }
+        loadSavedPriceItemsStore();
+
+        function saveCurrentPriceToMyItems() {
+            const name = document.getElementById('price-item-name').value.trim();
+            if (!name) {
+                alert('Please enter an Item Name before saving.');
+                document.getElementById('price-item-name').focus();
+                return;
+            }
+            const data = {
+                fields: capturePanelFields('priceInputPanel'),
+                priceDiscType: priceDiscType,
+                priceLayoutOption: priceLayoutOption,
+                brandVisible: document.getElementById('price-brand-group').style.display !== 'none'
+            };
+            const dataStr = JSON.stringify(data);
+            const dupIndex = savedPriceItemsStore.findIndex(e => e.label === name && JSON.stringify(e.data) === dataStr);
+            if (dupIndex !== -1) {
+                const existing = savedPriceItemsStore.splice(dupIndex, 1)[0];
+                existing.ts = Date.now();
+                savedPriceItemsStore.unshift(existing);
+            } else {
+                savedPriceItemsStore.unshift({
+                    id: 'm' + Date.now() + Math.random().toString(36).slice(2, 7),
+                    ts: Date.now(),
+                    label: name,
+                    data: data
+                });
+            }
+            saveSavedPriceItemsStore();
+            showToast('💾 Saved "' + name + '" to My Items');
+            priceMrpBaseline = parseFloat(document.getElementById('price-item-value').value) || null;
+            checkMrpBaselineChanged();
+            refreshItemNameSuggestions();
+        }
+
+        // Item Name autocomplete — suggests names from My Items (your
+        // deliberately-saved catalog) via a plain <datalist>, so re-typing
+        // a common item's exact spelling isn't necessary. Rebuilt whenever
+        // My Items changes (save/delete/clear) rather than kept constantly
+        // in sync, since it only needs to be fresh when you're about to type.
+        function refreshItemNameSuggestions() {
+            const listEl = document.getElementById('priceItemNameSuggestions');
+            if (!listEl) return;
+            const names = Array.from(new Set(savedPriceItemsStore.map(e => e.label).filter(Boolean)));
+            listEl.innerHTML = names.map(n => `<option value="${escapeHtml(n)}">`).join('');
+        }
+
+        // Compares the MRP currently on the form against whatever MRP a
+        // recalled My Items entry was last SAVED at, and shows a small
+        // "was ₹X" note if they've since diverged — easy to miss otherwise
+        // since nothing else flags a stale saved price.
+        function checkMrpBaselineChanged() {
+            const noteEl = document.getElementById('price-mrp-was-note');
+            if (!noteEl) return;
+            const current = parseFloat(document.getElementById('price-item-value').value) || 0;
+            if (priceMrpBaseline != null && current !== priceMrpBaseline) {
+                noteEl.style.display = 'block';
+                noteEl.textContent = `✎ Changed from the saved MRP (was ₹${priceMrpBaseline.toFixed(2)})`;
+            } else {
+                noteEl.style.display = 'none';
+            }
+        }
+
+        // Updates the "🏷️ Shelf Code & Per-Unit" collapsible drawer's own
+        // label with a live count of how many of its fields are actually
+        // filled in, so it's obvious at a glance whether anything's hiding
+        // inside before bothering to open it.
+        function updateExtrasDrawerLabel() {
+            const label = document.getElementById('extras-drawer-label');
+            if (!label) return;
+            let count = 0;
+            if (document.getElementById('price-shelf-code').value.trim()) count++;
+            if (document.getElementById('price-show-per-unit').checked) count++;
+            label.textContent = '🏷️ Shelf Code & Per-Unit' + (count ? ` (${count} active)` : ' (Optional)');
+        }
+
+        function openMyItemsModal() {
+            const modal = document.getElementById('myItemsModal');
+            if (modal.style.display === 'block') { hideAllPanelsKeepData(); return; }
+            hideAllPanelsKeepData();
+            renderMyItemsList();
+            modal.style.display = 'block';
+        }
+
+        function renderMyItemsList() {
+            const listEl = document.getElementById('myItemsList');
+            const entries = savedPriceItemsStore;
+            if (!entries.length) {
+                listEl.innerHTML = '<div class="recent-prints-empty"><div class="recent-prints-empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="22" height="22"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div><div class="recent-prints-empty-title">No saved items yet</div><div class="recent-prints-empty-sub">Fill in an item, then tap "💾 Save to My Items"<br>to add it here for quick reuse later.</div></div>';
+                return;
+            }
+            listEl.innerHTML = entries.map(e => `
+                <div class="recent-print-item">
+                    <div class="recent-print-info">
+                        <div class="recent-print-label">${escapeHtml(e.label || 'Item')}</div>
+                        <div class="recent-print-time">Saved ${formatRecentTime(e.ts)}</div>
+                    </div>
+                    <div class="recent-print-actions">
+                        <button type="button" class="recent-print-reprint-btn" onclick="useMyItem('${e.id}')">📂 Use</button>
+                        <button type="button" class="recent-print-delete-btn" title="Remove" onclick="deleteMyItem('${e.id}')">✕</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function deleteMyItem(id) {
+            savedPriceItemsStore = savedPriceItemsStore.filter(e => e.id !== id);
+            saveSavedPriceItemsStore();
+            renderMyItemsList();
+            refreshItemNameSuggestions();
+        }
+
+        function clearMyItems() {
+            savedPriceItemsStore = [];
+            saveSavedPriceItemsStore();
+            renderMyItemsList();
+            refreshItemNameSuggestions();
+        }
+
+        // Fills the Price Tag form from a saved item so it can be checked
+        // or tweaked — deliberately does NOT print, unlike Recent Prints'
+        // reprintRecent(), which restores and immediately prints.
+        function useMyItem(id) {
+            const entry = savedPriceItemsStore.find(e => e.id === id);
+            if (!entry) return;
+            const data = entry.data;
+
+            togglePricePanel(); // closes My Items and opens the Price Tag panel
+            applyPanelFields('priceInputPanel', data.fields);
+            const grp = document.getElementById('price-brand-group');
+            const btn = document.getElementById('price-brand-toggle-btn');
+            if (data.brandVisible) {
+                grp.style.display = 'flex';
+                btn.textContent = '✕ Remove Brand Name';
+                btn.style.background = '#e2e8f0';
+            } else {
+                grp.style.display = 'none';
+                btn.textContent = '+ Add Brand Name';
+                btn.style.background = '#f1f5f9';
+            }
+            setPriceDiscType(data.priceDiscType || 'pct');
+            setPriceLayout(data.priceLayoutOption || 1);
+            applyPanelFields('priceInputPanel', data.fields);
+
+            // Remembers what MRP this item was SAVED at, so if you then
+            // change it on the form, a "was ₹X" note reminds you it's not
+            // what's on file — easy to miss otherwise since nothing else
+            // flags it.
+            priceMrpBaseline = parseFloat(data.fields['price-item-value']) || null;
+
+            updatePriceCardPreview();
+        }
+
+        // ---- Price Tag: Batch Print (several different items, one print job) ----
+        let batchPrintRowSeq = 0;
+        function openBatchPrintModal() {
+            const modal = document.getElementById('batchPrintModal');
+            if (modal.style.display === 'block') { hideAllPanelsKeepData(); return; }
+            hideAllPanelsKeepData();
+            const rowsEl = document.getElementById('batchPrintRows');
+            if (!rowsEl.children.length) {
+                addBatchPrintRow();
+                addBatchPrintRow();
+            }
+            modal.style.display = 'block';
+            updateBatchPrintCount();
+        }
+
+        function addBatchPrintRow() {
+            const rowsEl = document.getElementById('batchPrintRows');
+            const rowId = 'batchRow' + (++batchPrintRowSeq);
+            const row = document.createElement('div');
+            row.className = 'batch-print-row';
+            row.id = rowId;
+            row.style.cssText = 'display:flex; gap:6px; align-items:center; flex-wrap:wrap; border:1px solid #e2e8f0; border-radius:8px; padding:7px;';
+            row.innerHTML =
+                '<input type="text" class="form-control batch-name" placeholder="Item Name" style="flex:1 1 100px; min-width:0;">' +
+                '<input type="text" class="form-control batch-qty" placeholder="Qty (500g)" style="flex:1 1 80px; min-width:0;">' +
+                '<input type="number" class="form-control batch-mrp" placeholder="MRP" style="flex:1 1 65px; min-width:0;">' +
+                '<input type="number" class="form-control batch-disc" placeholder="Disc %" style="flex:1 1 65px; min-width:0;">' +
+                '<input type="text" class="form-control batch-barcode" placeholder="Barcode" style="flex:1 1 85px; min-width:0;">' +
+                '<button type="button" class="recent-print-delete-btn" title="Remove row" onclick="document.getElementById(\'' + rowId + '\').remove(); updateBatchPrintCount();">✕</button>';
+            rowsEl.appendChild(row);
+            updateBatchPrintCount();
+        }
+
+        function clearBatchPrintRows() {
+            document.getElementById('batchPrintRows').innerHTML = '';
+            updateBatchPrintCount();
+        }
+
+        // Enter key moves to the next field, and from the last field of
+        // the last row adds a new row and jumps straight into it — so a
+        // fast counter session doesn't need to tap/click between every box.
+        function handleBatchRowKeydown(e) {
+            if (e.key !== 'Enter' || !e.target.matches('input')) return;
+            e.preventDefault();
+            const inputs = Array.from(document.querySelectorAll('#batchPrintRows .batch-print-row input'));
+            const idx = inputs.indexOf(e.target);
+            if (idx === -1) return;
+            if (idx === inputs.length - 1) {
+                addBatchPrintRow();
+                const newRow = document.getElementById('batchPrintRows').lastElementChild;
+                const firstInput = newRow && newRow.querySelector('.batch-name');
+                if (firstInput) firstInput.focus();
+            } else {
+                inputs[idx + 1].focus();
+            }
+        }
+
+        // Copies the item currently on the main form into a new Batch
+        // Print row, for printing a near-identical item (same product,
+        // different weight/price) without retyping the name. Clears the
+        // barcode field on the copy since a duplicate almost always needs
+        // its own barcode, not the same one.
+        function duplicateCurrentItemToBatch() {
+            const name = document.getElementById('price-item-name').value.trim();
+            const mrp = parseFloat(document.getElementById('price-item-value').value) || 0;
+            if (!name || !mrp) {
+                alert('Enter an Item Name and MRP first, then Duplicate for Batch.');
+                return;
+            }
+            hideAllPanelsKeepData();
+            document.getElementById('batchPrintModal').style.display = 'block';
+            addBatchPrintRow();
+            const newRow = document.getElementById('batchPrintRows').lastElementChild;
+            newRow.querySelector('.batch-name').value = name;
+            newRow.querySelector('.batch-qty').value = document.getElementById('price-item-qty').value.trim();
+            newRow.querySelector('.batch-mrp').value = mrp;
+            newRow.querySelector('.batch-disc').value = document.getElementById('price-disc-val').value.trim();
+            updateBatchPrintCount();
+            // The modal can already have rows in it (e.g. two blank
+            // starter rows from an earlier "Batch Print" open), so the new
+            // row lands below the fold — scroll it into view and focus its
+            // qty field so it's obviously there, not just silently
+            // appended off-screen.
+            newRow.scrollIntoView({ block: 'nearest' });
+            const qtyField = newRow.querySelector('.batch-qty');
+            if (qtyField) qtyField.focus();
+            showToast('⎘ Added a copy to Batch Print — tweak the weight/price as needed');
+        }
+
+        // Live "N items ready → N tags will print" line, so a blank/invalid
+        // row (no name, or no MRP) is obvious BEFORE hitting Print All
+        // rather than silently being skipped.
+        function updateBatchPrintCount() {
+            const lineEl = document.getElementById('batchPrintCountLine');
+            if (!lineEl) return;
+            const rows = Array.from(document.querySelectorAll('#batchPrintRows .batch-print-row'));
+            const validCount = rows.filter(row => {
+                const name = row.querySelector('.batch-name').value.trim();
+                const mrp = parseFloat(row.querySelector('.batch-mrp').value) || 0;
+                return name && mrp > 0;
+            }).length;
+            const totalRows = rows.length;
+            if (totalRows === 0 || validCount === 0) {
+                lineEl.textContent = totalRows === 0
+                    ? '0 items ready → 0 tags will print'
+                    : `0 of ${totalRows} rows ready yet → add a Name + MRP to each row`;
+                lineEl.style.color = totalRows === 0 ? '#0ea5e9' : '#d97706';
+            } else if (validCount < totalRows) {
+                lineEl.textContent = `${validCount} of ${totalRows} rows ready → ${validCount} tag${validCount === 1 ? '' : 's'} will print (fill in Name + MRP on the rest)`;
+                lineEl.style.color = '#d97706';
+            } else {
+                lineEl.textContent = `${validCount} item${validCount === 1 ? '' : 's'} ready → ${validCount} tag${validCount === 1 ? '' : 's'} will print`;
+                lineEl.style.color = '#0ea5e9';
+            }
+        }
+
+        // Prints a whole list of different items' Price Tags in a single
+        // print job (one window.print() call, each tag back-to-back with a
+        // page-break/cut between them) rather than opening the print dialog
+        // once per item. Reuses the real Price Tag form/preview one item at
+        // a time — filling it, rendering it, grabbing the rendered card's
+        // HTML — rather than duplicating all of updatePriceCardPreview()'s
+        // layout logic a second time.
+        function runBatchPrint() {
+            const rows = Array.from(document.querySelectorAll('#batchPrintRows .batch-print-row'));
+            const items = rows.map(row => ({
+                name: row.querySelector('.batch-name').value.trim(),
+                qty: row.querySelector('.batch-qty').value.trim(),
+                mrp: parseFloat(row.querySelector('.batch-mrp').value) || 0,
+                disc: parseFloat(row.querySelector('.batch-disc').value) || 0,
+                barcode: row.querySelector('.batch-barcode').value.trim()
+            })).filter(it => it.name && it.mrp > 0);
+
+            if (!items.length) {
+                alert('Add at least one item with a Name and MRP before printing.');
+                return;
+            }
+
+            // Save the real form's current state so it can be restored
+            // afterwards — batch printing temporarily drives the same
+            // form/preview used for a single Price Tag, one item at a time.
+            const savedFields = capturePanelFields('priceInputPanel');
+            const savedDiscType = priceDiscType;
+            const savedLayout = priceLayoutOption;
+            const savedBrandVisible = document.getElementById('price-brand-group').style.display !== 'none';
+
+            const previewBox = document.querySelector('#priceReceiptCol .preview-box');
+            const originalPreviewHtml = previewBox.innerHTML;
+
+            setPriceDiscType('pct');
+            const cardHtmls = [];
+            items.forEach(it => {
+                document.getElementById('price-item-name').value = it.name;
+                document.getElementById('price-item-qty').value = it.qty;
+                document.getElementById('price-item-value').value = it.mrp;
+                document.getElementById('price-disc-val').value = it.disc;
+                document.getElementById('price-barcode-number').value = it.barcode;
+                document.getElementById('price-notes').value = '';
+                updatePriceCardPreview();
+                cardHtmls.push(document.getElementById('price-card-el').outerHTML);
+            });
+
+            // Batch Print used to always lay out and print as Thermal,
+            // even when a Label size was the current printer/label
+            // choice — so a batch of items duplicated via "Duplicate for
+            // Batch" while in Label mode printed at the wrong physical
+            // size entirely. Mirror triggerMobilePrint()'s branching here
+            // too: each row becomes a 2-up pair (same item printed twice,
+            // side-by-side) when a label size is active, same as a single
+            // Label print does.
+            const isLabel = priceLabelMode === 'label2550' || priceLabelMode === 'label5050';
+            previewBox.innerHTML = isLabel
+                ? cardHtmls.map(html => `<div class="label-2up-row">${html}${html}</div>`).join('<div class="print-cut-break"></div>')
+                : cardHtmls.join('<div class="print-cut-break"></div>');
+
+            resetPrintBodyClasses();
+            document.body.classList.add('print-price');
+            if (isLabel) {
+                document.body.classList.add('print-label-mode');
+                document.body.classList.toggle('print-label-2550-mode', priceLabelMode === 'label2550');
+                document.body.classList.toggle('print-label-5050-mode', priceLabelMode === 'label5050');
+                setDynamicPageSize('100mm auto');
+            } else {
+                setDynamicPageSize('80mm auto');
+            }
+            window.print();
+
+            // Restore the real form/preview exactly as it was before the batch.
+            previewBox.innerHTML = originalPreviewHtml;
+            applyPanelFields('priceInputPanel', savedFields);
+            setPriceDiscType(savedDiscType);
+            setPriceLayout(savedLayout);
+            applyPanelFields('priceInputPanel', savedFields);
+            const grp = document.getElementById('price-brand-group');
+            const btn = document.getElementById('price-brand-toggle-btn');
+            if (savedBrandVisible) {
+                grp.style.display = 'flex';
+                btn.textContent = '✕ Remove Brand Name';
+                btn.style.background = '#e2e8f0';
+            } else {
+                grp.style.display = 'none';
+                btn.textContent = '+ Add Brand Name';
+                btn.style.background = '#f1f5f9';
+            }
+            updatePriceCardPreview();
+
+            const printedCount = isLabel ? items.length * 2 : items.length;
+            showPrintToast('Batch: ' + items.length + ' Price Tags' + (isLabel ? ' (2-up)' : ''), printedCount);
+            recordPrintStat(printedCount);
+            hideAllPanelsKeepData();
         }
 
         function setCouponType(type) {
@@ -7177,10 +8348,25 @@ Millet Groceries & Snacks</textarea>
                 localStorage.setItem('lp_printStats', JSON.stringify(stats));
             } catch (e) {}
             updatePrintStatsBadge();
+            refreshPrintTally();
         }
 
         function getPrintStats() {
             try { return JSON.parse(localStorage.getItem('lp_printStats') || '{}'); } catch (e) { return {}; }
+        }
+
+        // Tiny running "Printed N tags today" counter shown under the
+        // Price Tag panel's header — same lp_printStats data as the badge
+        // above, just scoped to today and always visible on that panel.
+        function refreshPrintTally() {
+            const lineEl = document.getElementById('printTallyLine');
+            if (!lineEl) return;
+            let count = 0;
+            try {
+                const stats = JSON.parse(localStorage.getItem('lp_printStats') || '{}');
+                count = stats[getLocalDateStr()] || 0;
+            } catch (e) {}
+            lineEl.textContent = `Printed ${count} tag${count === 1 ? '' : 's'} today`;
         }
 
         function updatePrintStatsBadge() {
@@ -7294,6 +8480,11 @@ Millet Groceries & Snacks</textarea>
             captureRecentPrint(type);
 
             resetPrintBodyClasses();
+            // Every print except a label-mode price tag uses the standard
+            // 80mm roll @page size — reset it here so a label print
+            // earlier in the session (which sets this to 100mm) never
+            // leaks into the next, unrelated print type.
+            if (!(type === 'price' && priceLabelMode !== 'thermal')) setDynamicPageSize('80mm auto');
             if (type === 'exchange') document.body.classList.add('print-exchange');
             else if (type === 'custom') document.body.classList.add('print-custom');
             else if (type === 'coupon-gajuwaka') document.body.classList.add('print-coupon', 'print-coupon-gajuwaka');
@@ -7307,7 +8498,30 @@ Millet Groceries & Snacks</textarea>
             else if (type === 'promo') document.body.classList.add('print-promo');
 
             const qtyKey = printQtyKeyForType(type);
-            printWithCopies(printColumnIdForType(type), printQty[qtyKey], printLabelForType(type));
+
+            if (type === 'price' && priceLabelMode !== 'thermal') {
+                // Label media (50x25mm / 50x50mm, 2-up) needs the 100mm-wide
+                // @page size and the print-label body classes instead of the
+                // plain thermal 80mm path — see setDynamicPageSize() /
+                // printLabelWithCopies() and the "Label printing" CSS block
+                // near .price-card.label-2550.
+                document.body.classList.add('print-label-mode');
+                document.body.classList.toggle('print-label-2550-mode', priceLabelMode === 'label2550');
+                document.body.classList.toggle('print-label-5050-mode', priceLabelMode === 'label5050');
+                setDynamicPageSize('100mm auto');
+                printLabelWithCopies(printColumnIdForType(type), printQty[qtyKey], 'Price Tag (2-up)');
+            } else {
+                printWithCopies(printColumnIdForType(type), printQty[qtyKey], printLabelForType(type));
+            }
+
+            if (type === 'price') {
+                // Always snap "Number of Prints" back to 1 after printing a
+                // price tag — a quantity left over from one big batch
+                // restock would otherwise silently carry into the next,
+                // unrelated item and over-print it.
+                printQty.price = 1;
+                refreshPrintQtyDisplay('price');
+            }
         }
     </script>
 </body>
