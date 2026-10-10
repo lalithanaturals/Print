@@ -200,6 +200,32 @@
       metrics allow, which a different device can render a few px wider —
       added a small safety margin so that can't flip a name from one line
       to two.
+    v1.10.5 (2026-10-10) — Price Tag: Minimal Design now actually shortens
+      the printed card instead of only hiding form fields. Item Name is
+      now the single biggest element (22px, up from 18px), centered on
+      its own full-width line; Qty and MRP share one line below it,
+      centered together; Brand, MRP-strike row, Save line, Shelf Code,
+      Per-Unit line and Notes are hidden unconditionally in Minimal mode
+      regardless of what's filled on the form (previously those could
+      still leak through since the form field only clears the input
+      group, not the value itself). Printed card drops from ~29mm to
+      ~14mm tall. Item Name's shrink-to-fit logic also fixed for this new
+      layout, which otherwise mis-measured the name's width under the
+      new flex layout and over-shrank it.
+    v1.10.6 (2026-10-10) — Price Tag Minimal Design fixes: (1) the UOM/Qty
+      input field was still hidden by Minimal Design even though the new
+      v1.10.5 layout prints Qty right next to the MRP — it was left over
+      from before that redesign, so there was no way to type a UOM in
+      Minimal mode at all; it now stays visible. (2) Barcode is now hidden
+      on the printed card (and its input field) in Minimal Design, keeping
+      it short and barcode-free as intended. (3) The Detailed Font Sizes
+      drawer (Item Name/SP/Quantity) now actually works in Minimal mode —
+      v1.10.5 had hardcoded those sizes, so changing the drawer did nothing
+      while Minimal was on; Minimal still *defaults* to a small SP price
+      (16px) when switched on so it stays short out of the box, but every
+      dropdown in the drawer now overrides it live, same as regular
+      thermal mode, and turning Minimal back off restores whatever SP size
+      was selected before.
 -->
 
 
@@ -2503,6 +2529,68 @@
             text-align: left;
         }
 
+        /* ---- Minimal Design: real stacked short layout (not just hidden form fields) ----
+           Item Name becomes the single biggest/boldest element, centered on its
+           own full-width line. Qty and MRP share ONE line below it, centered
+           together. Brand, MRP-strike-row, Save line, Shelf Code, Per-unit line
+           and Notes are force-hidden unconditionally — regardless of what the
+           form fields contain, since those keep their DOM value even when the
+           matching form group is hidden. .price-tag-info-col / .price-tag-price-col
+           are unwrapped via display:contents so their children become direct
+           flex children of .price-tag-main-row, which is then reordered via
+           CSS `order`. */
+        .price-card.minimal .price-tag-brand-name,
+        .price-card.minimal .price-tag-mrp-strike-row,
+        .price-card.minimal .price-tag-save-line,
+        .price-card.minimal .price-tag-shelf-code,
+        .price-card.minimal .price-tag-per-unit-line,
+        .price-card.minimal #p-card-notes-wrapper,
+        .price-card.minimal .price-tag-hr {
+            display: none !important;
+        }
+        .price-card.minimal .price-tag-info-col,
+        .price-card.minimal .price-tag-price-col {
+            display: contents;
+        }
+        .price-card.minimal .price-tag-main-row {
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: baseline;
+            row-gap: 2px;
+        }
+        .price-card.minimal .price-tag-item-name-v2 {
+            order: 1;
+            flex: 1 0 100%;
+            text-align: center;
+            font-weight: 900;
+            font-size: 22px;
+        }
+        .price-card.minimal .price-tag-item-qty-v2 {
+            order: 2;
+            font-weight: 700;
+            color: #444;
+        }
+        .price-card.minimal .price-tag-price-badge-row {
+            order: 3;
+        }
+        .price-card.minimal .price-tag-mrp-badge {
+            font-size: 9px;
+            padding: 1.5px 5px;
+        }
+        /* Item Name, Quantity and SP sizes above are deliberately NOT
+           !important — the Detailed Font Sizes drawer sets its own inline
+           style on each element (see updatePriceCardPreview()), and that
+           inline style must still win here so the drawer stays functional
+           in Minimal Design, not just in the regular thermal layout. The
+           sizes above only act as the look before anyone touches the
+           drawer. */
+        .price-card.minimal .price-tag-sp-value {
+            font-size: 15px;
+        }
+        .price-card.minimal .price-tag-barcode-row {
+            display: none !important;
+        }
+
         /* ---- Label printing (2-up, 50mm-wide die-cut labels) ----
            Fixed font sizes tuned to FILL a 50mm-wide label edge-to-edge, not
            just fit on it — the Font Sizes drawer's dropdowns (tuned for the
@@ -4738,7 +4826,7 @@ Millet Groceries & Snacks</textarea>
         // ---- App version ----
         // Bump this (and add a line to the version-log comment at the very
         // top of this file) every time the file is updated and re-uploaded.
-        const APP_VERSION = 'v1.10.4';
+        const APP_VERSION = 'v1.10.6';
 
         // ---- Number of Prints ----
         // One count per print type, shown as a +/- stepper on the Quick
@@ -5512,7 +5600,27 @@ Millet Groceries & Snacks</textarea>
         // state.
         function togglePriceMinimalMode() {
             const box = document.getElementById('price-minimal-mode');
-            box.checked = !box.checked;
+            const turningOn = !box.checked;
+            box.checked = turningOn;
+
+            // Minimal Design's whole point is a short card, so swap the SP
+            // (price) font to a small preset automatically on the way in —
+            // otherwise the Detailed Font Sizes drawer's regular-thermal
+            // default (32px) would make Minimal look exactly like the
+            // regular layout until someone opens the drawer and changes it
+            // by hand. The dropdown stays fully editable afterwards (the
+            // drawer works the same in Minimal as in thermal mode), and
+            // turning Minimal back off restores whatever was selected
+            // before, rather than leaving it stuck on the small preset.
+            const priceFontSel = document.getElementById('p-font-price');
+            if (turningOn) {
+                priceFontSel.dataset.preMinimalValue = priceFontSel.value;
+                priceFontSel.value = '16px';
+            } else if (priceFontSel.dataset.preMinimalValue) {
+                priceFontSel.value = priceFontSel.dataset.preMinimalValue;
+                delete priceFontSel.dataset.preMinimalValue;
+            }
+
             updatePriceCardPreview();
         }
 
@@ -6904,8 +7012,14 @@ Millet Groceries & Snacks</textarea>
             // group keeps its own value in the DOM (nothing is cleared), so
             // switching back off restores whatever was already typed in.
             document.getElementById('price-minimal-toggle-btn').classList.toggle('active', minimalMode);
+            // price-qty-group (UOM) stays visible in Minimal Design — the new
+            // Minimal layout actually prints the Qty/UOM next to the MRP, so
+            // hiding its input field would leave no way to enter it.
+            // price-barcode-group is hidden too: Minimal Design drops the
+            // barcode off the printed card entirely (see .price-card.minimal
+            // CSS), so there's nothing for that field to feed.
             const minimalHiddenGroupIds = [
-                'price-brand-toggle-btn', 'price-qty-group',
+                'price-brand-toggle-btn', 'price-barcode-group',
                 'price-disctype-group', 'price-disc-val-group', 'price-notes-group',
                 'price-saveline-group', 'price-extras-section'
             ];
@@ -6922,9 +7036,6 @@ Millet Groceries & Snacks</textarea>
             if (minimalMode) {
                 document.getElementById('price-brand-group').style.display = 'none';
             }
-            // Barcode's row-mates (Discount Type/Value) are gone in Minimal
-            // Design, so let it take the full row instead of sitting half-empty.
-            document.getElementById('price-barcode-group').classList.toggle('full-width', minimalMode);
 
             // Shelf Code — optional small line under the item name.
             const shelfCodeEl = document.getElementById('p-card-shelf-code');
@@ -7118,29 +7229,58 @@ Millet Groceries & Snacks</textarea>
             const infoCol = root.querySelector('.price-tag-info-col');
             if (!nameEl || !infoCol) return;
 
-            const baseSize = parseFloat(document.getElementById('p-font-name').value) || 18;
-            const minSize = 10;
+            // Minimal Design unwraps .price-tag-info-col with display:contents
+            // (see .price-card.minimal CSS) so it generates no box of its own —
+            // infoCol.clientWidth would read 0 there. In that mode the name
+            // sits on its own full-width line of .price-tag-main-row instead,
+            // so measure from that row. The starting size still comes from
+            // the Detailed Font Sizes drawer's Item Name dropdown (same as
+            // the regular thermal layout) so that drawer stays functional in
+            // Minimal Design too — 22px is only the drawer's own default, not
+            // a value hardcoded here.
+            const cardEl = nameEl.closest('.price-card');
+            const isMinimal = !!(cardEl && cardEl.classList.contains('minimal'));
 
-            // Fixed, conservative width budget (not the column's live width) —
-            // keeps a given name's size, and so the sticker's length, the same
-            // regardless of discount (the price column's own width shifts a
-            // little depending on its content). Scaled up along with the
-            // 70mm → 76mm card widening, so Item Name actually gets to use
-            // the reclaimed space instead of it sitting blank next to MRP.
-            const SAFE_INFO_COL_WIDTH = 123;
-            // A small safety margin: widening the live column's cap from
-            // 95 to 123 (above) meant, on screens where the live column is
-            // narrower than 123, the algorithm started cutting it exactly
-            // as close as the measured width allows — fine in this
-            // browser's font metrics, but a different device/browser can
-            // render the same text a couple of px wider and tip it into
-            // wrapping (which is what happened with "BHARGAV"). This
-            // buffer keeps a few px of headroom so that kind of
-            // measurement drift can't flip a name from one line to two.
-            const availableWidth = Math.min(infoCol.clientWidth, SAFE_INFO_COL_WIDTH) - 4;
+            let baseSize, minSize, availableWidth;
+            if (isMinimal) {
+                baseSize = parseFloat(document.getElementById('p-font-name').value) || 22;
+                minSize = 10;
+                const mainRow = root.querySelector('.price-tag-main-row');
+                const rowWidth = (mainRow && mainRow.clientWidth) || cardEl.clientWidth || 160;
+                availableWidth = rowWidth - 8;
+            } else {
+                baseSize = parseFloat(document.getElementById('p-font-name').value) || 18;
+                minSize = 10;
+
+                // Fixed, conservative width budget (not the column's live width) —
+                // keeps a given name's size, and so the sticker's length, the same
+                // regardless of discount (the price column's own width shifts a
+                // little depending on its content). Scaled up along with the
+                // 70mm → 76mm card widening, so Item Name actually gets to use
+                // the reclaimed space instead of it sitting blank next to MRP.
+                const SAFE_INFO_COL_WIDTH = 123;
+                // A small safety margin: widening the live column's cap from
+                // 95 to 123 (above) meant, on screens where the live column is
+                // narrower than 123, the algorithm started cutting it exactly
+                // as close as the measured width allows — fine in this
+                // browser's font metrics, but a different device/browser can
+                // render the same text a couple of px wider and tip it into
+                // wrapping (which is what happened with "BHARGAV"). This
+                // buffer keeps a few px of headroom so that kind of
+                // measurement drift can't flip a name from one line to two.
+                availableWidth = Math.min(infoCol.clientWidth, SAFE_INFO_COL_WIDTH) - 4;
+            }
 
             nameEl.style.whiteSpace = 'nowrap';
             nameEl.style.width = 'max-content';
+            // In Minimal mode nameEl is a flex child with `flex: 1 0 100%`
+            // (see .price-card.minimal CSS) so its box is pinned to the full
+            // row width no matter what `width` is set to here — scrollWidth
+            // would read the row's width instead of the text's actual width,
+            // so the shrink loop never sees it get narrower. Overriding
+            // `flex` during measurement only lets the box shrink-wrap the
+            // text again; it's restored right after, same as whiteSpace/width.
+            if (isMinimal) nameEl.style.flex = 'none';
             let size = baseSize;
             nameEl.style.fontSize = size + 'px';
             while (size > minSize && nameEl.scrollWidth > availableWidth) {
@@ -7149,6 +7289,7 @@ Millet Groceries & Snacks</textarea>
             }
             nameEl.style.whiteSpace = '';
             nameEl.style.width = '';
+            if (isMinimal) nameEl.style.flex = '';
         }
 
         // Draws the optional barcode via JsBarcode — only when a barcode
