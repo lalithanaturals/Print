@@ -226,6 +226,12 @@
       dropdown in the drawer now overrides it live, same as regular
       thermal mode, and turning Minimal back off restores whatever SP size
       was selected before.
+    v1.10.7 (2026-10-10) — Price Tag Minimal Design: UOM/Qty text is now
+      bold black (900 weight) to match the MRP badge next to it, instead
+      of a lighter grey. Detailed Font Sizes drawer now only shows the
+      three settings that actually do something in Minimal mode (Item
+      Name, SP Price, Quantity) — MRP Font, Brand Font and Notes Font are
+      hidden there since Minimal never shows those elements at all.
 -->
 
 
@@ -2567,8 +2573,8 @@
         }
         .price-card.minimal .price-tag-item-qty-v2 {
             order: 2;
-            font-weight: 700;
-            color: #444;
+            font-weight: 900;
+            color: #000;
         }
         .price-card.minimal .price-tag-price-badge-row {
             order: 3;
@@ -3935,7 +3941,7 @@ Millet Groceries & Snacks</textarea>
                             <option value="48px">48px</option>
                         </select>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group" id="p-font-mrp-group">
                         <label>MRP Font</label>
                         <select class="form-control" id="p-font-mrp" onchange="updatePriceCardPreview()">
                             <option value="14px">14px</option>
@@ -3950,7 +3956,7 @@ Millet Groceries & Snacks</textarea>
                             <option value="36px">36px</option>
                         </select>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group" id="p-font-brand-group">
                         <label>Brand Font</label>
                         <select class="form-control" id="p-font-brand" onchange="updatePriceCardPreview()">
                             <option value="10px">10px</option>
@@ -3974,7 +3980,7 @@ Millet Groceries & Snacks</textarea>
                             <option value="20px">20px</option>
                         </select>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group" id="p-font-notes-group">
                         <label>Notes Font</label>
                         <select class="form-control" id="p-font-notes" onchange="updatePriceCardPreview()">
                             <option value="8px">8px</option>
@@ -4826,7 +4832,7 @@ Millet Groceries & Snacks</textarea>
         // ---- App version ----
         // Bump this (and add a line to the version-log comment at the very
         // top of this file) every time the file is updated and re-uploaded.
-        const APP_VERSION = 'v1.10.6';
+        const APP_VERSION = 'v1.10.7';
 
         // ---- Number of Prints ----
         // One count per print type, shown as a +/- stepper on the Quick
@@ -7021,7 +7027,12 @@ Millet Groceries & Snacks</textarea>
             const minimalHiddenGroupIds = [
                 'price-brand-toggle-btn', 'price-barcode-group',
                 'price-disctype-group', 'price-disc-val-group', 'price-notes-group',
-                'price-saveline-group', 'price-extras-section'
+                'price-saveline-group', 'price-extras-section',
+                // These three font-size dropdowns control elements that
+                // Minimal Design never shows at all (Brand, the MRP-strike
+                // row, Notes) — leaving them in the drawer would offer
+                // settings with nothing on the card for them to affect.
+                'p-font-mrp-group', 'p-font-brand-group', 'p-font-notes-group'
             ];
             minimalHiddenGroupIds.forEach(id => {
                 const el = document.getElementById(id);
