@@ -274,6 +274,9 @@
       MRP/Barcode just stacked in plain order, losing the whole point
       (Barcode and MRP sharing one row). Fixed by marking the new layout's
       flex display !important too, so it actually wins at print time.
+    v1.11.2 (2026-10-11) — Price Tag (regular, non-Minimal): Item Name
+      font default changed from 18px to 26px. Minimal Design's own default
+      (22px) is unaffected, swapping automatically on toggle as before.
 -->
 
 
@@ -2455,7 +2458,7 @@
         }
 
         .price-tag-item-name-v2 {
-            font-size: 18px;
+            font-size: 26px;
             font-weight: 700;
             text-transform: uppercase;
             word-break: break-word;
@@ -4040,11 +4043,11 @@ Millet Groceries & Snacks</textarea>
                             <option value="12px">12px</option>
                             <option value="14px">14px</option>
                             <option value="16px">16px</option>
-                            <option value="18px" selected>18px (Default)</option>
+                            <option value="18px">18px</option>
                             <option value="20px">20px</option>
                             <option value="22px">22px (Minimal Design Default)</option>
                             <option value="24px">24px</option>
-                            <option value="26px">26px (Big)</option>
+                            <option value="26px" selected>26px (Default)</option>
                             <option value="28px">28px</option>
                             <option value="32px">32px</option>
                             <option value="36px">36px</option>
@@ -4957,7 +4960,7 @@ Millet Groceries & Snacks</textarea>
         // ---- App version ----
         // Bump this (and add a line to the version-log comment at the very
         // top of this file) every time the file is updated and re-uploaded.
-        const APP_VERSION = 'v1.11.1';
+        const APP_VERSION = 'v1.11.2';
 
         // ---- Number of Prints ----
         // One count per print type, shown as a +/- stepper on the Quick
@@ -7428,7 +7431,7 @@ Millet Groceries & Snacks</textarea>
             // break-word for this), the same way any other wrapping text
             // on the card behaves, rather than shrinking the font.
             if (!isMinimal) {
-                const baseSize = parseFloat(document.getElementById('p-font-name').value) || 18;
+                const baseSize = parseFloat(document.getElementById('p-font-name').value) || 26;
                 nameEl.style.whiteSpace = '';
                 nameEl.style.width = '';
                 nameEl.style.fontSize = baseSize + 'px';
