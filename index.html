@@ -277,7 +277,30 @@
     v1.11.2 (2026-10-11) — Price Tag (regular, non-Minimal): Item Name
       font default changed from 18px to 26px. Minimal Design's own default
       (22px) is unaffected, swapping automatically on toggle as before.
+    v1.12.0 (2026-10-11) — Price Tag: Bulk Entry. A new "📋 Bulk Entry"
+      button sits right beside "🏷️ Minimal Design" and opens the same
+      engine that used to be the hidden-in-"More" "Batch Print" feature,
+      now with every Price Tag field as its own column: Item Name, UOM,
+      MRP, Discount Type (None/%/₹ — defaults to None on every new row),
+      Discount Value, Barcode #, Shelf Code (new), and Copies (new —
+      defaults to 1). Each row's discount type is now honored individually
+      when printing (previously the whole batch was forced to "%"
+      regardless of what was typed). Printing inserts an auto-cut after
+      EVERY single tag, including every extra copy of the same row, not
+      just between different items. Also added UOM auto-save: any UOM
+      typed in the normal Price Tag form's Qty field or in a Bulk Entry
+      row is remembered (localStorage) and offered back as a suggestion
+      in both places — same mechanism as the existing "My Items" name
+      autocomplete, no separate save step.
+    v1.12.1 (2026-10-11) — Bulk Entry modal widened (460px → 880px) and
+      every row switched from wrapping flex fields to fixed-width columns
+      lined up under header labels, so a row stays on ONE line instead of
+      wrapping onto two — the wrap was slowing down fast data entry.
+      Narrow/phone screens get horizontal scroll instead of wrapping, so
+      columns never lose alignment. Discount Value is now disabled (not
+      hidden) while Discount Type is "None", keeping row width constant.
 -->
+
 
 
 
@@ -3919,6 +3942,13 @@ Millet Groceries & Snacks</textarea>
                  never shifts when it's pressed. -->
             <button type="button" class="upload-logo-action-btn" id="price-minimal-toggle-btn" onclick="togglePriceMinimalMode()">🏷️ Minimal Design</button>
             <input type="checkbox" id="price-minimal-mode" style="display: none;">
+            <!-- Bulk Entry: a visible shortcut to the same Batch Print
+                 modal/engine (openBatchPrintModal/runBatchPrint) rather
+                 than a second, duplicate feature — it was previously
+                 reachable only from the "More" menu as "Batch Print",
+                 buried where it's easy to miss. Placed right beside
+                 Minimal Design per request. -->
+            <button type="button" class="upload-logo-action-btn" id="price-bulk-entry-btn" onclick="openBatchPrintModal()">📋 Bulk Entry</button>
             <button type="button" class="upload-logo-action-btn" id="price-brand-toggle-btn" onclick="togglePriceBrandInput()">+ Add Brand Name</button>
             <label class="custom-checkbox-label price-logo-opt" id="price-tagline-opt-wrap" style="display: none;">
                 <input type="checkbox" id="price-show-tagline" onchange="updatePriceCardPreview()"> Include Tagline
@@ -3950,7 +3980,8 @@ Millet Groceries & Snacks</textarea>
             </div>
             <div class="form-group" id="price-qty-group">
                 <label>Net Weight / Quantity</label>
-                <input type="text" class="form-control sentence-case-input" id="price-item-qty" placeholder="" value="" oninput="updatePriceCardPreview()">
+                <input type="text" class="form-control sentence-case-input" id="price-item-qty" placeholder="" value="" list="uomSuggestions" oninput="updatePriceCardPreview()" onchange="recordUomUsage(this.value)">
+                <datalist id="uomSuggestions"></datalist>
             </div>
             <div class="form-group">
                 <label>MRP (₹) <span style="color:#ef4444;">*</span></label>
@@ -4530,12 +4561,30 @@ Millet Groceries & Snacks</textarea>
     </div>
 
     <!-- Batch Print: print several different items' Price Tags in one go -->
-    <div class="recent-prints-panel modal-panel" id="batchPrintModal" style="max-width: 460px;">
+    <div class="recent-prints-panel modal-panel" id="batchPrintModal" style="max-width: 880px;">
         <div class="panel-header-row">
-            <span class="panel-title">📋 Batch Print Price Tags</span>
+            <span class="panel-title">📋 Bulk Entry — Price Tags</span>
         </div>
-        <div style="font-size: 11.5px; color: #64748b; margin-top: 4px; line-height: 1.5;">Add each item's name, qty and MRP. Every row prints as its own Price Tag, one after another, in a single print job.</div>
-        <div id="batchPrintRows" style="display: flex; flex-direction: column; gap: 8px; margin-top: 12px;" oninput="updateBatchPrintCount()" onkeydown="handleBatchRowKeydown(event)"></div>
+        <div style="font-size: 11.5px; color: #64748b; margin-top: 4px; line-height: 1.5;">Add every item's details below — Item Name, UOM, MRP, Discount, Barcode #, Shelf Code and Copies. Each row prints as its own Price Tag(s), one after another with an auto-cut after every single tag, in one print job.</div>
+        <!-- Wide modal (880px) + fixed-width columns that line up with the
+             header labels below, so every row stays on ONE line instead of
+             wrapping onto two — wrapping was slowing down fast data entry.
+             Horizontal scroll is the fallback on narrow/phone screens
+             rather than wrapping, so the columns never lose alignment. -->
+        <div style="overflow-x: auto; margin-top: 12px;">
+            <div id="batchPrintHeaderRow" style="display:flex; gap:6px; padding: 0 7px; min-width: 760px;">
+                <span style="flex:0 0 160px; font-size:10.5px; font-weight:800; color:#64748b; text-transform:uppercase;">Item Name</span>
+                <span style="flex:0 0 90px; font-size:10.5px; font-weight:800; color:#64748b; text-transform:uppercase;">UOM</span>
+                <span style="flex:0 0 75px; font-size:10.5px; font-weight:800; color:#64748b; text-transform:uppercase;">MRP</span>
+                <span style="flex:0 0 85px; font-size:10.5px; font-weight:800; color:#64748b; text-transform:uppercase;">Disc. Type</span>
+                <span style="flex:0 0 75px; font-size:10.5px; font-weight:800; color:#64748b; text-transform:uppercase;">Disc. Val</span>
+                <span style="flex:0 0 95px; font-size:10.5px; font-weight:800; color:#64748b; text-transform:uppercase;">Barcode #</span>
+                <span style="flex:0 0 85px; font-size:10.5px; font-weight:800; color:#64748b; text-transform:uppercase;">Shelf Code</span>
+                <span style="flex:0 0 55px; font-size:10.5px; font-weight:800; color:#64748b; text-transform:uppercase;">Copies</span>
+                <span style="flex:0 0 26px;"></span>
+            </div>
+            <div id="batchPrintRows" style="display: flex; flex-direction: column; gap: 6px; margin-top: 6px; min-width: 760px;" oninput="updateBatchPrintCount()" onkeydown="handleBatchRowKeydown(event)"></div>
+        </div>
         <button type="button" class="upload-logo-action-btn" style="margin-top: 10px;" onclick="addBatchPrintRow()">+ Add Item</button>
         <div id="batchPrintCountLine" style="font-size: 11.5px; font-weight: 800; color: #0ea5e9; margin-top: 8px;">0 items ready → 0 tags will print</div>
         <div class="recent-prints-footer">
@@ -4960,7 +5009,7 @@ Millet Groceries & Snacks</textarea>
         // ---- App version ----
         // Bump this (and add a line to the version-log comment at the very
         // top of this file) every time the file is updated and re-uploaded.
-        const APP_VERSION = 'v1.11.2';
+        const APP_VERSION = 'v1.12.1';
 
         // ---- Number of Prints ----
         // One count per print type, shown as a +/- stepper on the Quick
@@ -7576,6 +7625,41 @@ Millet Groceries & Snacks</textarea>
         }
         loadSavedPriceItemsStore();
 
+        // UOM auto-save — every UOM typed anywhere (the single Price Tag
+        // form's own Qty/UOM field, or any Bulk Entry row's UOM field) is
+        // remembered automatically and offered back as a <datalist>
+        // suggestion in both places, no separate save step. Same plain
+        // localStorage + datalist pattern as the "My Items" name
+        // autocomplete above, just keyed on UOM text instead of a whole
+        // saved item.
+        let uomHistoryStore = [];
+        function loadUomHistoryStore() {
+            try {
+                const raw = localStorage.getItem('lp_uomHistory');
+                uomHistoryStore = raw ? JSON.parse(raw) : [];
+            } catch (e) { uomHistoryStore = []; }
+        }
+        function saveUomHistoryStore() {
+            try { localStorage.setItem('lp_uomHistory', JSON.stringify(uomHistoryStore)); }
+            catch (e) { /* storage full/unavailable — history just won't persist */ }
+        }
+        function recordUomUsage(value) {
+            const v = (value || '').trim();
+            if (!v) return;
+            uomHistoryStore = uomHistoryStore.filter(u => u.toLowerCase() !== v.toLowerCase());
+            uomHistoryStore.unshift(v);
+            if (uomHistoryStore.length > 30) uomHistoryStore = uomHistoryStore.slice(0, 30);
+            saveUomHistoryStore();
+            refreshUomSuggestions();
+        }
+        function refreshUomSuggestions() {
+            const listEl = document.getElementById('uomSuggestions');
+            if (!listEl) return;
+            listEl.innerHTML = uomHistoryStore.map(u => `<option value="${escapeHtml(u)}">`).join('');
+        }
+        loadUomHistoryStore();
+        refreshUomSuggestions();
+
         function saveCurrentPriceToMyItems() {
             const name = document.getElementById('price-item-name').value.trim();
             if (!name) {
@@ -7749,16 +7833,46 @@ Millet Groceries & Snacks</textarea>
             const row = document.createElement('div');
             row.className = 'batch-print-row';
             row.id = rowId;
-            row.style.cssText = 'display:flex; gap:6px; align-items:center; flex-wrap:wrap; border:1px solid #e2e8f0; border-radius:8px; padding:7px;';
+            // Fixed widths (not flex-basis-and-wrap) so every row lines up
+            // under the header labels above and stays on ONE line — the
+            // modal is wide enough (880px) that this no longer needs to
+            // wrap onto two lines per item like the first version did,
+            // which was slowing down fast data entry.
+            row.style.cssText = 'display:flex; gap:6px; align-items:center; flex-wrap:nowrap; border:1px solid #e2e8f0; border-radius:8px; padding:5px 7px;';
             row.innerHTML =
-                '<input type="text" class="form-control batch-name" placeholder="Item Name" style="flex:1 1 100px; min-width:0;">' +
-                '<input type="text" class="form-control batch-qty" placeholder="Qty (500g)" style="flex:1 1 80px; min-width:0;">' +
-                '<input type="number" class="form-control batch-mrp" placeholder="MRP" style="flex:1 1 65px; min-width:0;">' +
-                '<input type="number" class="form-control batch-disc" placeholder="Disc %" style="flex:1 1 65px; min-width:0;">' +
-                '<input type="text" class="form-control batch-barcode" placeholder="Barcode" style="flex:1 1 85px; min-width:0;">' +
-                '<button type="button" class="recent-print-delete-btn" title="Remove row" onclick="document.getElementById(\'' + rowId + '\').remove(); updateBatchPrintCount();">✕</button>';
+                '<input type="text" class="form-control batch-name" placeholder="Item Name" style="flex:0 0 160px; min-width:0;">' +
+                '<input type="text" class="form-control batch-qty" placeholder="500g" list="uomSuggestions" style="flex:0 0 90px; min-width:0;" onchange="recordUomUsage(this.value)">' +
+                '<input type="number" class="form-control batch-mrp" placeholder="MRP" style="flex:0 0 75px; min-width:0;">' +
+                '<select class="form-control batch-disctype" style="flex:0 0 85px; min-width:0;" onchange="handleBatchDiscTypeChange(this)">' +
+                    '<option value="none" selected>None</option>' +
+                    '<option value="pct">%</option>' +
+                    '<option value="rs">₹</option>' +
+                '</select>' +
+                '<input type="number" class="form-control batch-disc" placeholder="—" style="flex:0 0 75px; min-width:0;" disabled>' +
+                '<input type="text" class="form-control batch-barcode" placeholder="Barcode" style="flex:0 0 95px; min-width:0;">' +
+                '<input type="text" class="form-control batch-shelf" placeholder="e.g. A-04" style="flex:0 0 85px; min-width:0;">' +
+                '<input type="number" class="form-control batch-copies" value="1" min="1" style="flex:0 0 55px; min-width:0;">' +
+                '<button type="button" class="recent-print-delete-btn" title="Remove row" style="flex:0 0 26px;" onclick="document.getElementById(\'' + rowId + '\').remove(); updateBatchPrintCount();">✕</button>';
             rowsEl.appendChild(row);
             updateBatchPrintCount();
+        }
+
+        // Discount Value only makes sense once a Discount Type (% or ₹)
+        // is chosen — DISABLED (not hidden) while "No Disc." is selected
+        // (the new default for every row), so the field keeps its fixed
+        // width and every row stays aligned under the header labels; a
+        // disabled field also can't silently carry a leftover number into
+        // a row nobody meant to discount.
+        function handleBatchDiscTypeChange(selectEl) {
+            const row = selectEl.closest('.batch-print-row');
+            const discInput = row && row.querySelector('.batch-disc');
+            if (!discInput) return;
+            if (selectEl.value === 'none') {
+                discInput.disabled = true;
+                discInput.value = '';
+            } else {
+                discInput.disabled = false;
+            }
         }
 
         function clearBatchPrintRows() {
@@ -7804,7 +7918,14 @@ Millet Groceries & Snacks</textarea>
             newRow.querySelector('.batch-name').value = name;
             newRow.querySelector('.batch-qty').value = document.getElementById('price-item-qty').value.trim();
             newRow.querySelector('.batch-mrp').value = mrp;
-            newRow.querySelector('.batch-disc').value = document.getElementById('price-disc-val').value.trim();
+            const discValCopy = document.getElementById('price-disc-val').value.trim();
+            const discTypeSelect = newRow.querySelector('.batch-disctype');
+            if (discValCopy && parseFloat(discValCopy) > 0) {
+                discTypeSelect.value = priceDiscType; // 'pct' or 'rs'
+                newRow.querySelector('.batch-disc').value = discValCopy;
+                handleBatchDiscTypeChange(discTypeSelect);
+            }
+            newRow.querySelector('.batch-shelf').value = document.getElementById('price-shelf-code').value.trim();
             updateBatchPrintCount();
             // The modal can already have rows in it (e.g. two blank
             // starter rows from an earlier "Batch Print" open), so the new
@@ -7824,11 +7945,18 @@ Millet Groceries & Snacks</textarea>
             const lineEl = document.getElementById('batchPrintCountLine');
             if (!lineEl) return;
             const rows = Array.from(document.querySelectorAll('#batchPrintRows .batch-print-row'));
-            const validCount = rows.filter(row => {
+            const validRows = rows.filter(row => {
                 const name = row.querySelector('.batch-name').value.trim();
                 const mrp = parseFloat(row.querySelector('.batch-mrp').value) || 0;
                 return name && mrp > 0;
-            }).length;
+            });
+            const validCount = validRows.length;
+            const totalTags = validRows.reduce((sum, row) => {
+                const copiesEl = row.querySelector('.batch-copies');
+                let copies = parseInt(copiesEl && copiesEl.value, 10);
+                if (!copies || copies < 1) copies = 1;
+                return sum + copies;
+            }, 0);
             const totalRows = rows.length;
             if (totalRows === 0 || validCount === 0) {
                 lineEl.textContent = totalRows === 0
@@ -7836,10 +7964,10 @@ Millet Groceries & Snacks</textarea>
                     : `0 of ${totalRows} rows ready yet → add a Name + MRP to each row`;
                 lineEl.style.color = totalRows === 0 ? '#0ea5e9' : '#d97706';
             } else if (validCount < totalRows) {
-                lineEl.textContent = `${validCount} of ${totalRows} rows ready → ${validCount} tag${validCount === 1 ? '' : 's'} will print (fill in Name + MRP on the rest)`;
+                lineEl.textContent = `${validCount} of ${totalRows} rows ready → ${totalTags} tag${totalTags === 1 ? '' : 's'} will print (fill in Name + MRP on the rest)`;
                 lineEl.style.color = '#d97706';
             } else {
-                lineEl.textContent = `${validCount} item${validCount === 1 ? '' : 's'} ready → ${validCount} tag${validCount === 1 ? '' : 's'} will print`;
+                lineEl.textContent = `${validCount} item${validCount === 1 ? '' : 's'} ready → ${totalTags} tag${totalTags === 1 ? '' : 's'} will print`;
                 lineEl.style.color = '#0ea5e9';
             }
         }
@@ -7853,13 +7981,23 @@ Millet Groceries & Snacks</textarea>
         // layout logic a second time.
         function runBatchPrint() {
             const rows = Array.from(document.querySelectorAll('#batchPrintRows .batch-print-row'));
-            const items = rows.map(row => ({
-                name: row.querySelector('.batch-name').value.trim(),
-                qty: row.querySelector('.batch-qty').value.trim(),
-                mrp: parseFloat(row.querySelector('.batch-mrp').value) || 0,
-                disc: parseFloat(row.querySelector('.batch-disc').value) || 0,
-                barcode: row.querySelector('.batch-barcode').value.trim()
-            })).filter(it => it.name && it.mrp > 0);
+            const items = rows.map(row => {
+                const discTypeEl = row.querySelector('.batch-disctype');
+                const discType = discTypeEl ? discTypeEl.value : 'none'; // 'none' | 'pct' | 'rs'
+                const copiesEl = row.querySelector('.batch-copies');
+                let copies = parseInt(copiesEl && copiesEl.value, 10);
+                if (!copies || copies < 1) copies = 1;
+                return {
+                    name: row.querySelector('.batch-name').value.trim(),
+                    qty: row.querySelector('.batch-qty').value.trim(),
+                    mrp: parseFloat(row.querySelector('.batch-mrp').value) || 0,
+                    discType: discType,
+                    disc: discType === 'none' ? 0 : (parseFloat(row.querySelector('.batch-disc').value) || 0),
+                    barcode: row.querySelector('.batch-barcode').value.trim(),
+                    shelfCode: row.querySelector('.batch-shelf') ? row.querySelector('.batch-shelf').value.trim() : '',
+                    copies: copies
+                };
+            }).filter(it => it.name && it.mrp > 0);
 
             if (!items.length) {
                 alert('Add at least one item with a Name and MRP before printing.');
@@ -7877,17 +8015,26 @@ Millet Groceries & Snacks</textarea>
             const previewBox = document.querySelector('#priceReceiptCol .preview-box');
             const originalPreviewHtml = previewBox.innerHTML;
 
-            setPriceDiscType('pct');
             const cardHtmls = [];
             items.forEach(it => {
+                // Each row can have its own Discount Type now (None/%/₹),
+                // unlike before when the whole batch was forced to '%' —
+                // set it per item right before rendering that item's card.
+                setPriceDiscType(it.discType === 'rs' ? 'rs' : 'pct');
                 document.getElementById('price-item-name').value = it.name;
                 document.getElementById('price-item-qty').value = it.qty;
                 document.getElementById('price-item-value').value = it.mrp;
                 document.getElementById('price-disc-val').value = it.disc;
                 document.getElementById('price-barcode-number').value = it.barcode;
+                document.getElementById('price-shelf-code').value = it.shelfCode;
                 document.getElementById('price-notes').value = '';
                 updatePriceCardPreview();
-                cardHtmls.push(document.getElementById('price-card-el').outerHTML);
+                const html = document.getElementById('price-card-el').outerHTML;
+                // Push the card once per Copies — every copy lands in the
+                // print job as its own entry, so the cut-break join below
+                // puts an auto-cut after every single printed tag, not
+                // just between different items.
+                for (let c = 0; c < it.copies; c++) cardHtmls.push(html);
             });
 
             // Batch Print used to always lay out and print as Thermal,
@@ -7934,8 +8081,9 @@ Millet Groceries & Snacks</textarea>
             }
             updatePriceCardPreview();
 
-            const printedCount = isLabel ? items.length * 2 : items.length;
-            showPrintToast('Batch: ' + items.length + ' Price Tags' + (isLabel ? ' (2-up)' : ''), printedCount);
+            const totalCopies = items.reduce((sum, it) => sum + it.copies, 0);
+            const printedCount = isLabel ? totalCopies * 2 : totalCopies;
+            showPrintToast('Bulk Entry: ' + items.length + ' item' + (items.length === 1 ? '' : 's') + ', ' + printedCount + ' tag' + (printedCount === 1 ? '' : 's') + (isLabel ? ' (2-up)' : ''), printedCount);
             recordPrintStat(printedCount);
             hideAllPanelsKeepData();
         }
