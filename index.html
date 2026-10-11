@@ -263,6 +263,17 @@
       side-by-side layout (MRP-strike/SP/Save line need their own column
       to be readable), same as before. Minimal Design and label printing
       (50×25mm/50×50mm) are both unaffected.
+    v1.11.1 (2026-10-11) — Fixed the v1.11.0 no-discount stacked layout
+      actually printing differently from what the on-screen/JPEG preview
+      showed: a pre-existing print-only rule (".card { display: block
+      !important }", which every receipt card relies on to reset to plain
+      block flow for print before re-specializing) was silently beating
+      the new layout's "display: flex" at the exact moment of printing
+      only — the screen preview and any snapshot of the live page still
+      looked right, but the physical sticker fell back to Item Name/UOM/
+      MRP/Barcode just stacked in plain order, losing the whole point
+      (Barcode and MRP sharing one row). Fixed by marking the new layout's
+      flex display !important too, so it actually wins at print time.
 -->
 
 
@@ -2642,9 +2653,22 @@
            unwrap trick as Minimal, but one level higher — the whole card
            becomes the flex container, not just .price-tag-main-row — so
            Barcode (a sibling of .price-tag-main-row, not a descendant)
-           can share a flex row with the price badge. */
+           can share a flex row with the price badge.
+
+           display:flex here MUST be !important: the @media print block
+           further down has a generic ".card { display: block !important; }"
+           rule (it resets every receipt card to plain block flow for
+           print, then each card type re-specializes from there — see the
+           ".price-card { width/padding/border }" print override right
+           after it, which is why that one already needs !important too).
+           Without !important here, that rule silently wins only AT PRINT
+           TIME — screen preview and any JPEG/canvas snapshot of the live
+           DOM still showed the intended flex layout, but the actual
+           printed sticker fell back to plain stacked block flow (losing
+           the whole point: Barcode and MRP sharing one row), which is
+           exactly the mismatch between the preview and the real print. */
         .price-card.stack-name {
-            display: flex;
+            display: flex !important;
             flex-wrap: wrap;
             align-items: flex-start;
             text-align: left;
@@ -4933,7 +4957,7 @@ Millet Groceries & Snacks</textarea>
         // ---- App version ----
         // Bump this (and add a line to the version-log comment at the very
         // top of this file) every time the file is updated and re-uploaded.
-        const APP_VERSION = 'v1.11.0';
+        const APP_VERSION = 'v1.11.1';
 
         // ---- Number of Prints ----
         // One count per print type, shown as a +/- stepper on the Quick
